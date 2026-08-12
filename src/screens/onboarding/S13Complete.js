@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 export default function S13OnboardingComplete({ route, navigation }) {
-  // 캐릭터 선택에서 전달받은 캐릭터 데이터
+  // (임시) 캐릭터 선택에서 전달받은 캐릭터 데이터
   const { selectedCharacter } = route.params || {};
 
 
@@ -27,13 +27,12 @@ export default function S13OnboardingComplete({ route, navigation }) {
 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'MainHome' }], 
+      routes: [{ name: 'Main' }], 
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 상단 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -62,7 +61,7 @@ export default function S13OnboardingComplete({ route, navigation }) {
                 resizeMode="contain"
               />
             ) : (
-              // 아직 이미지가 없거나 준비 중일 때 표시되는 점선 Placeholder
+
               <View style={styles.placeholderBox}>
                 <Text style={styles.placeholderText}>Image</Text>
               </View>
