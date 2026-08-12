@@ -61,7 +61,7 @@ export default function S21PlusLogInput({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-          {/* 상단 헤더 */}
+
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
