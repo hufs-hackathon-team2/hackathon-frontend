@@ -14,7 +14,7 @@ import {
   Alert,
 } from 'react-native';
 
-export default function S03Signup({ navigation }) {
+export default function S02Signup({ navigation }) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -230,7 +230,7 @@ export default function S03Signup({ navigation }) {
                 <Text style={styles.errorText}>{emailError}</Text>
               ) : (
                 <Text style={styles.guideText}>
-                  등록되지 않은 이메일 주소를 사용하세요
+                  자주 쓰는 이메일을 입력해주세요
                 </Text>
               )}
             </View>
