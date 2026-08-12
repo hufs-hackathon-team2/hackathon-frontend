@@ -71,7 +71,7 @@ export default function S11Interests({ navigation }) {
                 style={styles.textArea}
                 value={interestText}
                 onChangeText={setInterestText}
-                placeholder="불규칙한 식습관 / 운동 부족 / 체중 조절 / 불규칙한 수면 / 스트레스"
+                placeholder="식습관 개선 / 운동 루틴 / 체중 조절 / 수면 패턴 개선 / 스트레스 관리"
                 multiline={true}
                 numberOfLines={4}
                 maxLength={maxLength} 
