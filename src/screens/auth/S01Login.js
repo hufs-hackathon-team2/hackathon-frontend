@@ -17,11 +17,10 @@ export default function S01Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // 로그인 실패 여부/에러 메시지 상태
+  
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = () => {
-    // 기존 에러 초기화
     setErrorMessage('');
 
     // API 연결 전 임의 테스트 아이디, 비번 (다르게 입력 시 오류)
@@ -30,13 +29,11 @@ export default function S01Login({ navigation }) {
       password: 'password123',
     };
 
-    // 검증 실패 시 오류 배너 띄우기
     if (email !== MOCK_USER.email || password !== MOCK_USER.password) {
       setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
       return;
     }
 
-    // 성공 시 처리
     navigation.reset({
       index: 0,
       routes: [{ name: 'Main' }],
@@ -50,7 +47,7 @@ export default function S01Login({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-          {/* 상단 헤더 */}
+
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
@@ -64,11 +61,11 @@ export default function S01Login({ navigation }) {
 
           <View style={styles.divider} />
 
-          {/* 메인 폼 */}
+
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
 
-            {/* 이메일 입력 */}
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
@@ -76,14 +73,14 @@ export default function S01Login({ navigation }) {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (errorMessage) setErrorMessage(''); // 타이핑 시작하면 에러 제거
+                  if (errorMessage) setErrorMessage(''); 
                 }}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
             </View>
 
-            {/* 비밀번호 입력 */}
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
@@ -91,25 +88,24 @@ export default function S01Login({ navigation }) {
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
-                  if (errorMessage) setErrorMessage(''); // 타이핑 시작하면 에러 제거
+                  if (errorMessage) setErrorMessage(''); 
                 }}
                 secureTextEntry
               />
             </View>
 
-            {/* 입력 영역 아래 오류 배너 */}
             {errorMessage ? (
               <View style={styles.errorBanner}>
                 <Text style={styles.errorBannerText}>{errorMessage}</Text>
               </View>
             ) : null}
 
-            {/* 로그인 버튼 */}
+
             <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
 
-            {/* 링크 영역 */}
+
             <View style={styles.linkContainer}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ResetPassword')}
