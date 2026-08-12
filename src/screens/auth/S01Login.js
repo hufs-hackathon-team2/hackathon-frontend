@@ -10,34 +10,63 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
+  ActivityIndicator,
 } from 'react-native';
+
+// 서버 주소 들어갈 부분
+const API_BASE_URL = ""; 
 
 export default function S01Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+
+  const handleLogin = async () => {
     setErrorMessage('');
 
-    // API 연결 전 임의 테스트 아이디, 비번 (다르게 입력 시 오류)
-    const MOCK_USER = {
-      email: 'test@example.com',
-      password: 'password123',
-    };
-
-    if (email !== MOCK_USER.email || password !== MOCK_USER.password) {
-      setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password) {
+      setErrorMessage('이메일과 비밀번호를 모두 입력해 주세요.');
       return;
     }
 
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Main' }],
-    });
+    setLoading(true);
+
+    try {
+
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: trimmedEmail,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('로그인 성공 결과 데이터:', data);
+
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      } else {
+
+        setErrorMessage(data.message || '이메일 또는 비밀번호를 확인해 주세요.');
+      }
+    } catch (error) {
+      console.error('로그인 API 통신 에러:', error);
+      setErrorMessage('서버 연결 실패. (API 주소를 확인해 주세요)');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,7 +76,6 @@ export default function S01Login({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-
           <View style={styles.header}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
@@ -61,10 +89,8 @@ export default function S01Login({ navigation }) {
 
           <View style={styles.divider} />
 
-
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
-
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
@@ -73,13 +99,13 @@ export default function S01Login({ navigation }) {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (errorMessage) setErrorMessage(''); 
+                  if (errorMessage) setErrorMessage('');
                 }}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                editable={!loading}
               />
             </View>
-
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
@@ -88,9 +114,10 @@ export default function S01Login({ navigation }) {
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
-                  if (errorMessage) setErrorMessage(''); 
+                  if (errorMessage) setErrorMessage('');
                 }}
                 secureTextEntry
+                editable={!loading}
               />
             </View>
 
@@ -100,17 +127,26 @@ export default function S01Login({ navigation }) {
               </View>
             ) : null}
 
-
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>로그인</Text>
+            <TouchableOpacity
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" size="small" />
+              ) : (
+                <Text style={styles.loginButtonText}>로그인</Text>
+              )}
             </TouchableOpacity>
-
 
             <View style={styles.linkContainer}>
               <TouchableOpacity
                 onPress={() => navigation.navigate('ResetPassword')}
               >
-                <Text style={styles.underlineText}>비밀번호를 잊으셨나요?</Text>
+                <Text style={styles.underlineText}>
+                  비밀번호를 잊으셨나요?
+                </Text>
               </TouchableOpacity>
 
               <View style={styles.signUpRow}>
@@ -191,7 +227,6 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#E53E3E',
   },
-
   errorBanner: {
     backgroundColor: '#FFF5F5',
     borderColor: '#FEB2B2',
@@ -216,6 +251,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 8,
     marginBottom: 32,
+    minWidth: 80,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#718096',
   },
   loginButtonText: {
     color: '#FFFFFF',
