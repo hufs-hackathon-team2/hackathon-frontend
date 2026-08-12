@@ -63,7 +63,7 @@ export default function S01Login({ navigation }) {
       }
     } catch (error) {
       console.error('로그인 API 통신 에러:', error);
-      setErrorMessage('서버 연결 실패. (API 주소를 확인해 주세요)');
+      setErrorMessage('네트워크 연결이 불안정하거나 서버에 연결할 수 없습니다.');
     } finally {
       setLoading(false);
     }
