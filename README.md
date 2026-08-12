@@ -45,7 +45,6 @@ Metro는 누가 요청하기 전까지 번들을 만들지 않습니다. 그래�
 빌드가 시작되는데, 첫 빌드는 2분 가까이 걸려서 Expo Go가 기다리지 못하고
 `There was a problem running the requested app` 을 띄우는 경우가 있습니다.
 
-터미널을 하나 더 열어서 미리 빌드시켜두면 해결됩니다.
 
 ## 폴더 구조
 
