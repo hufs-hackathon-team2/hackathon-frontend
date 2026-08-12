@@ -54,15 +54,22 @@ src/
   screens/                 화면 하나당 파일 하나
     auth/                  S00 S01 S02 S03
     onboarding/            S11 S12 S13
-    home/                  S20 S21 S22
-    cycle/                 S30 S31 S32
+    home/                  S20
+    log/                   S21 S22
     quest/                 S50 S51 S52
+    cycle/                 S30 S31 S32
     settings/              S70
     S40Resume.js           재개 화면
     S60Weekly.js           위클리 카드
   components/
     common/                여러 화면에서 함께 쓰는 조각
     character/ log/ cycle/ quest/
+```
+
+`screens` 아래 폴더는 하단 탭 순서와 같습니다.
+
+```
+홈 · 기록 · 퀘스트 · 사이클 · 설정
 ```
 
 `components` 아래 기능별 폴더는 아직 비어 있습니다. 화면 안에서 만든 조각이 두 군데 이상에서 쓰이게 되면 그때 옮기면 됩니다.
@@ -90,6 +97,8 @@ src/
 | S52 | 퀘스트 진행 상황 | QS 03 |
 | S60 | 위클리 카드 | WK 01, WK 02 |
 | S70 | 설정 | ST 01, ST 02, AU 04, AU 06 |
+
+S23(진행 중 퀘스트 바)은 별도 화면이 아니라 S20 홈 화면 안에 들어가는 컴포넌트입니다.
 
 지금은 모든 화면이 `Placeholder` 컴포넌트로 채워져 있습니다. 화면 이름과 이동 버튼만
 있는 상태라, 담당 화면을 맡으면 그 파일의 `Placeholder` 를 실제 UI로 바꾸면 됩니다.
