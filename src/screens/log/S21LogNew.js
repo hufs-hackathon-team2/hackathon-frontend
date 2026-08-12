@@ -5,7 +5,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
@@ -13,7 +12,9 @@ import {
   Alert,
 } from 'react-native';
 
-export default function S21PlusLogInput({ navigation }) {
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function S21LogNew({ navigation }) {
   const [logContent, setLogContent] = useState('');
   const maxLength = 200;
 
@@ -68,7 +69,7 @@ export default function S21PlusLogInput({ navigation }) {
             >
               <Text style={styles.backButtonText}>{'<'}</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>PLUS Log 입력 화면</Text>
+            <Text style={styles.headerTitle}>PLUS Log 입력</Text>
             <View style={styles.headerRightPlaceholder} />
           </View>
 
