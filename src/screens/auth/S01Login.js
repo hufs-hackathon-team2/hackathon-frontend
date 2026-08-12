@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#E53E3E',
   },
-  // 오류 배너 스타일
+
   errorBanner: {
     backgroundColor: '#FFF5F5',
     borderColor: '#FEB2B2',
