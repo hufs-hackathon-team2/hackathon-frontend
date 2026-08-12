@@ -45,7 +45,6 @@ export default function S21PlusLogInput({ navigation }) {
       return;
     }
 
-    console.log('저장된 PLUS Log:', logContent);
     Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
       {
         text: '확인',
