@@ -5,12 +5,13 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function S11Interests({ navigation }) {
 
@@ -49,7 +50,7 @@ export default function S11Interests({ navigation }) {
             >
               <Text style={styles.backButtonText}>{'<'}</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>관심 영역 입력 화면</Text>
+            <Text style={styles.headerTitle}>관심 영역 입력</Text>
             <View style={styles.headerRightPlaceholder} />
           </View>
 
@@ -70,7 +71,7 @@ export default function S11Interests({ navigation }) {
                 style={styles.textArea}
                 value={interestText}
                 onChangeText={setInterestText}
-                placeholder=""
+                placeholder="불규칙한 식습관 / 운동 부족 / 체중 조절 / 불규칙한 수면 / 스트레스"
                 multiline={true}
                 numberOfLines={4}
                 maxLength={maxLength} 
@@ -168,10 +169,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DADADA',
     borderRadius: 8,
-    height: 110,
+    height: 120,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 15,
+    fontSize: 14,
     color: '#1E232C',
   },
   charCount: {
