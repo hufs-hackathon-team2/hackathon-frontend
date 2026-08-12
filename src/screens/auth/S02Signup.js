@@ -274,7 +274,6 @@ export default function S03Signup({ navigation }) {
               )}
             </View>
 
-            {/* 닉네임 입력 */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>닉네임</Text>
               <TextInput
