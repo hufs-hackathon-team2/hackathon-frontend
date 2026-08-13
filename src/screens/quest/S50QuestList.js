@@ -57,6 +57,7 @@ export default function S50QuestList({ navigation }) {
 
     if (nextDays === 3) {
       navigation.navigate('QuestProgress', { title: activeQuest.title });
+      setactiveQuest(null);
     }
   };
 
