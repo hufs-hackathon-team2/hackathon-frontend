@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
+import React, { useState, useLayoutEffect, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,15 +9,17 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Animated, 
-  Alert
+  Animated,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function QuestCustomCreateScreen({ navigation }) {
   const [questTitle, setQuestTitle] = useState('');
   const [toastMessage, setToastMessage] = useState('');
-  const fadeAnim = useRef(new Animated.Value(0)).current; 
+  const [keyboardHeight, setKeyboardHeight] = useState(0); 
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const maxLength = 30;
   // 기존에 존재하는 퀘스트 목록 예시 (중복 시 에러 토스트)
@@ -30,20 +32,37 @@ export default function QuestCustomCreateScreen({ navigation }) {
   }, [navigation]);
 
 
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height); 
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0); 
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+
   const showCustomToast = (msg) => {
     setToastMessage(msg);
-
 
     Animated.sequence([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
       }),
       Animated.delay(2000),
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
       }),
     ]).start();
@@ -53,8 +72,6 @@ export default function QuestCustomCreateScreen({ navigation }) {
 
   const handleStart = () => {
     if (!isValid) return;
-
-    Keyboard.dismiss();
 
     const trimmedTitle = questTitle.trim();
 
@@ -72,6 +89,7 @@ export default function QuestCustomCreateScreen({ navigation }) {
   };
 
   return (
+    <>
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
@@ -88,10 +106,7 @@ export default function QuestCustomCreateScreen({ navigation }) {
             <Text style={styles.headerTitle}>퀘스트 직접 만들기</Text>
             <View style={styles.headerRightPlaceholder} />
           </View>
-
           <View style={styles.divider} />
-
-
           <View style={styles.content}>
             <Text style={styles.title}>직접 만들기</Text>
             <Text style={styles.subtitle}>
@@ -127,6 +142,7 @@ export default function QuestCustomCreateScreen({ navigation }) {
               disabled={!isValid}
               activeOpacity={0.8}
             >
+
               <Text
                 style={[
                   styles.startButtonText,
@@ -137,20 +153,25 @@ export default function QuestCustomCreateScreen({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <Animated.View
-            style={[
-              styles.toastContainer,
-              { opacity: fadeAnim }, 
-            ]}
-            pointerEvents="none" 
-          >
-            <Text style={styles.toastText}>{toastMessage}</Text>
-          </Animated.View>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+      </SafeAreaView>
+
+      <Animated.View
+        style={[
+          styles.toastContainer,
+          {
+            bottom: keyboardHeight > 0 ? keyboardHeight - 65 : 40,
+            opacity: fadeAnim,
+          },
+        ]}
+        pointerEvents="none"
+      >
+        <Text style={styles.toastText}>{toastMessage}</Text>
+      </Animated.View>
+    </> 
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -246,10 +267,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-
   toastContainer: {
     position: 'absolute',
-    bottom: 90, 
     left: 24,
     right: 24,
     backgroundColor: 'rgba(30, 35, 44, 0.95)',
@@ -264,7 +283,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-
   toastText: {
     color: '#FFFFFF',
     fontSize: 14,
