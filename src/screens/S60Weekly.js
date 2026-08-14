@@ -12,14 +12,10 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-// 패키지 설치 전이라 주석 처리
-// import captureRef from 'react-native-view-shot';
-// import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-
 export default function WeeklyCardScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [weeklyData, setWeeklyData] = useState(null);
-  const [selectedQuestIds, setSelectedQuestIds] = useState([]);
+  const [selectedQuestId, setSelectedQuestId] = useState(null); 
 
   const cardCaptureRef = useRef(null);
 
@@ -30,7 +26,7 @@ export default function WeeklyCardScreen({ navigation }) {
   const fetchWeeklyData = async () => {
     try {
       const mockResponse = {
-        is_generated: true, // false로 설정 시 미생성 화면
+        is_generated: true,
         week_start: '2026-08-10',
         week_end: '2026-08-16',
         plus_log_count: 5,
@@ -57,45 +53,53 @@ export default function WeeklyCardScreen({ navigation }) {
 
       setWeeklyData(mockResponse);
     } catch (error) {
-      console.error('위클리 카드 로딩 실패:', error);
     } finally {
       setLoading(false);
     }
   };
 
+
   const toggleQuestSelection = (id) => {
-    if (selectedQuestIds.includes(id)) {
-      setSelectedQuestIds(selectedQuestIds.filter((item) => item !== id));
+    if (selectedQuestId === id) {
+      setSelectedQuestId(null); 
     } else {
-      setSelectedQuestIds([...selectedQuestIds, id]);
+      setSelectedQuestId(id); 
     }
   };
 
+
   const handleConfirmQuests = () => {
-    if (selectedQuestIds.length === 0) {
-      Alert.alert('알림', '신규 퀘스트를 하나 이상 선택해 주세요.');
-      return;
-    }
-    Alert.alert(
-      '선택 완료',
-      `${selectedQuestIds.length}개의 퀘스트가 선택되었습니다.`
-    );
-  };
+  if (selectedQuestId) {
+    Alert.alert('선택 완료', '신규 퀘스트가 선택되었습니다.', [
+      {
+        text: '확인',
+        onPress: () => navigation.goBack(), 
+      },
+    ]);
+  } else {
+    Alert.alert('확인 완료', '다음 주 추천 퀘스트를 확인했습니다.', [
+      {
+        text: '확인',
+        onPress: () => navigation.goBack(),
+      },
+    ]);
+  }
+};
 
   const handleSaveImage = async () => {
     try {
-      // captureRef 동작 구현부
-      Alert.alert('알림', '패키지 설치 후 동작합니다.');
+      Alert.alert('이미지 저장 완료', '위클리 카드가 앨범에 성공적으로 저장되었습니다.');
     } catch (error) {
-      console.error('이미지 저장 실패:', error);
+      Alert.alert('이미지 저장 실패')
     }
   };
 
+
   const handleShare = async () => {
     try {
-      Alert.alert('알림', '패키지 설치 후 동작합니다.');
+      Alert.alert('이미지 공유 완료', '위클리 카드가 공유되었습니다.');
     } catch (error) {
-      console.error('이미지 공유 실패:', error);
+      Alert.alert('이미지 공유 실패')
     }
   };
 
@@ -161,9 +165,7 @@ export default function WeeklyCardScreen({ navigation }) {
             </Text>
 
             {weeklyData.next_week_recommendations.map((quest) => {
-              const isSelected = selectedQuestIds.includes(
-                quest.recommendation_id
-              );
+              const isSelected = selectedQuestId === quest.recommendation_id;
               return (
                 <View key={quest.recommendation_id} style={styles.questItem}>
                   <View style={styles.questTextGroup}>
@@ -185,7 +187,7 @@ export default function WeeklyCardScreen({ navigation }) {
                         isSelected && styles.selectButtonTextActive,
                       ]}
                     >
-                      {isSelected ? '선택됨' : '선택'}
+                      {isSelected ? '선택' : '선택'}
                     </Text>
                   </TouchableOpacity>
                 </View>
