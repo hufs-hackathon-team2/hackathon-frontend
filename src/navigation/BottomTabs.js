@@ -11,7 +11,6 @@ import S31CycleAnalysis from '../screens/cycle/S31CycleAnalysis';
 import S32CycleHistory from '../screens/cycle/S32CycleHistory';
 import S50QuestList from '../screens/quest/S50QuestList';
 import S51QuestCreate from '../screens/quest/S51QuestCreate';
-import S52QuestProgress from '../screens/quest/S52QuestProgress';
 import S70Settings from '../screens/settings/S70Settings';
 
 const LogStackNav = createNativeStackNavigator();
@@ -37,11 +36,6 @@ function QuestStack() {
         name="QuestCreate"
         component={S51QuestCreate}
         options={{ headerShown: true, title: '직접 만들기' }}
-      />
-      <QuestStackNav.Screen
-        name="QuestProgress"
-        component={S52QuestProgress}
-        options={{ headerShown: true, title: '진행 상황' }}
       />
     </QuestStackNav.Navigator>
   );
