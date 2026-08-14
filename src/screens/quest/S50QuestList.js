@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     alignItems: 'center',      // View 로 바뀌어서 textAlign 대신
-    justifyContent: 'center',  // lineHeight 대신
+    justifyContent: 'center',
   },
 
   questDayText:{

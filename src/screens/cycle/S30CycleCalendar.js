@@ -129,7 +129,7 @@ export default function S30CycleCalendar({ navigation }) {
           <Text style={styles.informSub}>수분 섭취, 산책, 스트레칭</Text>
         </View>
 
-        <Pressable style={styles.HealthyCycleBtn} onPress={() => navigation.navigate('CycleHistory')}>
+        <Pressable style={styles.HealthyCycleBtn} onPress={() => navigation.navigate('Resume')}>
           <Text style={styles.HealthyCycleBtnText}>지난 사이클 히스토리 보기</Text>
         </Pressable>
 
