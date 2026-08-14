@@ -18,11 +18,8 @@ function LogStack() {
   return (
     <LogStackNav.Navigator screenOptions={{ headerShown: false }}>
       <LogStackNav.Screen name="LogList" component={S22LogList} />
-      <LogStackNav.Screen
-        name="LogNew"
-        component={S21LogNew}
-        options={{ headerShown: true, title: '기록 입력' }}
-      />
+      <LogStackNav.Screen name="LogNew" component={S21LogNew} />
+
     </LogStackNav.Navigator>
   );
 }
@@ -32,11 +29,8 @@ function QuestStack() {
   return (
     <QuestStackNav.Navigator screenOptions={{ headerShown: false }}>
       <QuestStackNav.Screen name="QuestList" component={S50QuestList} />
-      <QuestStackNav.Screen
-        name="QuestCreate"
-        component={S51QuestCreate}
-        options={{ headerShown: true, title: '직접 만들기' }}
-      />
+      <QuestStackNav.Screen name="QuestCreate" component={S51QuestCreate} />
+
     </QuestStackNav.Navigator>
   );
 }

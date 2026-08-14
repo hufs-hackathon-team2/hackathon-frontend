@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -24,12 +24,6 @@ export default function QuestCustomCreateScreen({ navigation }) {
   const maxLength = 30;
   // 기존에 존재하는 퀘스트 목록 예시 (중복 시 에러 토스트)
   const existingQuests = ['하루 물 2L 마시기', '10분 산책하기', '영양제 챙겨먹기'];
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
 
 
   useEffect(() => {
@@ -80,12 +74,9 @@ export default function QuestCustomCreateScreen({ navigation }) {
       return;
     }
 
-    Alert.alert('퀘스트 생성 완료', `'${trimmedTitle}' 퀘스트를 시작합니다!`, [
-      {
-        text: '확인',
-        onPress: () => navigation.goBack(),
-      },
-    ]);
+    navigation.popTo('QuestList', {
+      newQuest: { id: Date.now(), title: trimmedTitle },
+    });
   };
 
   return (
