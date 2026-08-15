@@ -1,49 +1,69 @@
 // LG 03 기록 목록 조회 + LG 04 기록 수정 및 삭제
-import { ScrollView, View, Text, StyleSheet, Pressable, Alert} from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
 import LogItem from '../../components/log/LogItem';
 import { getDateDisplay, getTimeDisplay } from '../../lib/date';
-import { useState } from 'react';
+import { getLogs, deleteLog } from '../../lib/api/logs';
+import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-
-const now = Date.now();
-const HOUR = 60 * 60 * 1000;
-
-const Mock_Logs = [
-  { id: 1, content: '점심 먹고 30분 산책했다', createdAt: new Date(now - 2 * HOUR) },
-  { id: 2, content: '자기 전 스트레칭 10분',   createdAt: new Date(now - 30 * HOUR) },
-  { id: 3, content: '계단으로 5층까지 올라갔다', createdAt: new Date(now - 72 * HOUR) },
-  { id: 4, content: '콜라 대신에 바나나 우유를 마셨다', createdAt: new Date(now - 102 * HOUR) },
-  { id: 5, content: '치킨이 먹고 싶어서 피자를 먹었다', createdAt: new Date(now - 172 * HOUR) },
-  { id: 6, content: '운동하려 설치다가 다쳐버렸다', createdAt: new Date(now - 272 * HOUR) },
-  { id: 7, content: '마라탕탕후루후루', createdAt: new Date(now - 372 * HOUR) },
-  { id: 8, content: '새로운 기록', createdAt: new Date(now - 472 * HOUR) },
-  { id: 9, content: '오디세이는 용산 아이맥스 7층', createdAt: new Date(now - 572 * HOUR) },
-  { id: 10, content: '페이지네이션을 위한 로그', createdAt: new Date(now - 672 * HOUR) },
-  { id: 11, content: '야구는 질병이다', createdAt: new Date(now - 772 * HOUR) },
-  { id: 12, content: '페이지네이션을 위한 로그2', createdAt: new Date(now - 872 * HOUR) },
-  { id: 13, content: '중커톤이 다이어트다', createdAt: new Date(now - 972 * HOUR) },
-  { id: 14, content: '모두들 헬플리하세요', createdAt: new Date(now - 1072 * HOUR) },
-];
 
 
 
 export default function S22LogList({ navigation }) {
-    const insets = useSafeAreaInsets();
-    const [logs, setLogs] = useState(Mock_Logs);
-    const [visibleCount, setVisibleCount] = useState(10);
+  const insets = useSafeAreaInsets();
+  const [logs, setLogs] = useState([]);
 
-    const removeLog = (id) => {
-      setLogs(logs.filter((log) => log.id !==id));
-    }
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  const loadLogs = () => {
+    setLoading(true);
+    setError(false);
+
+    getLogs()
+      .then((data) => setLogs(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadLogs();
+  }, []);
+
+  const removeLog = (logId) => {
+    deleteLog(logId)
+      .then(() => setLogs(logs.filter((log) => log.log_id !== logId)))
+      .catch(() => Alert.alert('삭제하지 못했어요', '잠시 후 다시 시도해주세요'));
+  };
 
 
-    const handleDelete = (id) => {
-        Alert.alert('이 기록을 삭제할까요?', '', [
-            {text: '취소', style: 'cancel'},
-            {text: '삭제', style: 'destructive', onPress: () => removeLog(id)}
-        ]);
-    }
+  const handleDelete = (logid) => {
+      Alert.alert('이 기록을 삭제할까요?', '', [
+          {text: '취소', style: 'cancel'},
+          {text: '삭제', style: 'destructive', onPress: () => removeLog(logid)}
+      ]);
+  }
+
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#666" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>기록을 불러오지 못했어요</Text>
+        <Pressable style={styles.retryButton} onPress={loadLogs}>
+          <Text style={styles.retryText}>다시 시도</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
@@ -68,11 +88,11 @@ export default function S22LogList({ navigation }) {
       ) : (
         logs.slice(0, visibleCount).map((log) => (
           <LogItem
-            key={log.id}
-            date={getDateDisplay(log.createdAt)}
-            time={getTimeDisplay(log.createdAt)}
+            key={log.log_id}
+            date={getDateDisplay(new Date(log.created_at))}
+            time={getTimeDisplay(new Date(log.created_at))}
             content={log.content}
-            onDelete={() => handleDelete(log.id)}
+            onDelete={() => handleDelete(log.log_id)}
           />
         ))
       )}
@@ -160,4 +180,27 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
   },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 15,
+    color: '#888',
+    marginBottom: 16,
+  },
+  retryButton: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+  },
+  retryText: {
+    fontSize: 15,
+    color: '#666',
+  },
+
 })
