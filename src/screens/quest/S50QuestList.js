@@ -4,6 +4,7 @@ import { ScrollView, Text, View, Pressable, StyleSheet, Alert, Image} from "reac
 import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateDifference } from "../../lib/date";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -26,6 +27,7 @@ const MOCK_ACTIVE = {
 
 export default function S50QuestList({ navigation, route }) {
 
+  const insets = useSafeAreaInsets();
   const [activeQuest, setactiveQuest] = useState(MOCK_ACTIVE);
   const [suggestions] = useState(MOCK_SUGGESTIONS);
 
@@ -76,7 +78,7 @@ export default function S50QuestList({ navigation, route }) {
   }, [route.params?.newQuest])
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
       <View>
         <Text style={styles.header}>작심삼일 퀘스트</Text>
@@ -187,7 +189,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 35,
     borderBottomWidth: 1.5,
     borderBottomColor: '#ccc',
     paddingVertical: 10,
