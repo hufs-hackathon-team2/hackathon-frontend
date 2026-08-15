@@ -3,6 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Pressable, Alert} from 'react-nativ
 import LogItem from '../../components/log/LogItem';
 import { getDateDisplay, getTimeDisplay } from '../../lib/date';
 import { useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const now = Date.now();
@@ -28,6 +29,7 @@ const Mock_Logs = [
 
 
 export default function S22LogList({ navigation }) {
+    const insets = useSafeAreaInsets();
     const [logs, setLogs] = useState(Mock_Logs);
     const [visibleCount, setVisibleCount] = useState(10);
 
@@ -44,7 +46,7 @@ export default function S22LogList({ navigation }) {
     }
   
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
       <View>
         <Text style={styles.header}>PLUS Log</Text>
       </View>
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 35,
     borderBottomWidth: 1.5,
     borderBottomColor: '#ccc',
     paddingVertical: 10,

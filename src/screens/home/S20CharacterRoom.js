@@ -1,5 +1,6 @@
 // CH 01 캐릭터 방 렌더링 + CH 03 배경 에셋 배치 (홈 탭 첫 화면)
 import { ScrollView, View, Text, StyleSheet, Pressable} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,7 +11,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 35,
     borderBottomWidth: 1.5,
     borderBottomColor: '#ccc',
     paddingBottom: 10,
@@ -172,8 +172,10 @@ const percent = growth.isMax ? 100 : (growth.filled / growth.goal) * 100;
 
 
 export default function S20CharacterRoom({ navigation }) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
       <View >
         <Text style={styles.header}>HOME</Text>
