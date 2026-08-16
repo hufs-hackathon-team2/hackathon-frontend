@@ -5,15 +5,26 @@ import {
   View,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
 
-export default function S13OnboardingComplete({ route, navigation }) {
-  // (임시) 캐릭터 선택에서 전달받은 캐릭터 데이터
-  const { selectedCharacter } = route.params || {};
+import { SafeAreaView } from "react-native-safe-area-context";
 
+const CHARACTER_DATA = {
+  cat: {
+    id: 'cat',
+    name: '고양이',
+    image: require('../../../assets/cat.png'), 
+  },
+  dog: {
+    id: 'dog',
+    name: '강아지',
+    image: require('../../../assets/dog.png'),
+  },
+};
 
+export default function S13Complete({ route, navigation }) {
+  const { character, characterName } = route.params || {};
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -23,8 +34,6 @@ export default function S13OnboardingComplete({ route, navigation }) {
 
   const handleStart = () => {
     console.log('온보딩 완료! 메인 홈 화면으로 이동');
-    
-
     navigation.reset({
       index: 0,
       routes: [{ name: 'Main' }], 
@@ -34,14 +43,7 @@ export default function S13OnboardingComplete({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={styles.backButtonText}>{'<'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>온보딩 완료 안내 화면</Text>
-        <View style={styles.headerRightPlaceholder} />
+        <Text style={styles.headerTitle}>온보딩 완료 안내</Text>
       </View>
 
       <View style={styles.divider} />
@@ -50,18 +52,15 @@ export default function S13OnboardingComplete({ route, navigation }) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-
         <View style={styles.cardContainer}>
-
           <View style={styles.imageBox}>
-            {selectedCharacter?.image ? (
+            {character?.image ? (
               <Image
-                source={selectedCharacter.image}
+                source={character.image}
                 style={styles.characterImage}
                 resizeMode="contain"
               />
             ) : (
-
               <View style={styles.placeholderBox}>
                 <Text style={styles.placeholderText}>Image</Text>
               </View>
@@ -120,7 +119,7 @@ const styles = StyleSheet.create({
     height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 20,
   },
   backButtonText: {
@@ -132,6 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1E232C',
+    textAlign: 'center'
   },
   headerRightPlaceholder: {
     width: 20,

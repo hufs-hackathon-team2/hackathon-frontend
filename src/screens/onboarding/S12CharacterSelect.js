@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-
   StyleSheet,
   Text,
   View,
@@ -12,9 +11,23 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Image
 } from 'react-native';
 
 import { SafeAreaView } from "react-native-safe-area-context";
+
+const CHARACTER_DATA = {
+  cat: {
+    id: 'cat',
+    name: '고양이',
+    image: require('../../../assets/cat.png'), 
+  },
+  dog: {
+    id: 'dog',
+    name: '강아지',
+    image: require('../../../assets/dog.png'), 
+  },
+};
 
 export default function S12CharacterSelect({ navigation }) {
 
@@ -29,13 +42,20 @@ export default function S12CharacterSelect({ navigation }) {
       return;
     }
 
-    console.log('선택된 캐릭터:', selectedCharacter);
-    console.log('캐릭터 이름:', characterName);
 
+    const selectedCharacterObj = CHARACTER_DATA[selectedCharacter];
 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'OnboardingComplete' }],
+      routes: [
+        {
+          name: 'OnboardingComplete',
+          params: {
+            character: selectedCharacterObj, 
+            characterName: characterName.trim(), 
+          },
+        },
+      ],
     });
   };
 
@@ -79,11 +99,14 @@ export default function S12CharacterSelect({ navigation }) {
                 onPress={() => setSelectedCharacter('cat')}
                 activeOpacity={0.8}
               >
-
                 <View style={styles.imagePlaceholder}>
+                  <Image
+                    source={CHARACTER_DATA.cat.image}
+                    style={styles.cardImage}
+                    resizeMode="contain"
+                  />
                 </View>
                 <Text
-
                   style={[
                     styles.cardText,
                     selectedCharacter === 'cat' && styles.selectedCardText,
@@ -91,10 +114,9 @@ export default function S12CharacterSelect({ navigation }) {
                 >
                   고양이
                 </Text>
-
               </TouchableOpacity>
-              <TouchableOpacity
 
+              <TouchableOpacity
                 style={[
                   styles.card,
                   selectedCharacter === 'dog' && styles.selectedCard,
@@ -105,6 +127,11 @@ export default function S12CharacterSelect({ navigation }) {
 
               >
                 <View style={styles.imagePlaceholder}>
+                  <Image
+                    source={CHARACTER_DATA.dog.image}
+                    style={styles.cardImage}
+                    resizeMode="contain"
+                  />
                 </View>
                 <Text
                   style={[
@@ -241,6 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    overflow: 'hidden',
   },
 
   imagePlaceholderText: {
@@ -248,10 +276,9 @@ const styles = StyleSheet.create({
     color: '#A0AEC0',
   },
 
-  cardText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#4A5568',
+  cardImage: {
+    width: '100%',
+    height: '100%', 
   },
 
   selectedCardText: {
