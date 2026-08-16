@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import {
   StyleSheet,
   Text,
@@ -10,30 +9,25 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
-
 export default function S01Login({ navigation }) {
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // 입력창 포커스 상태 관리
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
   const handleLogin = () => {
-
     setErrorMessage('');
-
-
-    // API 연결 전 임의 테스트 아이디, 비번 (다르게 입력 시 오류)
 
     const MOCK_USER = {
       email: 'test@example.com',
       password: 'password123',
-
     };
-
 
     if (email !== MOCK_USER.email || password !== MOCK_USER.password) {
       setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
@@ -46,7 +40,6 @@ export default function S01Login({ navigation }) {
     });
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -54,26 +47,23 @@ export default function S01Login({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>로그인</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
-
-          <View style={styles.divider} />
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
+
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
-                style={[styles.input, errorMessage ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  isEmailFocused && styles.inputFocused,
+                  errorMessage ? styles.inputError : null,
+                ]}
                 value={email}
+                placeholder="you@example.com"
+                placeholderTextColor="#A0AEC0"
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
                 onChangeText={(text) => {
                   setEmail(text);
                   if (errorMessage) setErrorMessage('');
@@ -83,27 +73,35 @@ export default function S01Login({ navigation }) {
               />
             </View>
 
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
-                style={[styles.input, errorMessage ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  isPasswordFocused && styles.inputFocused,
+                  errorMessage ? styles.inputError : null,
+                ]}
                 value={password}
+                placeholder="비밀번호"
+                placeholderTextColor="#A0AEC0"
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
                 onChangeText={(text) => {
                   setPassword(text);
                   if (errorMessage) setErrorMessage('');
                 }}
                 secureTextEntry
               />
-
             </View>
+
             {errorMessage ? (
               <View style={styles.errorBanner}>
                 <Text style={styles.errorBannerText}>{errorMessage}</Text>
               </View>
             ) : null}
 
-
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.8}>
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
 
@@ -111,17 +109,15 @@ export default function S01Login({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate('ResetPassword')}
               >
-                <Text style={styles.underlineText}>비밀번호를 잊으셨나요?</Text>
+                <Text style={styles.blueLinkText}>비밀번호를 잊으셨나요?</Text>
               </TouchableOpacity>
-
-
 
               <View style={styles.signUpRow}>
                 <Text style={styles.grayText}>계정이 없으신가요? </Text>
                 <TouchableOpacity
                   onPress={() => navigation.navigate('Signup')}
                 >
-                  <Text style={styles.underlineText}>회원가입</Text>
+                  <Text style={styles.blueLinkText}>회원가입</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -135,76 +131,58 @@ export default function S01Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E8EEFF',
   },
 
   inner: {
     flex: 1,
-  },
-
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-
-  },
-
-  headerRightPlaceholder: {
-    width: 20,
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
+    justifyContent: 'center',
   },
 
   content: {
-    paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingHorizontal: 28,
+    paddingBottom: 40,
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 28,
+    color: '#111111',
+    textAlign: 'center',
+    marginBottom: 36,
   },
 
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
 
   label: {
-    fontSize: 14,
-    color: '#1E232C',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#333333',
     marginBottom: 8,
   },
 
+
   input: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#DADADA',
-    borderRadius: 8,
-    height: 48,
-    paddingHorizontal: 14,
+    borderColor: 'transparent', 
+    borderRadius: 12,
+    height: 52,
+    paddingHorizontal: 16,
     fontSize: 15,
-    color: '#1E232C',
+    color: '#111111',
+  },
+
+
+  inputFocused: {
+    borderWidth: 1.5,
+    borderColor: '#4C5F99', 
   },
 
   inputError: {
+    borderWidth: 1.5,
     borderColor: '#E53E3E',
   },
 
@@ -222,29 +200,29 @@ const styles = StyleSheet.create({
     color: '#E53E3E',
     fontSize: 13,
     fontWeight: '500',
+    textAlign: 'center',
   },
 
   loginButton: {
-    backgroundColor: '#222831',
-    borderRadius: 8,
-    height: 44,
+    backgroundColor: '#4C5F99',
+    borderRadius: 12,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 20,
-    marginTop: 8,
+    width: '100%',
+    marginTop: 12,
     marginBottom: 32,
   },
 
   loginButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
 
   linkContainer: {
     alignItems: 'center',
-    gap: 16,
+    gap: 24,
   },
 
   signUpRow: {
@@ -254,12 +232,12 @@ const styles = StyleSheet.create({
 
   grayText: {
     fontSize: 14,
-    color: '#4A5568',
+    color: '#333333',
   },
 
-  underlineText: {
+  blueLinkText: {
     fontSize: 14,
-    color: '#4A5568',
-    textDecorationLine: 'underline',
+    color: '#3F51B5',
+    fontWeight: '500',
   },
 });
