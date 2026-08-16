@@ -1,9 +1,10 @@
 // QS 01 AI 퀘스트 제안 (WK 01 에서 미리 생성해둔 5개, 실시간 AI 호출 없음)
 
 import { ScrollView, Text, View, Pressable, StyleSheet, Alert, Image} from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateDifference } from "../../lib/date";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -24,8 +25,9 @@ const MOCK_ACTIVE = {
 
 
 
-export default function S50QuestList({ navigation }) {
+export default function S50QuestList({ navigation, route }) {
 
+  const insets = useSafeAreaInsets();
   const [activeQuest, setactiveQuest] = useState(MOCK_ACTIVE);
   const [suggestions] = useState(MOCK_SUGGESTIONS);
 
@@ -61,9 +63,22 @@ export default function S50QuestList({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    const newQuest = route.params?.newQuest;
+    if (!newQuest) return;
+
+    navigation.setParams({ newQuest: undefined});
+
+    if (activeQuest) {
+      Alert.alert('이미 진행 중인 퀘스트가 있어요', '지금 퀘스트를 포기하면 새로 시작할 수 있어요')
+      
+      return;
+    }
+    setactiveQuest({...newQuest, doneDays:0, lastCheckedAt: null});
+  }, [route.params?.newQuest])
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
       <View>
         <Text style={styles.header}>작심삼일 퀘스트</Text>
@@ -148,8 +163,14 @@ export default function S50QuestList({ navigation }) {
             )         
           )}
 
-          <Pressable style={styles.questButton} onPress={() => navigation.navigate('QuestCreate')}>
-            <Text style={styles.questButtonText}>퀘스트 직접 만들기</Text>
+          <Pressable 
+          style={[styles.questButton,
+          activeQuest !== null && styles.questButtonDisabled]}
+          onPress={() => navigation.navigate('QuestCreate')}
+          disabled={activeQuest !== null}>
+            <Text style={[styles.questButtonText, activeQuest !== null && styles.questButtonTextDisabled]}>
+              퀘스트 직접 만들기
+            </Text>
           </Pressable>
 
         </View>
@@ -168,7 +189,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 35,
     borderBottomWidth: 1.5,
     borderBottomColor: '#ccc',
     paddingVertical: 10,
@@ -212,7 +232,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     alignItems: 'center',      // View 로 바뀌어서 textAlign 대신
-    justifyContent: 'center',  // lineHeight 대신
+    justifyContent: 'center',
   },
 
   questDayText:{
@@ -309,6 +329,14 @@ const styles = StyleSheet.create({
   },
   checkButtonTextDisabled: {
     color: '#aaa',
+  },
+  questButtonDisabled: {
+    backgroundColor: '#E0E0E0',
+    borderColor: '#E0E0E0',
+  },
+
+  questButtonTextDisabled: {
+    color: '#AAA',
   },
 
 

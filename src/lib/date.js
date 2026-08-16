@@ -59,3 +59,26 @@ export function getTimeDisplay(date) {
 
   return `${period} ${displayHours}:${displayMinutes}`;
 }
+
+//달력
+
+export function getDateFormat(date) {
+  const kst = toKst(date);
+  const year = kst.getUTCFullYear();
+  const month = String(kst.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(kst.getUTCDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`
+
+}
+
+//달력 점
+export function getFullDate(date) {
+  const kst = toKst(date);
+  const year = kst.getUTCFullYear();
+  const month = String(kst.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(kst.getUTCDate()).padStart(2, '0');
+
+  return `${year}.${month}.${day}`
+
+}
