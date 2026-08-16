@@ -163,7 +163,6 @@ export default function S60Weekly({ navigation }) {
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
-          {/* 캡처할 때 좌우에 더 넓은 여백을 적용하는 오프스크린 캡처 뷰 */}
           <View
             ref={cardCaptureRef}
             collapsable={false}
@@ -273,7 +272,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, paddingHorizontal: 20, paddingVertical: 16 },
   screenTitle: { fontSize: 20, fontWeight: 'bold', color: '#1A1D1E', marginBottom: 12 },
   
-  // 캡처 영역 설정: 가로 패딩을 40px로 지정하여 캡처 이미지 좌우에 더 넓은 배경 여백을 형성
   captureArea: { 
     backgroundColor: '#F8F9FA', 
     paddingHorizontal: 20, 
