@@ -17,6 +17,7 @@
     "expo": "~54.0.35",
     "expo-media-library": "~18.2.1",
     "expo-secure-store": "~15.0.8",
+    "expo-sharing": "~14.0.8",
     "expo-status-bar": "~3.0.9",
     "media-library": "^1.2.4",
     "react": "19.1.0",
