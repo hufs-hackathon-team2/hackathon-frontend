@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getDateFormat, getFullDate, getDateDifference } from '../../lib/date';
 
@@ -44,7 +45,8 @@ const MOCK_QUEST_DATES = [
 ];
 
 export default function S30CycleCalendar({ navigation }) {
-  
+
+  const insets = useSafeAreaInsets();
   const [cycles] = useState(MOCK_CYCLES);
   const current = cycles[0];
   const previous = cycles[1];
@@ -53,7 +55,7 @@ export default function S30CycleCalendar({ navigation }) {
 
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
       <Text style={styles.header}>Healthy Cycle</Text>
 
@@ -145,7 +147,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 35,
     borderBottomWidth: 1.5,
     borderBottomColor: '#ccc',
     paddingVertical: 10,
