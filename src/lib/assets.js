@@ -211,3 +211,54 @@ export const FALLBACK = STICKERS.sparkles;
 export function getSticker(name) {
   return STICKERS[name] ?? FALLBACK;
 }
+
+
+// 캐릭터 성장 단계 (1~7)
+export const CAT_STAGES = [
+  require('../../assets/character/cat-1.png'),
+  require('../../assets/character/cat-2.png'),
+  require('../../assets/character/cat-3.png'),
+  require('../../assets/character/cat-4.png'),
+  require('../../assets/character/cat-5.png'),
+  require('../../assets/character/cat-6.png'),
+  require('../../assets/character/cat-7.png'),
+];
+
+
+export const DOG_STAGES = [
+  require('../../assets/character/dog-1.png'),
+  require('../../assets/character/dog-2.png'),
+  require('../../assets/character/dog-3.png'),
+  require('../../assets/character/dog-4.png'),
+  require('../../assets/character/dog-5.png'),
+  require('../../assets/character/dog-6.png'),
+  require('../../assets/character/dog-7.png'),
+];
+
+export function getCharacterStages(type) {
+  return type === 'dog' ? DOG_STAGES : CAT_STAGES;
+}
+
+export const CAT_SIZES = [
+  { width: 71, height: 85 },
+  { width: 84, height: 108 },
+  { width: 84, height: 132 },
+  { width: 105, height: 152 },
+  { width: 119, height: 108 },
+  { width: 102, height: 181 },
+  { width: 126, height: 216 },
+];
+
+export const DOG_SIZES = [
+  { width: 80, height: 94 },
+  { width: 90, height: 118 },
+  { width: 100, height: 88 },
+  { width: 89, height: 144 },
+  { width: 110, height: 142 },
+  { width: 112, height: 192 },
+  { width: 129, height: 216 },
+];
+
+export function getCharacterSizes(type) {
+  return type === 'dog' ? DOG_SIZES : CAT_SIZES;
+}
