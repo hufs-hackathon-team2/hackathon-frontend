@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-
   StyleSheet,
   Text,
   View,
@@ -12,30 +11,43 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Image
 } from 'react-native';
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const CHARACTER_DATA = {
+  cat: {
+    id: 'cat',
+    name: '고양이',
+    image: require('../../../assets/cat.png'), 
+  },
+  dog: {
+    id: 'dog',
+    name: '강아지',
+    image: require('../../../assets/dog.png'), 
+  },
+};
+
 export default function S12CharacterSelect({ navigation }) {
 
   const [selectedCharacter, setSelectedCharacter] = useState('cat');
-  const [characterName, setCharacterName] = useState('');
-
 
 
   const handleComplete = () => {
-    if (!characterName.trim()) {
-      Alert.alert('알림', '캐릭터 이름을 입력해 주세요.');
-      return;
-    }
 
-    console.log('선택된 캐릭터:', selectedCharacter);
-    console.log('캐릭터 이름:', characterName);
-
+    const selectedCharacterObj = CHARACTER_DATA[selectedCharacter];
 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'OnboardingComplete' }],
+      routes: [
+        {
+          name: 'OnboardingComplete',
+          params: {
+            character: selectedCharacterObj 
+          },
+        },
+      ],
     });
   };
 
@@ -79,11 +91,14 @@ export default function S12CharacterSelect({ navigation }) {
                 onPress={() => setSelectedCharacter('cat')}
                 activeOpacity={0.8}
               >
-
                 <View style={styles.imagePlaceholder}>
+                  <Image
+                    source={CHARACTER_DATA.cat.image}
+                    style={styles.cardImage}
+                    resizeMode="contain"
+                  />
                 </View>
                 <Text
-
                   style={[
                     styles.cardText,
                     selectedCharacter === 'cat' && styles.selectedCardText,
@@ -91,10 +106,9 @@ export default function S12CharacterSelect({ navigation }) {
                 >
                   고양이
                 </Text>
-
               </TouchableOpacity>
-              <TouchableOpacity
 
+              <TouchableOpacity
                 style={[
                   styles.card,
                   selectedCharacter === 'dog' && styles.selectedCard,
@@ -105,6 +119,11 @@ export default function S12CharacterSelect({ navigation }) {
 
               >
                 <View style={styles.imagePlaceholder}>
+                  <Image
+                    source={CHARACTER_DATA.dog.image}
+                    style={styles.cardImage}
+                    resizeMode="contain"
+                  />
                 </View>
                 <Text
                   style={[
@@ -115,20 +134,6 @@ export default function S12CharacterSelect({ navigation }) {
                   강아지
                 </Text>
               </TouchableOpacity>
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>캐릭터 이름</Text>
-              <TextInput
-                style={styles.input}
-                value={characterName}
-                onChangeText={setCharacterName}
-                placeholder="이름을 입력해주세요"
-                placeholderTextColor="#A0AEC0"
-                autoCapitalize="none"
-
-              />
-
             </View>
 
 
@@ -178,7 +183,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1E232C',
-
   },
 
   headerRightPlaceholder: {
@@ -208,8 +212,6 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
 
-
-
   cardGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -232,15 +234,14 @@ const styles = StyleSheet.create({
   },
 
   imagePlaceholder: {
+    width: '90%',
+    alignSelf: 'center',
     aspectRatio: 1,
-    borderWidth: 1,
-    borderColor: '#CBD5E0',
-    borderStyle: 'dashed',
     borderRadius: 8,
-    backgroundColor: '#F8F9FA',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    overflow: 'hidden',
   },
 
   imagePlaceholderText: {
@@ -248,10 +249,9 @@ const styles = StyleSheet.create({
     color: '#A0AEC0',
   },
 
-  cardText: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#4A5568',
+  cardImage: {
+    width: '100%',
+    height: '100%', 
   },
 
   selectedCardText: {
