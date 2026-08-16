@@ -61,7 +61,7 @@ export default function S01Login({ navigation }) {
                 ]}
                 value={email}
                 placeholder="you@example.com"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 onFocus={() => setIsEmailFocused(true)}
                 onBlur={() => setIsEmailFocused(false)}
                 onChangeText={(text) => {
@@ -84,7 +84,7 @@ export default function S01Login({ navigation }) {
                 ]}
                 value={password}
                 placeholder="비밀번호"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 onFocus={() => setIsPasswordFocused(true)}
                 onBlur={() => setIsPasswordFocused(false)}
                 onChangeText={(text) => {
@@ -131,7 +131,7 @@ export default function S01Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E8EEFF',
+    backgroundColor: '#e3ecff',
   },
 
   inner: {
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
 
   inputFocused: {
     borderWidth: 1.5,
-    borderColor: '#4C5F99', 
+    borderColor: '#8ba1c5', 
   },
 
   inputError: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
 
   loginButton: {
-    backgroundColor: '#4C5F99',
+    backgroundColor: '#3E629F',
     borderRadius: 12,
     height: 52,
     justifyContent: 'center',
@@ -232,12 +232,12 @@ const styles = StyleSheet.create({
 
   grayText: {
     fontSize: 14,
-    color: '#333333',
+    color: '#1B1A18',
   },
 
   blueLinkText: {
     fontSize: 14,
-    color: '#3F51B5',
+    color: '#3E629F',
     fontWeight: '500',
   },
 });
