@@ -131,7 +131,7 @@ export default function S01Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e3ecff',
+    backgroundColor: '#E3ECFF',
   },
 
   inner: {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#111111',
+    color: '#1B1A18',
     textAlign: 'center',
     marginBottom: 36,
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#333333',
+    color: '#1B1A18',
     marginBottom: 8,
   },
 
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     height: 52,
     paddingHorizontal: 16,
     fontSize: 15,
-    color: '#111111',
+    color: '#1B1A18',
   },
 
 
