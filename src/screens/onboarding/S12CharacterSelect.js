@@ -32,16 +32,9 @@ const CHARACTER_DATA = {
 export default function S12CharacterSelect({ navigation }) {
 
   const [selectedCharacter, setSelectedCharacter] = useState('cat');
-  const [characterName, setCharacterName] = useState('');
-
 
 
   const handleComplete = () => {
-    if (!characterName.trim()) {
-      Alert.alert('알림', '캐릭터 이름을 입력해 주세요.');
-      return;
-    }
-
 
     const selectedCharacterObj = CHARACTER_DATA[selectedCharacter];
 
@@ -51,8 +44,7 @@ export default function S12CharacterSelect({ navigation }) {
         {
           name: 'OnboardingComplete',
           params: {
-            character: selectedCharacterObj, 
-            characterName: characterName.trim(), 
+            character: selectedCharacterObj 
           },
         },
       ],
@@ -144,20 +136,6 @@ export default function S12CharacterSelect({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>캐릭터 이름</Text>
-              <TextInput
-                style={styles.input}
-                value={characterName}
-                onChangeText={setCharacterName}
-                placeholder="이름을 입력해주세요"
-                placeholderTextColor="#A0AEC0"
-                autoCapitalize="none"
-
-              />
-
-            </View>
-
 
             <TouchableOpacity
               style={styles.submitButton}
@@ -205,7 +183,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1E232C',
-
   },
 
   headerRightPlaceholder: {
@@ -235,8 +212,6 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
 
-
-
   cardGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -259,12 +234,10 @@ const styles = StyleSheet.create({
   },
 
   imagePlaceholder: {
+    width: '90%',
+    alignSelf: 'center',
     aspectRatio: 1,
-    borderWidth: 1,
-    borderColor: '#CBD5E0',
-    borderStyle: 'dashed',
     borderRadius: 8,
-    backgroundColor: '#F8F9FA',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,

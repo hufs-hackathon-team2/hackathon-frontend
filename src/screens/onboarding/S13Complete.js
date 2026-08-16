@@ -24,7 +24,7 @@ const CHARACTER_DATA = {
 };
 
 export default function S13Complete({ route, navigation }) {
-  const { character, characterName } = route.params || {};
+  const { character } = route.params || {};
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -53,19 +53,15 @@ export default function S13Complete({ route, navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.cardContainer}>
-          <View style={styles.imageBox}>
-            {character?.image ? (
+          {character?.image && (
+            <View style={styles.imageBox}>
               <Image
                 source={character.image}
                 style={styles.characterImage}
                 resizeMode="contain"
               />
-            ) : (
-              <View style={styles.placeholderBox}>
-                <Text style={styles.placeholderText}>Image</Text>
-              </View>
-            )}
-          </View>
+            </View>
+          )}
 
           <Text style={styles.mainTitle}>준비 완료!</Text>
           <Text style={styles.mainSubtitle}>
@@ -171,9 +167,6 @@ const styles = StyleSheet.create({
   placeholderBox: {
     width: '100%',
     height: '100%',
-    borderWidth: 1,
-    borderColor: '#CBD5E0',
-    borderStyle: 'dashed',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
