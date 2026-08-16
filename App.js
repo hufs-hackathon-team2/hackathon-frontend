@@ -18,6 +18,8 @@ import S11Interests from './src/screens/onboarding/S11Interests';
 import S12CharacterSelect from './src/screens/onboarding/S12CharacterSelect';
 import S13Complete from './src/screens/onboarding/S13Complete';
 
+import S52QuestProgress from './src/screens/quest/S52QuestProgress';
+
 import S40Resume from './src/screens/S40Resume';
 import S60Weekly from './src/screens/S60Weekly';
 
@@ -46,6 +48,11 @@ export default function App() {
           <Stack.Screen name="Main" component={BottomTabs} />
 
           {/*팝업 화면 — 탭 바까지 덮어야 해서 여기 둔다*/}
+          <Stack.Screen
+            name="QuestProgress"
+            component={S52QuestProgress}
+            options={{ headerShown: true, title: '퀘스트 완료', presentation: 'modal' }}
+          />
           <Stack.Screen
             name="Resume"
             component={S40Resume}
