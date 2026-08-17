@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
   useLayoutEffect(() => {
@@ -21,25 +22,21 @@ export default function S02Signup({ navigation }) {
     });
   }, [navigation]);
 
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [nickname, setNickname] = useState('');
-
 
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [nicknameError, setNicknameError] = useState('');
 
+
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const [isRequiredAgreed, setIsRequiredAgreed] = useState(false);
   const [isOptionalAgreed, setIsOptionalAgreed] = useState(false);
 
-  // 더미 기존 가입된 이메일 목록
   const existingEmails = ['test@example.com', 'user@test.com', 'admin@helply.com'];
-
 
   const validateEmail = (value) => {
     const trimmed = value.trim();
@@ -63,7 +60,6 @@ export default function S02Signup({ navigation }) {
     return true;
   };
 
-
   const validatePassword = (value) => {
     if (!value) {
       setPasswordError('');
@@ -80,7 +76,6 @@ export default function S02Signup({ navigation }) {
     return true;
   };
 
-
   const validateConfirmPassword = (confirmValue, currentPassword) => {
     if (!confirmValue) {
       setConfirmPasswordError('');
@@ -95,24 +90,6 @@ export default function S02Signup({ navigation }) {
     setConfirmPasswordError('');
     return true;
   };
-
-
-  const validateNickname = (value) => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      setNicknameError('');
-      return false;
-    }
-
-    if (trimmed.length < 2 || trimmed.length > 10) {
-      setNicknameError('닉네임은 2자~10자여야 합니다.');
-      return false;
-    }
-
-    setNicknameError('');
-    return true;
-  };
-
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -132,51 +109,26 @@ export default function S02Signup({ navigation }) {
     if (confirmPasswordError) validateConfirmPassword(text, password);
   };
 
-  const handleNicknameChange = (text) => {
-    setNickname(text);
-    if (nicknameError) validateNickname(text);
-  };
-
-
   const handleSignup = () => {
     const trimmedEmail = email.trim();
-    const trimmedNickname = nickname.trim();
 
-
-    if (!trimmedEmail || !password || !confirmPassword || !trimmedNickname) {
+    if (!trimmedEmail || !password || !confirmPassword) {
       Alert.alert('알림', '모든 항목을 입력해 주세요.');
       return;
     }
 
-
     const isEmailValid = validateEmail(trimmedEmail);
     const isPasswordValid = validatePassword(password);
     const isConfirmPasswordValid = validateConfirmPassword(confirmPassword, password);
-    const isNicknameValid = validateNickname(trimmedNickname);
 
-
-    if (
-      !isEmailValid ||
-      !isPasswordValid ||
-      !isConfirmPasswordValid ||
-      !isNicknameValid
-    ) {
+    if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       return;
     }
-
 
     if (!isRequiredAgreed) {
       Alert.alert('알림', '필수 약관에 동의해 주세요.');
       return;
     }
-
-
-    console.log('회원가입 성공:', {
-      email: trimmedEmail,
-      password,
-      nickname: trimmedNickname,
-      isOptionalAgreed,
-    });
 
     Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
       {
@@ -193,21 +145,7 @@ export default function S02Signup({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>회원가입 화면</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
-
-          <View style={styles.divider} />
-
-
+          <ScreenHeader navigation={navigation} />
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
@@ -219,30 +157,46 @@ export default function S02Signup({ navigation }) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
-                style={[styles.input, emailError ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  focusedInput === 'email' && styles.inputFocused,
+                  emailError ? styles.inputError : null,
+                ]}
                 value={email}
+                placeholder="you@example.com"
+                placeholderTextColor="#757575"
                 onChangeText={handleEmailChange}
-                onBlur={() => validateEmail(email)}
+                onFocus={() => setFocusedInput('email')}
+                onBlur={() => {
+                  setFocusedInput(null);
+                  validateEmail(email);
+                }}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
               {emailError ? (
                 <Text style={styles.errorText}>{emailError}</Text>
-              ) : (
-                <Text style={styles.guideText}>
-                  자주 쓰는 이메일을 입력해주세요
-                </Text>
-              )}
+              ) : null}
             </View>
 
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
-                style={[styles.input, passwordError ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  focusedInput === 'password' && styles.inputFocused,
+                  passwordError ? styles.inputError : null,
+                ]}
                 value={password}
+                placeholder="비밀번호"
+                placeholderTextColor="#A0AEC0"
                 onChangeText={handlePasswordChange}
-                onBlur={() => validatePassword(password)}
+                onFocus={() => setFocusedInput('password')}
+                onBlur={() => {
+                  setFocusedInput(null);
+                  validatePassword(password);
+                }}
                 secureTextEntry
               />
               {passwordError ? (
@@ -252,17 +206,23 @@ export default function S02Signup({ navigation }) {
               )}
             </View>
 
-
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호 확인</Text>
               <TextInput
                 style={[
                   styles.input,
+                  focusedInput === 'confirmPassword' && styles.inputFocused,
                   confirmPasswordError ? styles.inputError : null,
                 ]}
                 value={confirmPassword}
+                placeholder="비밀번호 확인"
+                placeholderTextColor="#A0AEC0"
                 onChangeText={handleConfirmPasswordChange}
-                onBlur={() => validateConfirmPassword(confirmPassword, password)}
+                onFocus={() => setFocusedInput('confirmPassword')}
+                onBlur={() => {
+                  setFocusedInput(null);
+                  validateConfirmPassword(confirmPassword, password);
+                }}
                 secureTextEntry
               />
               {confirmPasswordError ? (
@@ -273,24 +233,6 @@ export default function S02Signup({ navigation }) {
                 </Text>
               )}
             </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>닉네임</Text>
-              <TextInput
-                style={[styles.input, nicknameError ? styles.inputError : null]}
-                value={nickname}
-                onChangeText={handleNicknameChange}
-                onBlur={() => validateNickname(nickname)}
-                autoCapitalize="none"
-                maxLength={10}
-              />
-              {nicknameError ? (
-                <Text style={styles.errorText}>{nicknameError}</Text>
-              ) : (
-                <Text style={styles.guideText}>2자 이상, 10자 이하로 입력해 주세요</Text>
-              )}
-            </View>
-
 
             <View style={styles.termsContainer}>
               <TouchableOpacity
@@ -306,9 +248,8 @@ export default function S02Signup({ navigation }) {
                 >
                   {isRequiredAgreed && <Text style={styles.checkmark}>✓</Text>}
                 </View>
-                <Text style={styles.termsTitle}>필수 약관 동의</Text>
-                <Text style={styles.termsDesc}>
-                  이용약관, 개인정보 처리방침에 동의합니다
+                <Text style={styles.termsText}>
+                  이용약관, 개인정보 처리방침에 동의합니다 (필수)
                 </Text>
               </TouchableOpacity>
 
@@ -325,27 +266,18 @@ export default function S02Signup({ navigation }) {
                 >
                   {isOptionalAgreed && <Text style={styles.checkmark}>✓</Text>}
                 </View>
-                <Text style={styles.termsTitle}>선택 약관 동의</Text>
-                <Text style={styles.termsDesc}>마케팅 정보 수신 (선택)</Text>
+                <Text style={styles.termsText}>마케팅 정보 수신 (선택)</Text>
               </TouchableOpacity>
             </View>
 
 
-            <View style={styles.buttonGroup}>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => navigation.goBack()}
-              >
-                <Text style={styles.cancelButtonText}>취소</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.submitButton}
-                onPress={handleSignup}
-              >
-                <Text style={styles.submitButtonText}>가입하기</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleSignup}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.submitButtonText}>가입하기</Text>
+            </TouchableOpacity>
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -356,49 +288,31 @@ export default function S02Signup({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3ECFF', 
   },
   inner: {
     flex: 1,
   },
   header: {
     height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 20,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-  },
-  headerRightPlaceholder: {
-    width: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
+    marginTop: 8,
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingTop: 12,
     paddingBottom: 40,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#1E232C',
+    color: '#1B1A18',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#4A5568',
+    color: '#1B1A18',
     marginBottom: 28,
   },
   inputGroup: {
@@ -407,24 +321,30 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1E232C',
+    color: '#1B1A18',
     marginBottom: 8,
   },
   input: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#DADADA',
-    borderRadius: 8,
-    height: 48,
-    paddingHorizontal: 14,
+    borderColor: '#CFCCC9',
+    borderRadius: 12,
+    height: 52,
+    paddingHorizontal: 16,
     fontSize: 15,
-    color: '#1E232C',
+    color: '#1B1A18',
+  },
+  inputFocused: {
+    borderWidth: 1.5,
+    borderColor: '#8BA1C5',
   },
   inputError: {
+    borderWidth: 1.5,
     borderColor: '#E53E3E',
   },
   guideText: {
     fontSize: 12,
-    color: '#718096',
+    color: '#504D49',
     marginTop: 6,
   },
   errorText: {
@@ -434,8 +354,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   termsContainer: {
-    marginTop: 10,
-    marginBottom: 36,
+    marginTop: 12,
+    marginBottom: 28,
     gap: 12,
   },
   checkboxRow: {
@@ -443,66 +363,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   checkbox: {
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     borderWidth: 1,
-    borderColor: '#CBD5E0',
+    borderColor: '#868079',
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
   },
   checkboxChecked: {
-    backgroundColor: '#1E232C',
-    borderColor: '#1E232C',
+    backgroundColor: '#3E629F',
+    borderColor: '#3E629F',
   },
   checkmark: {
-    color: '#FFFFFF',
-    fontSize: 12,
+    color: '#E3ECFF',
+    fontSize: 13,
     fontWeight: 'bold',
   },
-  termsTitle: {
+  termsText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1E232C',
-    marginRight: 12,
-  },
-  termsDesc: {
-    fontSize: 13,
-    color: '#4A5568',
+    color: '#1B1A18',
     flex: 1,
   },
-  buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  cancelButton: {
-    borderWidth: 1,
-    borderColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: '#1E232C',
-    fontSize: 14,
-    fontWeight: '600',
-  },
   submitButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
-    paddingHorizontal: 24,
+    backgroundColor: '#3E629F',
+    borderRadius: 12,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    marginTop: 8,
   },
   submitButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
 });
