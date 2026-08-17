@@ -46,7 +46,7 @@ export default function S50QuestList({ navigation }) {
 
   const handleStart = (quest) => {
     Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>
-3일 동안 매일 체크해보세요`, [
+7일 안에 3일만 체크하면 성공!`, [
       { text: '취소', style: 'cancel' },
       {
         text: '시작',
@@ -115,10 +115,14 @@ export default function S50QuestList({ navigation }) {
         <Text style={styles.questTitle}>진행중인 퀘스트</Text>
         {activeQuest ? (
           <View>
+            <Text style={styles.questDescription}>7일 안에 3번, 하루씩 띄어도 괜찮아요</Text>
+
             <View style={styles.questbox}>
 
               <Text style={styles.questName}>{activeQuest.quest_content}</Text>
-              <Text style={styles.questSub}>시작한 지 {activeQuest.count}일째</Text>
+              <Text style={styles.questSub}>
+                시작한 지 {activeQuest.days_since_start}일째 · D-{activeQuest.d_day}
+              </Text>
 
               <View style={styles.dayRow}>
                 {[1, 2, 3].map((day) => {
@@ -138,7 +142,7 @@ export default function S50QuestList({ navigation }) {
                         <View style={styles.doneMark}>
                           <Text style={styles.questCheck}>✓</Text>
                           <Text style={[styles.questDayText, styles.questDayTextActive]}>
-                            {day}일차
+                            {day}회차
                           </Text>
                         </View>
                       ) : (
@@ -148,7 +152,7 @@ export default function S50QuestList({ navigation }) {
                             isNext && styles.questDayTextActive,
                           ]}
                         >
-                          {day}일차
+                          {day}회차
                         </Text>
                       )}
                     </View>
@@ -237,7 +241,8 @@ const styles = StyleSheet.create({
     fontFamily: FONT.bold,
     fontSize: FONT.title,
     color: COLORS.text,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 15,
   },
 
   questbox:{
@@ -325,7 +330,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.danger,
     borderRadius: 999,
     paddingVertical: 10,
-    paddingHorizontal: 28,
+    paddingHorizontal: 20,
     marginVertical: 10,
   },
 
@@ -365,7 +370,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.textSub,
-    marginBottom: 12,
+    marginBottom: 15,
   },
 
   questButton: {
