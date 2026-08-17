@@ -11,48 +11,44 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 import { login } from '../../lib/api/mock/login';
 import { saveToken } from '../../lib/api/token';
 
 export default function S01Login({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
-  const validateEmail = (emailText) => {
+  const validateEmail = (text) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(emailText);
+    return emailRegex.test(text);
   };
 
-
-  const handleEmailBlur = () => {
-    setIsEmailFocused(false);
-    if (email.trim() && !validateEmail(email.trim())) {
+  const handleUsernameBlur = () => {
+    setIsUsernameFocused(false);
+    if (username.trim() && !validateEmail(username.trim())) {
       setErrorMessage('올바른 이메일 형식이 아닙니다.');
     }
   };
 
-
   const handleLogin = async () => {
     setErrorMessage('');
 
-    if (!email.trim() || !password.trim()) {
+    if (!username.trim() || !password.trim()) {
       setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    if (!validateEmail(email.trim())) {
+    if (!validateEmail(username.trim())) {
       setErrorMessage('올바른 이메일 형식이 아닙니다.');
       return;
     }
 
     try {
-
-      const data = await login(email, password);
+      const data = await login(username.trim(), password);
 
       await saveToken(data.accessToken, data.refreshToken);
 
@@ -82,16 +78,16 @@ export default function S01Login({ navigation }) {
               <TextInput
                 style={[
                   styles.input,
-                  isEmailFocused && styles.inputFocused,
+                  isUsernameFocused && styles.inputFocused,
                   errorMessage ? styles.inputError : null,
                 ]}
-                value={email}
+                value={username}
                 placeholder="you@example.com"
                 placeholderTextColor="#757575"
-                onFocus={() => setIsEmailFocused(true)}
-                onBlur={handleEmailBlur}
+                onFocus={() => setIsUsernameFocused(true)}
+                onBlur={handleUsernameBlur}
                 onChangeText={(text) => {
-                  setEmail(text);
+                  setUsername(text);
                   if (errorMessage) setErrorMessage('');
                 }}
                 keyboardType="email-address"
