@@ -32,6 +32,10 @@ export const COLORS = {
   danger: '#F6D8D5',
   dangerText: '#2A0C09',
 
+  // 탈퇴처럼 되돌릴 수 없는 동작
+  dangerStrong: '#A82F24',
+  dangerStrongText: '#FFFFFF',
+
   //점
   dotLog: '#66C78C',    // 초록 — PLUS Log
   dotQuest: '#FABF4D',  // 노랑 — 퀘스트 성공
