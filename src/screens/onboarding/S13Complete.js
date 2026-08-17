@@ -5,57 +5,39 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
-
-import { SafeAreaView } from "react-native-safe-area-context";
-
-
-const CHARACTER_DATA = {
-  cat: {
-    id: 'cat',
-    name: '고양이',
-    image: require('../../../assets/character/cat-1.png'), 
-  },
-  dog: {
-    id: 'dog',
-    name: '강아지',
-    image: require('../../../assets/character/dog-1.png'),
-  },
-};
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function S13Complete({ route, navigation }) {
   const { character } = route.params || {};
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
   }, [navigation]);
 
-
   const handleStart = () => {
     console.log('온보딩 완료! 메인 홈 화면으로 이동');
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Main' }], 
+      routes: [{ name: 'Main' }],
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {character?.image && (
+          <View style={styles.imageBox}>
+            <Image
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-          {character?.image && (
-            <View style={styles.imageBox}>
-              <Image
                 source={character.image}
+
                 style={[styles.characterImage,
                   {transform: [
                     {scale: 1.05},
-                    {translateX: 16}
+                    {translateX: 12}
                   ]}
                 ]}
                 resizeMode="contain"
@@ -63,7 +45,7 @@ export default function S13Complete({ route, navigation }) {
             </View>
           )}
 
-          <Text style={styles.mainTitle}>준비 완료!</Text>
+        <Text style={styles.mainTitle}>준비 완료!</Text>
 
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>
@@ -77,10 +59,9 @@ export default function S13Complete({ route, navigation }) {
           </Text>
         </View>
 
-
-          <Text style={styles.encouragementText}>
-            캐릭터가 기다리고 있어요
-          </Text>
+        <Text style={styles.encouragementText}>
+          캐릭터가 기다리고 있어요
+        </Text>
 
         <TouchableOpacity
           style={styles.startButton}
@@ -89,7 +70,7 @@ export default function S13Complete({ route, navigation }) {
         >
           <Text style={styles.startButtonText}>시작하기</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -97,29 +78,30 @@ export default function S13Complete({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E3ECFF',
+    backgroundColor: '#E3ECFF', 
   },
-  scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: 40,
+  content: {
+    flex: 1,
+    justifyContent: 'center', 
     alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   imageBox: {
-    width: 200,
-    height: 200,
-    borderRadius: 24,
-    backgroundColor: '#CCDDFF',
+    width: 160, 
+    height: 160,
+    borderRadius: 20,
+    backgroundColor: '#CCDDFF', 
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
   },
   characterImage: {
-    width: 140,
-    height: 140,
+    width: 100, 
+    height: 100,
   },
   mainTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#1B1A18',
     marginBottom: 20,
@@ -131,28 +113,28 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   descriptionText: {
-    fontSize: 14,
-    color: '#757575',
+    fontSize: 13,
+    color: '#757575', 
     textAlign: 'center',
     lineHeight: 20,
   },
   encouragementText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1B1A18',
+    color: '#1B1A18', 
     marginBottom: 28,
     textAlign: 'center',
   },
   startButton: {
-    backgroundColor: '#4C5F99',
-    borderRadius: 12,
-    height: 52,
+    backgroundColor: '#3E629F', 
+    borderRadius: 15, 
+    height: 55,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   startButtonText: {
-    color: '#FFFFFF',
+    color: '#FFFFFF', 
     fontSize: 16,
     fontWeight: '600',
   },
