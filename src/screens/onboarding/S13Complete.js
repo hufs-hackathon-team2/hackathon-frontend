@@ -12,7 +12,7 @@ export default function S13Complete({ route, navigation }) {
   const { character } = route.params || {};
 
   const isCat = 
-    character?.type === 'cat';
+    character?.id === 'cat';
 
   useLayoutEffect(() => {
     navigation.setOptions({
