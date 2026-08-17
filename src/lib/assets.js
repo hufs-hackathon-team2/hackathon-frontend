@@ -262,3 +262,29 @@ export const DOG_SIZES = [
 export function getCharacterSizes(type) {
   return type === 'dog' ? DOG_SIZES : CAT_SIZES;
 }
+
+//단계
+export const STAGE_INDEX = {
+  '1-small': 0,
+  '1-big': 1,
+  '2-small': 2,
+  '2-big': 3,
+  '3-small': 4,
+  '3-big': 5,
+  '4': 6,
+};
+
+export function getStageIndex(stage) {
+  return STAGE_INDEX[stage] ?? 0;
+}
+
+//캐릭터 이름
+export const CHARACTER_NAMES = {
+  cat: '애옹이',
+  dog: '누렁이',
+};
+
+export function getCharacterName(type) {
+  return CHARACTER_NAMES[type] ?? CHARACTER_NAMES.cat;
+}
+
