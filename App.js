@@ -20,6 +20,7 @@ import S52QuestProgress from './src/screens/quest/S52QuestProgress';
 
 import S40Resume from './src/screens/S40Resume';
 import S60Weekly from './src/screens/S60Weekly';
+import S04SignupComplete from './src/screens/auth/S04SignupComplete';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ export default function App() {
           <Stack.Screen name="Login" component={S01Login} />
           <Stack.Screen name="Signup" component={S02Signup} />
           <Stack.Screen name="ResetPassword" component={S03ResetPassword} />
+          <Stack.Screen name= "SignupComplete" component={S04SignupComplete}/>
 
           {/*온보딩*/}
           <Stack.Screen name="Interests" component={S11Interests} />
