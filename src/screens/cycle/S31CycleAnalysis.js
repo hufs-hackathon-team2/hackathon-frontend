@@ -294,12 +294,12 @@ const styles = StyleSheet.create({
 
   detailValue: {
     fontFamily: FONT.semibold,
-    fontSize: FONT.body,
+    fontSize: FONT.subbody,
     color: COLORS.text,
   },
   detailStatus: {
     fontFamily: FONT.semibold,
-    fontSize: FONT.body,
+    fontSize: FONT.subbody,
     color: COLORS.primary,
   },
 
@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
+
   suggestList: {
     marginTop: 10,
     gap: 10,

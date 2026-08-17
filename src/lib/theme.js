@@ -54,6 +54,7 @@ export const FONT = {
   title: 24,
   cardTitle: 18,
   body: 16,
+  subbody: 14,
   caption: 13,
 };
 

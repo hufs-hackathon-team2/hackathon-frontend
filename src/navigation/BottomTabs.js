@@ -43,7 +43,7 @@ function CycleStack() {
       <CycleStackNav.Screen
         name="CycleAnalysis"
         component={S31CycleAnalysis}
-        options={{ headerShown: true, title: '분석 결과' }}
+        options={{ headerShown: false}}
       />
       <CycleStackNav.Screen name="CycleHistory" component={S32CycleHistory} />
     </CycleStackNav.Navigator>
