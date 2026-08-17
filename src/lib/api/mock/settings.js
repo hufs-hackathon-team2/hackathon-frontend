@@ -5,6 +5,7 @@ export const MOCK_PASSWORD = 'helply1234';
 export const MOCK_SETTINGS = {
   nickname: '한서연',
   email: 'seoyn95@hufs.ac.kr',
+  onboardingCompleted: true,
   restart_notification: true,
   activity_notification: true,
 };

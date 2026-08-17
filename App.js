@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import BottomTabs from './src/navigation/BottomTabs';
 
 import S00Splash from './src/screens/auth/S00Splash';
+import Welcome from './src/screens/auth/Welcome';
 import S01Login from './src/screens/auth/S01Login';
 import S02Signup from './src/screens/auth/S02Signup';
 import S03ResetPassword from './src/screens/auth/S03ResetPassword';
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
           {/*시작 */}
           <Stack.Screen name="Splash" component={S00Splash} />
+          <Stack.Screen name="Welcome" component={Welcome} />
 
           {/*로그인*/}
           <Stack.Screen name="Login" component={S01Login} />
