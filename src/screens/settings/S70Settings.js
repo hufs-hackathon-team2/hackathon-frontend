@@ -29,7 +29,7 @@ export default function S70Settings({ navigation }) {
   // 쌓여 있던 화면을 모두 버리고 로그인만 남긴다
   const goToLogin = () => {
     const root = navigation.getParent()?.getParent() ?? navigation;
-    root.reset({ index: 0, routes: [{ name: 'Login' }] });
+    root.reset({ index: 0, routes: [{ name: 'Welcome' }] });
   };
 
   const handleLogout = () => {
