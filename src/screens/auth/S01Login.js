@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { login } from '../../lib/api/mock/auth';
+// import { login } from '../../lib/api/mock/auth';
 import { saveToken } from '../../lib/api/token';
-import { loginAPI } from '../api/auth';
+import { loginAPI } from '../../lib/api/auth';
 
 export default function S01Login({ navigation }) {
   const [username, setUsername] = useState('');
