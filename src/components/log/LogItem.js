@@ -4,22 +4,21 @@ import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 const styles = StyleSheet.create({
   logItem: {
-    padding: 10,
-    marginVertical: 10,
+    padding: 5,
+    marginVertical: 5,
   },
   date:{
-    fontFamily: FONT.semibold,
+    fontFamily: FONT.bold,
     fontSize: FONT.cardTitle,
-    color: COLORS.text,
-    marginBottom: 10,
+    color: COLORS.navigate,
   },
   content:{
     marginBottom: 5,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: 10,
+    borderRadius: RADIUS.card,
     backgroundColor: COLORS.cardWhite,
-    padding: 10,
+    padding: 20,
   },
   contentText:{
     fontFamily: FONT.regular,
@@ -39,7 +38,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   trash: {
+    fontFamily: FONT.semibold,
     fontSize: 16,
+    color: COLORS.textSub,
     opacity: 0.4,
   },
 

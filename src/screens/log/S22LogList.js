@@ -1,4 +1,4 @@
-// LG 03 기록 목록 조회 + LG 04 기록 수정 및 삭제
+// LG 03 기록 목록 조회 + LG 04 기록 삭제
 import { ScrollView, View, Text, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
 import LogItem from '../../components/log/LogItem';
 import { getDateDisplay, getTimeDisplay, getDateDifference } from '../../lib/date';
@@ -52,10 +52,37 @@ export default function S22LogList({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
+  // 지금까지 불러온 페이지를 다시 받아 서버와 목록을 맞춘다
+  const reload = () => {
+    const requests = [];
+
+    for (let i = 1; i <= page; i++) {
+      requests.push(getLogs(i));
+    }
+
+    Promise.all(requests)
+      .then((pages) => {
+        const all = [].concat(...pages);
+        const last = pages[pages.length - 1];
+
+        setLogs(all);
+        setHasMore(last.length === PAGE_SIZE);
+      })
+      .catch(() => Alert.alert('목록을 갱신하지 못했어요', '잠시 후 다시 시도해주세요'));
+  };
+
   const removeLog = (logId) => {
+    const before = logs;
+
+    // 먼저 화면에서 지우고, 서버 응답은 뒤에서 맞춘다
+    setLogs(logs.filter((log) => log.log_id !== logId));
+
     deleteLog(logId)
-      .then(() => setLogs(logs.filter((log) => log.log_id !== logId)))
-      .catch(() => Alert.alert('삭제하지 못했어요', '잠시 후 다시 시도해주세요'));
+      .then(reload)
+      .catch(() => {
+        setLogs(before);
+        Alert.alert('삭제하지 못했어요', '잠시 후 다시 시도해주세요');
+      });
   };
 
 
@@ -108,10 +135,6 @@ export default function S22LogList({ navigation }) {
         </View>
 
         <Text style={styles.description}>지금까지 남긴 건강 행동이에요</Text>
-
-        {wroteToday && (
-          <Text style={styles.wroteTodayText}>오늘은 이미 기록했어요</Text>
-        )}
       </View>
 
 
@@ -157,7 +180,8 @@ const styles = StyleSheet.create({
     fontFamily: FONT.bold,
     fontSize: FONT.title,
     color: COLORS.text,
-    paddingVertical: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
 
   description:{
@@ -174,9 +198,10 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    width: 44,
-    height: 44,
+    width: 50,
+    height: 50,
     borderRadius: 999,
+    marginTop: 10,
     backgroundColor: COLORS.navigate,
     alignItems: 'center',
     justifyContent: 'center',
@@ -191,13 +216,6 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 30,
     color: COLORS.navigateText,
-  },
-
-  wroteTodayText: {
-    fontFamily: FONT.regular,
-    fontSize: FONT.caption,
-    color: COLORS.textSub,
-    marginTop: 6,
   },
 
   logItem: {
