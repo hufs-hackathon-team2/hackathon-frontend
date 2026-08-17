@@ -110,6 +110,13 @@ const styles = StyleSheet.create({
   },
   textArea: {
     backgroundColor: '#F0F5FF',
+    borderWidth: 1,
+    borderColor: '#ffffff',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1.5,
     borderRadius: 18,
     height: 160,
     paddingHorizontal: 20,
