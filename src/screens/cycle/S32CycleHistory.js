@@ -41,7 +41,7 @@ const MOCK_HISTORY = [
 export default function S32CycleHistory({ navigation }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScreenHeader title="히스토리" navigation={navigation} />
+      <ScreenHeader navigation={navigation} />
 
       <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.historyTitle}>Healthy Cycle 히스토리</Text>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: SPACE.screen,
+    paddingHorizontal: SPACE.screen,
     backgroundColor: COLORS.bg,
     flexGrow: 1,
   },
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.title,
     fontWeight: WEIGHT.bold,
     color: COLORS.text,
-    paddingBottom: 15,
+    paddingVertical: 15,
   },
   historySub:{
     fontSize: FONT.caption,
