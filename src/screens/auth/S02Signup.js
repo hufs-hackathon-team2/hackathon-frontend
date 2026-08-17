@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
   useLayoutEffect(() => {
@@ -144,16 +145,7 @@ export default function S02Signup({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-          {/* 뒤로가기 버튼 */}
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>←</Text>
-            </TouchableOpacity>
-          </View>
-
+          <ScreenHeader navigation={navigation} />
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
