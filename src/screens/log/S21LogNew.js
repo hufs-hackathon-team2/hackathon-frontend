@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S21LogNew({ navigation }) {
   const [logContent, setLogContent] = useState('');
@@ -23,7 +24,6 @@ export default function S21LogNew({ navigation }) {
       headerShown: false,
     });
   }, [navigation]);
-
 
   // 위험 키워드 예시
   const DANGER_KEYWORDS = ['폭식', '자해', '구토'];
@@ -58,55 +58,39 @@ export default function S21LogNew({ navigation }) {
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.inner}
         >
-
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>PLUS Log 입력</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
-
-          <View style={styles.divider} />
-
+          <ScreenHeader navigation={navigation} />
 
           <View style={styles.content}>
             <Text style={styles.title}>오늘 나를 위한 기록</Text>
             <Text style={styles.subtitle}>
-              건강에 도움이 된 행동을 자유롭게 적어보세요. 작은 것도 충분히 소중합니다.
+              건강에 도움이 된 행동을 자유롭게 적어보세요.{'\n'}작은 것도 충분히 소중합니다.
             </Text>
 
+
             <View style={styles.inputContainer}>
-              <Text style={styles.exampleText}>예: 점심 후 10분 산책했어요</Text>
-              
               <TextInput
                 style={styles.textArea}
                 value={logContent}
                 onChangeText={setLogContent}
-                placeholder=""
+                placeholder="예) 오늘 점심에 채소를 챙겨 먹었어요"
+                placeholderTextColor="#8A94A6"
                 multiline={true}
                 numberOfLines={5}
                 maxLength={maxLength}
                 textAlignVertical="top"
               />
 
-              <Text style={styles.charCount}>
-                {logContent.length} / {maxLength}
-              </Text>
             </View>
-
 
             <Text style={styles.noticeText}>
               위험 키워드가 포함된 경우 저장되지 않습니다.
             </Text>
 
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.8}>
               <Text style={styles.saveButtonText}>저장하기</Text>
             </TouchableOpacity>
           </View>
@@ -119,93 +103,63 @@ export default function S21LogNew({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3ECFF', 
   },
   inner: {
     flex: 1,
   },
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-  },
-  headerRightPlaceholder: {
-    width: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
-  },
   content: {
-    paddingHorizontal: 24,
-    paddingTop: 32,
+    flex: 1,
+    paddingHorizontal: 28,
+    justifyContent: 'center', 
+    alignItems: 'center',
+    paddingBottom: 60,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 8,
+    color: '#1B1A18',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: '#4A5568',
+    color: '#1B1A18',
     lineHeight: 20,
-    marginBottom: 24,
+    marginBottom: 32,
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 8,
-  },
-  exampleText: {
-    fontSize: 15,
-    color: '#1E232C',
-    marginBottom: 10,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderColor: '#DADADA',
-    borderRadius: 8,
-    height: 120,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
-    color: '#1E232C',
-  },
-  charCount: {
-    fontSize: 13,
-    color: '#4A5568',
-    textAlign: 'right',
-    marginTop: 8,
+    width: '100%',
     marginBottom: 16,
   },
+  textArea: {
+    backgroundColor: '#F0F5FF',
+    borderRadius: 18,
+    height: 160,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    fontSize: 15,
+    color: '#1B1A18',
+  },
+
   noticeText: {
     fontSize: 13,
-    color: '#4A5568',
-    marginBottom: 20,
+    color: '#504D49',
+    marginBottom: 28,
+    textAlign: 'center',
   },
   saveButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
+    backgroundColor: '#3E629F',
+    borderRadius: 24,
+    height: 48,
+    width: 140,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 20,
   },
   saveButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
   },
 });
