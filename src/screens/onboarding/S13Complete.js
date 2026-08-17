@@ -10,7 +10,6 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import ScreenHeader from '../../components/common/ScreenHeader';
 
 const CHARACTER_DATA = {
   cat: {
@@ -44,7 +43,6 @@ export default function S13Complete({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader navigation={navigation} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}

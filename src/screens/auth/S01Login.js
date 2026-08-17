@@ -5,10 +5,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -17,7 +16,6 @@ export default function S01Login({ navigation }) {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 입력창 포커스 상태 관리
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
@@ -43,13 +41,14 @@ export default function S01Login({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.inner}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
-
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
@@ -72,7 +71,6 @@ export default function S01Login({ navigation }) {
                 autoCapitalize="none"
               />
             </View>
-
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
@@ -101,7 +99,11 @@ export default function S01Login({ navigation }) {
               </View>
             ) : null}
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleLogin}
+              activeOpacity={0.8}
+            >
               <Text style={styles.loginButtonText}>로그인</Text>
             </TouchableOpacity>
 
@@ -109,7 +111,9 @@ export default function S01Login({ navigation }) {
               <TouchableOpacity
                 onPress={() => navigation.navigate('ResetPassword')}
               >
-                <Text style={styles.blueLinkText}>비밀번호를 잊으셨나요?</Text>
+                <Text style={styles.blueLinkText}>
+                  비밀번호를 잊으셨나요?
+                </Text>
               </TouchableOpacity>
 
               <View style={styles.signUpRow}>
@@ -122,7 +126,7 @@ export default function S01Login({ navigation }) {
               </View>
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );
@@ -133,17 +137,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E3ECFF',
   },
-
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-
-  content: {
-    paddingHorizontal: 28,
+  scrollContent: {
+    paddingTop: 60, 
     paddingBottom: 40,
   },
-
+  content: {
+    paddingHorizontal: 28,
+  },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -151,41 +151,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 36,
   },
-
   inputContainer: {
     marginBottom: 20,
   },
-
   label: {
     fontSize: 15,
     fontWeight: '500',
     color: '#1B1A18',
     marginBottom: 8,
   },
-
-
   input: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: 'transparent', 
+    borderColor: 'transparent',
     borderRadius: 12,
     height: 52,
     paddingHorizontal: 16,
     fontSize: 15,
     color: '#1B1A18',
   },
-
-
   inputFocused: {
     borderWidth: 1.5,
-    borderColor: '#8ba1c5', 
+    borderColor: '#8ba1c5',
   },
-
   inputError: {
     borderWidth: 1.5,
     borderColor: '#E53E3E',
   },
-
   errorBanner: {
     backgroundColor: '#FFF5F5',
     borderColor: '#FEB2B2',
@@ -195,14 +187,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
   },
-
   errorBannerText: {
     color: '#E53E3E',
     fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
   },
-
   loginButton: {
     backgroundColor: '#3E629F',
     borderRadius: 12,
@@ -213,28 +203,23 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 32,
   },
-
   loginButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-
   linkContainer: {
     alignItems: 'center',
     gap: 24,
   },
-
   signUpRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   grayText: {
     fontSize: 14,
     color: '#1B1A18',
   },
-
   blueLinkText: {
     fontSize: 14,
     color: '#3E629F',
