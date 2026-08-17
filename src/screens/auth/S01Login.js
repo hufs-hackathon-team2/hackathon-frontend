@@ -22,13 +22,27 @@ export default function S01Login({ navigation }) {
   const handleLogin = () => {
     setErrorMessage('');
 
+    const trimmedEmail = email.trim();
+
+    // 1. 빈값 체크
+    if (!trimmedEmail || !password) {
+      setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setErrorMessage('올바른 이메일 형식이 아닙니다.');
+      return;
+    }
+
     const MOCK_USER = {
       email: 'test@example.com',
       password: 'password123',
     };
 
-    if (email !== MOCK_USER.email || password !== MOCK_USER.password) {
-      setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
+    if (trimmedEmail !== MOCK_USER.email || password !== MOCK_USER.password) {
+      setErrorMessage('이메일 또는 비밀번호를 확인해주세요.');
       return;
     }
 
@@ -138,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3ECFF',
   },
   scrollContent: {
-    paddingTop: 60, 
+    paddingTop: 60,
     paddingBottom: 40,
   },
   content: {
