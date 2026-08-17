@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '../../components/ScreenHeader';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
   useLayoutEffect(() => {
@@ -30,7 +30,7 @@ export default function S02Signup({ navigation }) {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-  // 입력창 포커스 상태
+
   const [focusedInput, setFocusedInput] = useState(null);
 
   const [isRequiredAgreed, setIsRequiredAgreed] = useState(false);
@@ -153,7 +153,7 @@ export default function S02Signup({ navigation }) {
             <Text style={styles.title}>계정 만들기</Text>
             <Text style={styles.subtitle}>헬플리와 함께 시작해 보세요</Text>
 
-            {/* 이메일 */}
+
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
@@ -164,7 +164,7 @@ export default function S02Signup({ navigation }) {
                 ]}
                 value={email}
                 placeholder="you@example.com"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 onChangeText={handleEmailChange}
                 onFocus={() => setFocusedInput('email')}
                 onBlur={() => {
@@ -179,7 +179,7 @@ export default function S02Signup({ navigation }) {
               ) : null}
             </View>
 
-            {/* 비밀번호 */}
+
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
@@ -206,7 +206,6 @@ export default function S02Signup({ navigation }) {
               )}
             </View>
 
-            {/* 비밀번호 확인 */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호 확인</Text>
               <TextInput
@@ -235,7 +234,6 @@ export default function S02Signup({ navigation }) {
               )}
             </View>
 
-            {/* 약관 동의 */}
             <View style={styles.termsContainer}>
               <TouchableOpacity
                 style={styles.checkboxRow}
@@ -272,7 +270,7 @@ export default function S02Signup({ navigation }) {
               </TouchableOpacity>
             </View>
 
-            {/* 가입하기 버튼 */}
+
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSignup}
@@ -290,7 +288,7 @@ export default function S02Signup({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E8EEFF', // 이미지와 동일한 연보라 배경
+    backgroundColor: '#E3ECFF', 
   },
   inner: {
     flex: 1,
@@ -300,11 +298,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
     marginTop: 8,
-  },
-  backButtonText: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#1B1A18',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -373,12 +366,12 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderWidth: 1,
-    borderColor: '#CBD5E0',
+    borderColor: '#868079',
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
   },
   checkboxChecked: {
     backgroundColor: '#3E629F',
