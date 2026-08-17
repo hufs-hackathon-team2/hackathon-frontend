@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signupAPI } from '../../api/auth';
+import { signupAPI } from '../../lib/api/auth';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -148,7 +148,7 @@ export default function S02Signup({ navigation }) {
       ]);
     } catch (error) {
       Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
-      
+
       if (error.response?.data?.username || error.response?.data?.email) {
         setEmailError('이미 가입된 이메일이에요');
       } else {
