@@ -1,10 +1,11 @@
 // LG 03 기록 목록 조회 + LG 04 기록 수정 및 삭제
 import { ScrollView, View, Text, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
 import LogItem from '../../components/log/LogItem';
-import { getDateDisplay, getTimeDisplay } from '../../lib/date';
-import { getLogs, deleteLog } from '../../lib/api/logs';
+import { getDateDisplay, getTimeDisplay, getDateDifference } from '../../lib/date';
+import { getLogs, deleteLog, PAGE_SIZE } from '../../lib/api/logs';
 import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 
 
@@ -14,27 +15,53 @@ export default function S22LogList({ navigation }) {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   const loadLogs = () => {
     setLoading(true);
     setError(false);
 
-    getLogs()
-      .then((data) => setLogs(data))
+    getLogs(1)
+      .then((data) => {
+        setLogs(data);
+        setPage(1);
+        setHasMore(data.length === PAGE_SIZE);
+      })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
+  const loadMore = () => {
+    const next = page + 1;
+
+    getLogs(next)
+      .then((data) => {
+        setLogs(logs.concat(data));
+        setPage(next);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch(() => Alert.alert('더 불러오지 못했어요', '잠시 후 다시 시도해주세요'));
+  };
+
   useEffect(() => {
     loadLogs();
-  }, []);
+
+    // 기록을 새로 쓰고 돌아왔을 때 다시 받아온다
+    const unsubscribe = navigation.addListener('focus', loadLogs);
+    return unsubscribe;
+  }, [navigation]);
 
   const removeLog = (logId) => {
     deleteLog(logId)
       .then(() => setLogs(logs.filter((log) => log.log_id !== logId)))
       .catch(() => Alert.alert('삭제하지 못했어요', '잠시 후 다시 시도해주세요'));
   };
+
+
+  // PLUS Log 는 하루에 하나만 쓸 수 있다
+  const wroteToday = logs.length > 0 &&
+    getDateDifference(new Date(logs[0].created_at), new Date()) === 0;
 
 
   const handleDelete = (logid) => {
@@ -48,7 +75,7 @@ export default function S22LogList({ navigation }) {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#666" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
@@ -68,17 +95,24 @@ export default function S22LogList({ navigation }) {
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
       <View>
-        <Text style={styles.header}>PLUS Log</Text>
-      </View>
+        <View style={styles.titleRow}>
+          <Text style={styles.logtitle}>PLUS Log 기록</Text>
 
-      <View>
-        <Text style={styles.logtitle}>이번 사이클 기록</Text>
+          <Pressable
+            style={[styles.addButton, wroteToday && styles.addButtonDisabled]}
+            onPress={() => navigation.navigate('LogNew')}
+            disabled={wroteToday}
+          >
+            <Text style={styles.addButtonText}>+</Text>
+          </Pressable>
+        </View>
+
         <Text style={styles.description}>지금까지 남긴 건강 행동이에요</Text>
-      </View>
 
-      <Pressable style={styles.logButton} onPress={() => navigation.navigate('LogNew')}>
-        <Text style={styles.logButtonText}>PLUS Log 작성하기</Text>
-      </Pressable>
+        {wroteToday && (
+          <Text style={styles.wroteTodayText}>오늘은 이미 기록했어요</Text>
+        )}
+      </View>
 
 
       {logs.length === 0 ? (
@@ -86,7 +120,7 @@ export default function S22LogList({ navigation }) {
           <Text style={styles.emptyText}>아직 이번 사이클에 남긴 기록이 없어요</Text>
         </View>
       ) : (
-        logs.slice(0, visibleCount).map((log) => (
+        logs.map((log) => (
           <LogItem
             key={log.log_id}
             date={getDateDisplay(new Date(log.created_at))}
@@ -98,8 +132,8 @@ export default function S22LogList({ navigation }) {
       )}
 
 
-    {visibleCount < logs.length && (
-      <Pressable style={styles.moreButton} onPress={() => setVisibleCount(visibleCount + 10)}>
+    {hasMore && (
+      <Pressable style={styles.moreButton} onPress={loadMore}>
         <Text style={styles.moreButtonText}>더보기</Text>
       </Pressable>
     )}
@@ -114,93 +148,115 @@ export default function S22LogList({ navigation }) {
 const styles = StyleSheet.create({
   
   container: {
-    padding: 20,
-  },
-
-  header:{
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#ccc',
-    paddingVertical: 10,
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
+    flexGrow: 1,
   },
 
   logtitle:{
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 20,
+    fontFamily: FONT.bold,
+    fontSize: FONT.title,
+    color: COLORS.text,
+    paddingVertical: 20,
   },
 
   description:{
-    fontSize: 14,
-    color: '#666',
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.textSub,
     marginTop: 5,
     marginBottom: 10,
   },
-  logButton: {
-    backgroundColor: '#000000',
-    borderWidth: 1,
-    borderRadius: 15,
-    padding: 10,
-    marginVertical: 10,
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  logButtonText: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
+
+  addButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 999,
+    backgroundColor: COLORS.navigate,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  addButtonDisabled: {
+    backgroundColor: COLORS.disabled,
+  },
+
+  addButtonText: {
+    fontFamily: FONT.regular,
+    fontSize: 26,
+    lineHeight: 30,
+    color: COLORS.navigateText,
+  },
+
+  wroteTodayText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    marginTop: 6,
   },
 
   logItem: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: COLORS.border,
     borderRadius: 5,
     padding: 10,
     marginVertical: 10,
   },
-  
+
   emptyBox: {
     paddingVertical: 60,
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
-    color: '#999',
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.textSub,
   },
   moreButton: {
+    alignSelf: 'center',
+    backgroundColor: COLORS.cardWhite,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 15,
-    padding: 12,
-    marginVertical: 10,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    marginVertical: 16,
   },
   moreButtonText: {
-    color: '#666',
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.textSub,
     textAlign: 'center',
-    fontSize: 15,
   },
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
   },
   errorText: {
-    fontSize: 15,
-    color: '#888',
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
     marginBottom: 16,
   },
   retryButton: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 15,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.button,
     paddingVertical: 10,
     paddingHorizontal: 24,
   },
   retryText: {
-    fontSize: 15,
-    color: '#666',
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.textSub,
   },
 
 })
