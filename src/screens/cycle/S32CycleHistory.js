@@ -1,6 +1,9 @@
 // CY 06 사이클 히스토리 (P1)
 import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 import { getFullDate, getDateDifference } from "../../lib/date";
+import { COLORS, FONT, WEIGHT, SPACE, RADIUS } from '../../lib/theme';
 
 
 const MOCK_HISTORY = [
@@ -37,12 +40,13 @@ const MOCK_HISTORY = [
 
 export default function S32CycleHistory({ navigation }) {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScreenHeader title="히스토리" navigation={navigation} />
 
-      <View>
-        <Text style={styles.historyTitle}>Healthy Cycle 히스토리</Text>
-        <Text style={styles.historySub}>지금까지 쌓아온 나의 건강 흐름이에요</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.historyTitle}>Healthy Cycle 히스토리</Text>
+
+      <Text style={styles.historySub}>지금까지 쌓아온 나의 건강 흐름이에요</Text>
 
 
       {MOCK_HISTORY.map((cycle) => (
@@ -59,49 +63,60 @@ export default function S32CycleHistory({ navigation }) {
 
       ))}
 
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+
   container: {
-    padding: 20,
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
+    flexGrow: 1,
   },
 
   historyTitle:{
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingBottom: 10,
+    fontSize: FONT.title,
+    fontWeight: WEIGHT.bold,
+    color: COLORS.text,
+    paddingBottom: 15,
   },
   historySub:{
-    fontSize: 13,
-    color: '#888',
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
     marginBottom: 20,
   },
 
   historyBox:{
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardWhite,
   },
 
   historyNth:{
-    fontSize: 18,
+    fontSize: FONT.cardTitle,
     fontWeight: '600',
-    paddingVertical: 4,
+    color: COLORS.text,
+    paddingVertical: 5,
   },
 
   historyPeriod:{
-    fontSize: 13,
-    color: '#888',
-  },
-  historySummary:{
-    fontSize: 13,
-    color: '#555',
-    marginTop: 6,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
   },
 
-})
+  historySummary:{
+    fontSize: FONT.caption,
+    color: COLORS.text,
+    marginTop: 6,
+  },
+});
