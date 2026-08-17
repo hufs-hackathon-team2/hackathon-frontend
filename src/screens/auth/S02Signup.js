@@ -190,6 +190,8 @@ export default function S02Signup({ navigation }) {
                   setFocusedInput(null);
                   validateEmail(email);
                 }}
+                placeholder="you@example.com"
+                placeholderTextColor="#757575"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -214,7 +216,7 @@ export default function S02Signup({ navigation }) {
                   validatePassword(password);
                 }}
                 placeholder="비밀번호"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {passwordError ? (
@@ -242,7 +244,7 @@ export default function S02Signup({ navigation }) {
                   validateConfirmPassword(confirmPassword, password);
                 }}
                 placeholder="비밀번호 확인"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {confirmPasswordError ? (
