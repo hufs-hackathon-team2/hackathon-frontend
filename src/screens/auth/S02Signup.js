@@ -51,11 +51,11 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    const isExist = MOCK_USER.some((user) => user.username === trimmed);
-    if (isExist) {
-      setEmailError('이미 가입된 이메일이에요');
-      return false;
-    }
+    // const isExist = MOCK_USER.some((user) => user.username === trimmed);
+    // if (isExist) {
+    //   setEmailError('이미 가입된 이메일이에요');
+    //   return false;
+    // }
 
     setEmailError('');
     return true;
@@ -136,7 +136,7 @@ export default function S02Signup({ navigation }) {
 
     try {
       await signupAPI({
-        email: trimmedEmail,
+        username: trimmedEmail,
         password: password,
       });
 
@@ -148,6 +148,14 @@ export default function S02Signup({ navigation }) {
       ]);
     } catch (error) {
       Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
+      
+      if (error.response?.data?.username || error.response?.data?.email) {
+        setEmailError('이미 가입된 이메일이에요');
+      } else {
+        const serverErrorMessage =
+          error.response?.data?.message || '회원가입 처리 중 오류가 발생했습니다.';
+        Alert.alert('회원가입 실패', serverErrorMessage);
+      }
     }
   };
 
