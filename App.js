@@ -1,6 +1,4 @@
-// 앱의 화면 목록과 이동 경로를 정의하는 파일
-// 명세서 화면 구조도(S00~S70)를 그대로 옮겨놨고, 화면 19개가 전부 등록
-// 새 화면을 추가할 일이 아니면 여기는 건드리지 않아도 됨
+import { useFonts } from 'expo-font';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -26,6 +24,15 @@ import S60Weekly from './src/screens/S60Weekly';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  
+  const [loaded] = useFonts({
+    AstaSans: require('./assets/fonts/AstaSans-Regular.ttf'),
+    AstaSansSemiBold: require('./assets/fonts/AstaSans-SemiBold.ttf'),
+    AstaSansBold: require('./assets/fonts/AstaSans-Bold.ttf'),
+  });
+
+  if (!loaded) return null;
+
   return (
     <SafeAreaProvider>
       <StatusBar style="auto" />
