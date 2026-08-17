@@ -1,8 +1,8 @@
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { getCycleMarks, getRestMarks, mergeMarks, getActivityDots } from '../../lib/cycle';
+import { getActivityDots } from '../../lib/cycle';
 import { getDateFormat } from '../../lib/date';
 import { View, Text, StyleSheet } from 'react-native';
-
+import { COLORS, FONT, RADIUS } from '../../lib/theme';
 
 LocaleConfig.locales.ko = {
   monthNames: [
@@ -19,73 +19,73 @@ LocaleConfig.locales.ko = {
 };
 LocaleConfig.defaultLocale = 'ko';
 
-
 const DOT_COLORS = {
-  log: '#FFFFFF',
-  quest: '#E8C547',
-  both: '#8CB369',
+  log: COLORS.dotLog,
+  quest: COLORS.dotQuest,
+  both: COLORS.dotBoth,
+  today: COLORS.todayBg,
+  todayText: COLORS.primary,
 };
 
-
-export default function CycleCalendar({ cycle, logDates = [], questDates = [], color = '#4A6B4E', restColor = '#C9CCC0'}) {
+export default function CycleCalendar({ cycle, logDates = [], questDates = [] }) {
   return (
     <View>
-      <Calendar
-        markingType="period"
-        current={getDateFormat(cycle.startDate)}
-        markedDates={mergeMarks(
-          getCycleMarks(cycle, color),
-          getRestMarks(cycle, logDates, restColor),
-          getActivityDots(logDates, questDates, DOT_COLORS),
-        )}
-        theme={{
-          calendarBackground: 'transparent',
-          todayTextColor: '#4A6B4E',
-          arrowColor: '#4A6B4E',
-          monthTextColor: '#242A24',
-          textDayFontSize: 15,
-          textMonthFontWeight: 'bold',
-        }}
-      />
+      <View style={styles.card}>
+        <Calendar
+          current={getDateFormat(cycle.startDate)}
+          markedDates={getActivityDots(logDates, questDates, DOT_COLORS)}
+          theme={{
+            calendarBackground: COLORS.cardWhite,
+            textSectionTitleColor: COLORS.text,
+            todayTextColor: COLORS.primary,
+            arrowColor: COLORS.textSub,
+            monthTextColor: COLORS.text,
+            dayTextColor: COLORS.text,
+            textDayFontFamily: FONT.regular,
+            textMonthFontFamily: FONT.semibold,
+            textDayHeaderFontFamily: FONT.regular,
+            textDayFontSize: 15,
+            textMonthFontSize: 16,
+            dotStyle: { width: 8, height: 8, borderRadius: 4, marginTop: 2 },
+          }}
+        />
+      </View>
 
       <View style={styles.legend}>
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: DOT_COLORS.log }]} />
-          <Text style={styles.legendText}>PLUS Log</Text>
+          <Text style={styles.legendText}>PLUS Log 기록</Text>
         </View>
 
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: DOT_COLORS.quest }]} />
-          <Text style={styles.legendText}>퀘스트</Text>
+          <Text style={styles.legendText}>퀘스트 성공</Text>
         </View>
 
         <View style={styles.legendItem}>
           <View style={[styles.dot, { backgroundColor: DOT_COLORS.both }]} />
-          <Text style={styles.legendText}>둘 다</Text>
-        </View>
-  
-        <View style={styles.legendItem}>
-          <View style={[styles.bar, { backgroundColor: color }]} />
-          <Text style={styles.legendText}>활동기</Text>
-        </View>
-
-        <View style={styles.legendItem}>
-          <View style={[styles.bar, { backgroundColor: restColor }]} />
-          <Text style={styles.legendText}>휴식기</Text>
+          <Text style={styles.legendText}>모두 성공!</Text>
         </View>
       </View>
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
+  card: {
+    backgroundColor: COLORS.cardWhite,
+    borderRadius: RADIUS.card,
+    paddingVertical: 8,
+    overflow: 'hidden',
+  },
   legend: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'center',
+    backgroundColor: COLORS.cardWhite,
+    borderRadius: RADIUS.card,
+    paddingVertical: 12,
     gap: 14,
-    marginTop: 10,
+    marginTop: 12,
     marginBottom: 20,
   },
   legendItem: {
@@ -97,16 +97,10 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-  bar: {
-    width: 16,
-    height: 8,
-    borderRadius: 4,
   },
   legendText: {
+    fontFamily: FONT.regular,
     fontSize: 12,
-    color: '#666',
+    color: COLORS.textSub,
   },
 });
