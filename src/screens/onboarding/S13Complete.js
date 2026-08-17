@@ -10,16 +10,18 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import ScreenHeader from '../../components/common/ScreenHeader';
+
 const CHARACTER_DATA = {
   cat: {
     id: 'cat',
     name: '고양이',
-    image: require('../../../assets/cat.png'), 
+    image: require('../../../assets/character/cat-1.png'), 
   },
   dog: {
     id: 'dog',
     name: '강아지',
-    image: require('../../../assets/dog.png'),
+    image: require('../../../assets/character/dog-1.png'),
   },
 };
 
@@ -42,17 +44,12 @@ export default function S13Complete({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>온보딩 완료 안내</Text>
-      </View>
-
-      <View style={styles.divider} />
+      <ScreenHeader navigation={navigation} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.cardContainer}>
           {character?.image && (
             <View style={styles.imageBox}>
               <Image
@@ -64,35 +61,23 @@ export default function S13Complete({ route, navigation }) {
           )}
 
           <Text style={styles.mainTitle}>준비 완료!</Text>
-          <Text style={styles.mainSubtitle}>
-            첫 Healthy Cycle이 시작되었어요.
-          </Text>
-        </View>
 
-
-        <View style={styles.infoCard}>
-          <Text style={styles.infoCardTitle}>이번 사이클에서 할 수 있는 것</Text>
-          <Text style={styles.infoText}>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionText}>
             작은 건강 행동을 기록하고 캐릭터를 함께 성장시키세요
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={styles.descriptionText}>
             매주 활동을 분석한 위클리 카드를 받아보세요
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={styles.descriptionText}>
             작심삼일 퀘스트로 습관을 천천히 만들어 보세요
           </Text>
         </View>
 
 
-        <View style={styles.encouragementBox}>
-          <Text style={styles.encouragementTextPrimary}>
+          <Text style={styles.encouragementText}>
             캐릭터가 기다리고 있어요
           </Text>
-          <Text style={styles.encouragementTextSecondary}>
-            지금 바로 행동을 기록해 보세요
-          </Text>
-        </View>
-
 
         <TouchableOpacity
           style={styles.startButton}
@@ -109,139 +94,63 @@ export default function S13Complete({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-    textAlign: 'center'
-  },
-  headerRightPlaceholder: {
-    width: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
+    backgroundColor: '#E3ECFF',
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: 24,
+    paddingTop: 8,
     paddingBottom: 40,
     alignItems: 'center',
   },
-
-  cardContainer: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#E8ECF4',
-    borderRadius: 12,
-    padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#FAFAFA',
-    marginBottom: 20,
-  },
   imageBox: {
-    width: '100%',
-    height: 160,
-    marginBottom: 16,
+    width: 200,
+    height: 200,
+    borderRadius: 24,
+    backgroundColor: '#CCDDFF',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 24,
   },
   characterImage: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderBox: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-  placeholderText: {
-    fontSize: 16,
-    color: '#A0AEC0',
+    width: 140,
+    height: 140,
   },
   mainTitle: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 8,
-  },
-  mainSubtitle: {
-    fontSize: 14,
-    color: '#4A5568',
-  },
-
-  infoCard: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#E8ECF4',
-    borderRadius: 12,
-    padding: 20,
-    backgroundColor: '#FAFAFA',
+    color: '#1B1A18',
     marginBottom: 20,
+    textAlign: 'center',
   },
-  infoCardTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 14,
-  },
-  infoText: {
-    fontSize: 13,
-    color: '#4A5568',
-    lineHeight: 22,
-    marginBottom: 4,
-  },
-
-  encouragementBox: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#E8ECF4',
-    borderRadius: 12,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    backgroundColor: '#FAFAFA',
+  descriptionContainer: {
     alignItems: 'center',
     marginBottom: 28,
+    gap: 8,
   },
-  encouragementTextPrimary: {
-    fontSize: 13,
-    color: '#4A5568',
-    marginBottom: 4,
-  },
-  encouragementTextSecondary: {
+  descriptionText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1E232C',
+    color: '#757575',
+    textAlign: 'center',
+    lineHeight: 20,
   },
-
+  encouragementText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1B1A18',
+    marginBottom: 28,
+    textAlign: 'center',
+  },
   startButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
-    paddingHorizontal: 36,
+    backgroundColor: '#4C5F99',
+    borderRadius: 12,
+    height: 52,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   startButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
 });
