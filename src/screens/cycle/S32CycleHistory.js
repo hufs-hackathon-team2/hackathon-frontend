@@ -81,13 +81,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  historyTitle:{
+  historyTitle: {
+    fontFamily: FONT.bold,
     fontSize: FONT.title,
-    fontWeight: WEIGHT.bold,
     color: COLORS.text,
     paddingVertical: 15,
   },
+
   historySub:{
+    fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.textSub,
     marginBottom: 20,
@@ -103,18 +105,21 @@ const styles = StyleSheet.create({
   },
 
   historyNth:{
+    fontFamily: FONT.semibold,
     fontSize: FONT.cardTitle,
-    fontWeight: '600',
     color: COLORS.text,
-    paddingVertical: 5,
+    paddingBottom: 5,
+    paddingTop: 2,
   },
 
   historyPeriod:{
+    fontFamily: FONT.regular,
     fontSize: FONT.body,
     color: COLORS.textSub,
   },
 
   historySummary:{
+    fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.text,
     marginTop: 6,

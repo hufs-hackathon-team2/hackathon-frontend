@@ -33,7 +33,10 @@ export const COLORS = {
 };
 
 export const FONT = {
-  family: 'AstaSans',
+  regular: 'AstaSans',
+  semibold: 'AstaSansSemiBold',
+  bold: 'AstaSansBold',
+
   title: 22,
   cardTitle: 18,
   body: 16,
@@ -52,7 +55,7 @@ export const SPACE = {
 };
 
 export const RADIUS = {
-  card: 12,
+  card: 20,
   button: 8,
   input: 8,
 };
