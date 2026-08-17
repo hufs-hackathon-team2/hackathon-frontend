@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { login } from '../../lib/api/mock/auth';
 import { saveToken } from '../../lib/api/token';
+import { loginAPI } from '../api/auth';
 
 export default function S01Login({ navigation }) {
   const [username, setUsername] = useState('');
@@ -48,9 +49,12 @@ export default function S01Login({ navigation }) {
     }
 
     try {
-      const data = await login(username.trim(), password);
+      const response = await loginAPI({
+        username: username,
+        password: password,
+      });
 
-      await saveToken(data.accessToken, data.refreshToken);
+      await saveToken(response.accessToken, response.refreshToken); // API의 response에 맞춰 수정
 
       navigation.reset({
         index: 0,
