@@ -52,7 +52,12 @@ export default function S13Complete({ route, navigation }) {
             <View style={styles.imageBox}>
               <Image
                 source={character.image}
-                style={styles.characterImage}
+                style={[styles.characterImage,
+                  {transform: [
+                    {scale: 1.05},
+                    {translateX: 16}
+                  ]}
+                ]}
                 resizeMode="contain"
               />
             </View>
