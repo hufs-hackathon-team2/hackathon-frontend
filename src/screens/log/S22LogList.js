@@ -1,4 +1,3 @@
-// LG 03 기록 목록 조회 + LG 04 기록 삭제
 import { ScrollView, View, Text, StyleSheet, Pressable, Alert, ActivityIndicator} from 'react-native';
 import LogItem from '../../components/log/LogItem';
 import { getDateDisplay, getTimeDisplay, getDateDifference } from '../../lib/date';
@@ -47,12 +46,10 @@ export default function S22LogList({ navigation }) {
   useEffect(() => {
     loadLogs();
 
-    // 기록을 새로 쓰고 돌아왔을 때 다시 받아온다
     const unsubscribe = navigation.addListener('focus', loadLogs);
     return unsubscribe;
   }, [navigation]);
 
-  // 지금까지 불러온 페이지를 다시 받아 서버와 목록을 맞춘다
   const reload = () => {
     const requests = [];
 
@@ -74,7 +71,6 @@ export default function S22LogList({ navigation }) {
   const removeLog = (logId) => {
     const before = logs;
 
-    // 먼저 화면에서 지우고, 서버 응답은 뒤에서 맞춘다
     setLogs(logs.filter((log) => log.log_id !== logId));
 
     deleteLog(logId)
@@ -86,7 +82,6 @@ export default function S22LogList({ navigation }) {
   };
 
 
-  // PLUS Log 는 하루에 하나만 쓸 수 있다
   const wroteToday = logs.length > 0 &&
     getDateDifference(new Date(logs[0].created_at), new Date()) === 0;
 
