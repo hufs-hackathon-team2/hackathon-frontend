@@ -11,6 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function S13Complete({ route, navigation }) {
   const { character } = route.params || {};
 
+  const isCat = 
+    character?.type === 'cat';
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -35,10 +38,11 @@ export default function S13Complete({ route, navigation }) {
                 source={character.image}
 
                 style={[styles.characterImage,
+                  isCat&& 
                   {transform: [
                     {scale: 1.05},
-                    {translateX: 12}
-                  ]}
+                    {translateX: 12},
+                  ],}
                 ]}
                 resizeMode="contain"
               />
