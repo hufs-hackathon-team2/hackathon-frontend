@@ -11,7 +11,6 @@ import S31CycleAnalysis from '../screens/cycle/S31CycleAnalysis';
 import S32CycleHistory from '../screens/cycle/S32CycleHistory';
 import S50QuestList from '../screens/quest/S50QuestList';
 import S51QuestCreate from '../screens/quest/S51QuestCreate';
-import S52QuestProgress from '../screens/quest/S52QuestProgress';
 import S70Settings from '../screens/settings/S70Settings';
 
 const LogStackNav = createNativeStackNavigator();
@@ -19,11 +18,8 @@ function LogStack() {
   return (
     <LogStackNav.Navigator screenOptions={{ headerShown: false }}>
       <LogStackNav.Screen name="LogList" component={S22LogList} />
-      <LogStackNav.Screen
-        name="LogNew"
-        component={S21LogNew}
-        options={{ headerShown: true, title: '기록 입력' }}
-      />
+      <LogStackNav.Screen name="LogNew" component={S21LogNew} />
+
     </LogStackNav.Navigator>
   );
 }
@@ -33,16 +29,8 @@ function QuestStack() {
   return (
     <QuestStackNav.Navigator screenOptions={{ headerShown: false }}>
       <QuestStackNav.Screen name="QuestList" component={S50QuestList} />
-      <QuestStackNav.Screen
-        name="QuestCreate"
-        component={S51QuestCreate}
-        options={{ headerShown: true, title: '직접 만들기' }}
-      />
-      <QuestStackNav.Screen
-        name="QuestProgress"
-        component={S52QuestProgress}
-        options={{ headerShown: true, title: '진행 상황' }}
-      />
+      <QuestStackNav.Screen name="QuestCreate" component={S51QuestCreate} />
+
     </QuestStackNav.Navigator>
   );
 }
@@ -57,11 +45,7 @@ function CycleStack() {
         component={S31CycleAnalysis}
         options={{ headerShown: true, title: '분석 결과' }}
       />
-      <CycleStackNav.Screen
-        name="CycleHistory"
-        component={S32CycleHistory}
-        options={{ headerShown: true, title: '히스토리' }}
-      />
+      <CycleStackNav.Screen name="CycleHistory" component={S32CycleHistory} />
     </CycleStackNav.Navigator>
   );
 }
