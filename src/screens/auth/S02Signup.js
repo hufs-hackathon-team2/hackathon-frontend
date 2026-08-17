@@ -13,6 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { signup, MOCK_USER } from '../../lib/api/mock/auth';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -30,13 +31,12 @@ export default function S02Signup({ navigation }) {
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
-
-  const [focusedInput, setFocusedInput] = useState(null);
-
   const [isRequiredAgreed, setIsRequiredAgreed] = useState(false);
   const [isOptionalAgreed, setIsOptionalAgreed] = useState(false);
 
-  const existingEmails = ['test@example.com', 'user@test.com', 'admin@helply.com'];
+
+
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const validateEmail = (value) => {
     const trimmed = value.trim();
@@ -51,7 +51,8 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    if (existingEmails.includes(trimmed)) {
+    const isExist = MOCK_USER.some((user) => user.username === trimmed);
+    if (isExist) {
       setEmailError('이미 가입된 이메일이에요');
       return false;
     }
@@ -109,7 +110,7 @@ export default function S02Signup({ navigation }) {
     if (confirmPasswordError) validateConfirmPassword(text, password);
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail || !password || !confirmPassword) {
@@ -119,7 +120,10 @@ export default function S02Signup({ navigation }) {
 
     const isEmailValid = validateEmail(trimmedEmail);
     const isPasswordValid = validatePassword(password);
-    const isConfirmPasswordValid = validateConfirmPassword(confirmPassword, password);
+    const isConfirmPasswordValid = validateConfirmPassword(
+      confirmPassword,
+      password
+    );
 
     if (!isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
       return;
@@ -130,12 +134,18 @@ export default function S02Signup({ navigation }) {
       return;
     }
 
-    Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
-      {
-        text: '확인',
-        onPress: () => navigation.navigate('Interests'),
-      },
-    ]);
+    try {
+      await signup(trimmedEmail, password);
+
+      Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
+        {
+          text: '확인',
+          onPress: () => navigation.navigate('Interests'),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
+    }
   };
 
   return (
@@ -146,13 +156,13 @@ export default function S02Signup({ navigation }) {
           style={styles.inner}
         >
           <ScreenHeader navigation={navigation} />
+
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
             <Text style={styles.title}>계정 만들기</Text>
             <Text style={styles.subtitle}>헬플리와 함께 시작해 보세요</Text>
-
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
@@ -163,8 +173,6 @@ export default function S02Signup({ navigation }) {
                   emailError ? styles.inputError : null,
                 ]}
                 value={email}
-                placeholder="you@example.com"
-                placeholderTextColor="#757575"
                 onChangeText={handleEmailChange}
                 onFocus={() => setFocusedInput('email')}
                 onBlur={() => {
@@ -179,7 +187,6 @@ export default function S02Signup({ navigation }) {
               ) : null}
             </View>
 
-
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
@@ -189,20 +196,22 @@ export default function S02Signup({ navigation }) {
                   passwordError ? styles.inputError : null,
                 ]}
                 value={password}
-                placeholder="비밀번호"
-                placeholderTextColor="#A0AEC0"
                 onChangeText={handlePasswordChange}
                 onFocus={() => setFocusedInput('password')}
                 onBlur={() => {
                   setFocusedInput(null);
                   validatePassword(password);
                 }}
+                placeholder="비밀번호"
+                placeholderTextColor="#A0AEC0"
                 secureTextEntry
               />
               {passwordError ? (
                 <Text style={styles.errorText}>{passwordError}</Text>
               ) : (
-                <Text style={styles.guideText}>8자 이상, 영문과 숫자 포함</Text>
+                <Text style={styles.guideText}>
+                  8자 이상, 영문과 숫자 포함
+                </Text>
               )}
             </View>
 
@@ -215,14 +224,14 @@ export default function S02Signup({ navigation }) {
                   confirmPasswordError ? styles.inputError : null,
                 ]}
                 value={confirmPassword}
-                placeholder="비밀번호 확인"
-                placeholderTextColor="#A0AEC0"
                 onChangeText={handleConfirmPasswordChange}
                 onFocus={() => setFocusedInput('confirmPassword')}
                 onBlur={() => {
                   setFocusedInput(null);
                   validateConfirmPassword(confirmPassword, password);
                 }}
+                placeholder="비밀번호 확인"
+                placeholderTextColor="#A0AEC0"
                 secureTextEntry
               />
               {confirmPasswordError ? (
@@ -270,7 +279,6 @@ export default function S02Signup({ navigation }) {
               </TouchableOpacity>
             </View>
 
-
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleSignup}
@@ -288,58 +296,56 @@ export default function S02Signup({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E3ECFF', 
+    backgroundColor: '#E3ECFF',
   },
   inner: {
     flex: 1,
   },
   header: {
-    height: 48,
+    height: 52,
     justifyContent: 'center',
     paddingHorizontal: 20,
-    marginTop: 8,
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingBottom: 40,
   },
   title: {
     fontSize: 26,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#1B1A18',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
     color: '#1B1A18',
-    marginBottom: 28,
+    marginBottom: 32,
   },
   inputGroup: {
     marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#1B1A18',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#CFCCC9',
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
     height: 52,
     paddingHorizontal: 16,
     fontSize: 15,
     color: '#1B1A18',
   },
   inputFocused: {
-    borderWidth: 1.5,
     borderColor: '#8BA1C5',
+    borderWidth: 2,
   },
   inputError: {
-    borderWidth: 1.5,
     borderColor: '#E53E3E',
   },
   guideText: {
@@ -354,24 +360,24 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   termsContainer: {
-    marginTop: 12,
+    marginTop: 10,
     marginBottom: 28,
-    gap: 12,
+    gap: 10,
   },
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   checkbox: {
-    width: 22,
-    height: 22,
-    borderWidth: 1,
+    width: 20,
+    height: 20,
+    borderWidth: 1.5,
     borderColor: '#868079',
     borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFFFF',
   },
   checkboxChecked: {
     backgroundColor: '#3E629F',
@@ -379,21 +385,19 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     color: '#E3ECFF',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   termsText: {
-    fontSize: 14,
+    fontSize: 13.5,
     color: '#1B1A18',
-    flex: 1,
   },
   submitButton: {
     backgroundColor: '#3E629F',
-    borderRadius: 12,
+    borderRadius: 14,
     height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
     marginTop: 8,
   },
   submitButtonText: {
