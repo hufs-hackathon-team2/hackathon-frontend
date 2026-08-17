@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,95 +9,60 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Animated,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
-export default function QuestCustomCreateScreen({ navigation }) {
-  const [questTitle, setQuestTitle] = useState('');
-  const [toastMessage, setToastMessage] = useState('');
-  const [keyboardHeight, setKeyboardHeight] = useState(0); 
+export default function S21LogNew({ navigation }) {
+  const [logContent, setLogContent] = useState('');
+  const maxLength = 200;
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  const maxLength = 30;
-  // 기존에 존재하는 퀘스트 목록 예시 (중복 시 에러 토스트)
-  const existingQuests = ['하루 물 2L 마시기', '10분 산책하기', '영양제 챙겨먹기'];
-
-
-  useEffect(() => {
-    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
-
-    const showSub = Keyboard.addListener(showEvent, (e) => {
-      setKeyboardHeight(e.endCoordinates.height); 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
     });
-    const hideSub = Keyboard.addListener(hideEvent, () => {
-      setKeyboardHeight(0); 
-    });
+  }, [navigation]);
 
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
+  // 위험 키워드 예시
+  const DANGER_KEYWORDS = ['폭식', '자해', '구토'];
 
-
-  const showCustomToast = (msg) => {
-    setToastMessage(msg);
-
-    Animated.sequence([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-      Animated.delay(2000),
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const isValid = questTitle.trim().length > 0;
-
-  const handleStart = () => {
-    if (!isValid) return;
-
-    const trimmedTitle = questTitle.trim();
-
-    if (existingQuests.includes(trimmedTitle)) {
-      showCustomToast('이미 등록된 퀘스트입니다.');
+  const handleSave = () => {
+    if (!logContent.trim()) {
+      Alert.alert('알림', '기록 내용을 입력해 주세요.');
       return;
     }
 
-    navigation.popTo('QuestList', {
-      newQuest: { id: Date.now(), title: trimmedTitle },
-    });
+    const hasDangerKeyword = DANGER_KEYWORDS.some((keyword) =>
+      logContent.includes(keyword)
+    );
+
+    if (hasDangerKeyword) {
+      Alert.alert(
+        '저장 불가',
+        '위험 키워드가 포함된 경우 저장되지 않습니다.'
+      );
+      return;
+    }
+
+    Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
+      {
+        text: '확인',
+        onPress: () => navigation.goBack(),
+      },
+    ]);
   };
 
   return (
-    <>
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.inner}
         >
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>퀘스트 직접 만들기</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
-          <View style={styles.divider} />
+
+          <ScreenHeader navigation={navigation} />
+
           <View style={styles.content}>
             <Text style={styles.title}>직접 만들기</Text>
             <Text style={styles.subtitle}>
@@ -105,178 +70,89 @@ export default function QuestCustomCreateScreen({ navigation }) {
             </Text>
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>무엇을 이루고 싶나요?</Text>
-
               <TextInput
                 style={styles.textArea}
-                value={questTitle}
-                onChangeText={setQuestTitle}
-                placeholder=""
-                placeholderTextColor="#A0AEC0"
+                value={logContent}
+                onChangeText={setLogContent}
+                placeholder="예) 저녁 8시 이후 야식 안 먹기"
+                placeholderTextColor="#757575"
                 multiline={true}
-                numberOfLines={3}
                 maxLength={maxLength}
                 textAlignVertical="top"
               />
-
-              <Text style={styles.charCount}>
-                {questTitle.length}/{maxLength}
-              </Text>
             </View>
 
+
             <TouchableOpacity
-              style={[
-                styles.startButton,
-                !isValid && styles.startButtonDisabled,
-              ]}
-              onPress={handleStart}
-              disabled={!isValid}
+              style={styles.saveButton}
+              onPress={handleSave}
               activeOpacity={0.8}
             >
-
-              <Text
-                style={[
-                  styles.startButtonText,
-                  !isValid && styles.startButtonTextDisabled,
-                ]}
-              >
-                시작하기
-              </Text>
+              <Text style={styles.saveButtonText}>시작하기</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-      </SafeAreaView>
-
-      <Animated.View
-        style={[
-          styles.toastContainer,
-          {
-            bottom: keyboardHeight > 0 ? keyboardHeight - 65 : 40,
-            opacity: fadeAnim,
-          },
-        ]}
-        pointerEvents="none"
-      >
-        <Text style={styles.toastText}>{toastMessage}</Text>
-      </Animated.View>
-    </> 
+    </SafeAreaView>
   );
-
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3ECFF',
   },
   inner: {
     flex: 1,
   },
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-  },
-  headerRightPlaceholder: {
-    width: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
-  },
   content: {
+    flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 80,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 8,
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#1B1A18',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
     fontSize: 14,
-    color: '#4A5568',
-    marginBottom: 24,
+    color: '#1B1A18',
+    textAlign: 'center',
+    marginBottom: 28,
   },
   inputContainer: {
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#1E232C',
-    marginBottom: 10,
+    width: '100%',
+    marginBottom: 32,
   },
   textArea: {
+    width: '100%',
+    height: 150,
+    backgroundColor: '#F0F5FF',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    fontSize: 15,
+    color: '#1B1A18',
+    textAlign: 'center',
     borderWidth: 1,
-    borderColor: '#DADADA',
-    borderRadius: 8,
-    height: 90,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 14,
-    color: '#1E232C',
+    borderColor: '#FDFDFF'
   },
-  charCount: {
-    fontSize: 13,
-    color: '#718096',
-    marginTop: 8,
-    marginBottom: 20,
-  },
-  startButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
+  saveButton: {
+    backgroundColor: '#3E629F',
+    borderRadius: 24,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 28,
+    paddingHorizontal: 48,
   },
-  startButtonDisabled: {
-    backgroundColor: '#C2C2C2',
-  },
-  startButtonText: {
+  saveButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-  },
-  startButtonTextDisabled: {
-    color: '#FFFFFF',
-  },
-
-  toastContainer: {
-    position: 'absolute',
-    left: 24,
-    right: 24,
-    backgroundColor: 'rgba(30, 35, 44, 0.95)',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-  },
-  toastText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '500',
   },
 });
