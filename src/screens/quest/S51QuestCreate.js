@@ -13,10 +13,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
+import { startQuest } from '../../lib/api/quests';
 
-export default function S21LogNew({ navigation }) {
-  const [logContent, setLogContent] = useState('');
-  const maxLength = 200;
+export default function S51QuestCreate({ navigation }) {
+  const [questTitle, setQuestTitle] = useState('');
+  const [starting, setStarting] = useState(false);
+  const maxLength = 30;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -24,33 +26,32 @@ export default function S21LogNew({ navigation }) {
     });
   }, [navigation]);
 
-  // 위험 키워드 예시
   const DANGER_KEYWORDS = ['폭식', '자해', '구토'];
 
-  const handleSave = () => {
-    if (!logContent.trim()) {
-      Alert.alert('알림', '기록 내용을 입력해 주세요.');
+  const handleStart = () => {
+    if (!questTitle.trim()) {
+      Alert.alert('알림', '퀘스트 내용을 입력해 주세요.');
       return;
     }
 
     const hasDangerKeyword = DANGER_KEYWORDS.some((keyword) =>
-      logContent.includes(keyword)
+      questTitle.includes(keyword)
     );
 
     if (hasDangerKeyword) {
       Alert.alert(
-        '저장 불가',
-        '위험 키워드가 포함된 경우 저장되지 않습니다.'
+        '시작 불가',
+        '위험 키워드가 포함된 경우 시작할 수 없습니다.'
       );
       return;
     }
 
-    Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
-      {
-        text: '확인',
-        onPress: () => navigation.goBack(),
-      },
-    ]);
+    setStarting(true);
+
+    startQuest(questTitle.trim())
+      .then(() => navigation.goBack())
+      .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'))
+      .finally(() => setStarting(false));
   };
 
   return (
@@ -72,23 +73,30 @@ export default function S21LogNew({ navigation }) {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.textArea}
-                value={logContent}
-                onChangeText={setLogContent}
+                value={questTitle}
+                onChangeText={setQuestTitle}
                 placeholder="예) 저녁 8시 이후 야식 안 먹기"
                 placeholderTextColor="#757575"
                 multiline={true}
                 maxLength={maxLength}
                 textAlignVertical="top"
               />
+
+              <Text style={styles.charCount} pointerEvents="none">
+                {questTitle.length}/{maxLength}
+              </Text>
             </View>
 
 
             <TouchableOpacity
               style={styles.saveButton}
-              onPress={handleSave}
+              onPress={handleStart}
+              disabled={starting}
               activeOpacity={0.8}
             >
-              <Text style={styles.saveButtonText}>시작하기</Text>
+              <Text style={styles.saveButtonText}>
+                {starting ? '시작 중...' : '시작하기'}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -135,12 +143,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F5FF',
     borderRadius: 20,
     paddingHorizontal: 20,
-    paddingVertical: 18,
+    paddingTop: 18,
+    paddingBottom: 36,
     fontSize: 15,
     color: '#1B1A18',
     textAlign: 'center',
     borderWidth: 1,
     borderColor: '#FDFDFF'
+  },
+  charCount: {
+    position: 'absolute',
+    right: 20,
+    bottom: 12,
+    fontSize: 13,
+    color: '#504D49',
   },
   saveButton: {
     backgroundColor: '#3E629F',

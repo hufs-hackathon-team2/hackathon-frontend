@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
+import { startQuest } from '../lib/api/quests';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -108,15 +109,9 @@ export default function S60Weekly({ navigation }) {
   };
 
   const handleSelectQuest = (quest) => {
-    navigation.navigate('QuestTab', {
-      screen: 'QuestList',
-      params: {
-        newQuest: {
-          id: quest.recommendation_id,
-          title: quest.quest_content,
-        },
-      },
-    });
+    startQuest(quest.quest_content)
+      .then(() => navigation.navigate('QuestTab', { screen: 'QuestList' }))
+      .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
   };
 
   if (loading) {
