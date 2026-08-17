@@ -24,7 +24,6 @@ export default function S04SignupComplete({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader navigation={navigation} />
 
       <View style={styles.content}>
         <Text style={styles.title}>가입이 완료되었습니다</Text>
