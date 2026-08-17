@@ -2,6 +2,8 @@
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { COLORS, FONT } from '../lib/theme';
 
 import S20CharacterRoom from '../screens/home/S20CharacterRoom';
 import S21LogNew from '../screens/log/S21LogNew';
@@ -15,6 +17,16 @@ import S70Settings from '../screens/settings/S70Settings';
 import S71Notifications from '../screens/settings/S71Notifications';
 import S72ServiceInfo from '../screens/settings/S72ServiceInfo';
 import S73Withdraw from '../screens/settings/S73Withdraw';
+
+
+const ICONS = {
+  HomeTab: 'home',
+  LogTab: 'document-text',
+  QuestTab: 'flag',
+  CycleTab: 'calendar',
+  SettingsTab: 'settings',
+};
+
 
 const LogStackNav = createNativeStackNavigator();
 function LogStack() {
@@ -69,7 +81,33 @@ const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons
+            name={focused ? ICONS[route.name] : `${ICONS[route.name]}-outline`}
+            size={18}
+            color={color}
+          />
+        ),
+
+        tabBarActiveTintColor: COLORS.navigate,
+        tabBarInactiveTintColor: COLORS.textSub,
+
+        tabBarLabelStyle: {
+          fontFamily: FONT.regular,
+          fontSize: 11,
+        },
+
+        tabBarStyle: {
+          backgroundColor: COLORS.cardAlt,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.disabled,
+        },
+      })}
+    >
       <Tab.Screen name="HomeTab" component={S20CharacterRoom} options={{ title: '홈' }} />
       <Tab.Screen name="LogTab" component={LogStack} options={{ title: '기록' }} />
       <Tab.Screen name="QuestTab" component={QuestStack} options={{ title: '퀘스트' }} />
