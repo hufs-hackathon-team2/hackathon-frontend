@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: 15,
     color: COLORS.text,
+    borderColor: '#ffffff',
     // backgroundColor: '#F0F5FF',
     // borderWidth: 1,
     // borderColor: '#ffffff',
