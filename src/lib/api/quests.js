@@ -2,9 +2,11 @@
 import api, { USE_MOCK } from './client';
 import { MOCK_ACTIVE_QUESTS, MOCK_RECOMMENDATIONS } from './mock/quests';
 
+let mockQuests = MOCK_ACTIVE_QUESTS;
+
 // 진행 중인 퀘스트 하나 (서버는 배열로 준다)
 export async function getActiveQuest() {
-  if (USE_MOCK) return MOCK_ACTIVE_QUESTS[0] ?? null;
+  if (USE_MOCK) return mockQuests[0] ?? null;
 
   const res = await api.get('/quests/active');
   return res.data.active_quests[0] ?? null;
@@ -19,13 +21,18 @@ export async function getRecommendations() {
 
 export async function startQuest(content) {
   if (USE_MOCK) {
-    return {
+    const quest = {
       quest_id: Date.now(),
       quest_content: content,
       started_at: new Date().toISOString().slice(0, 10),
+      days_since_start: 1,
+      d_day: 6,
       count: 0,
       state: 'ACTIVE',
     };
+
+    mockQuests = [quest];
+    return quest;
   }
 
   const res = await api.post('/quests', { quest_content: content });
@@ -33,14 +40,24 @@ export async function startQuest(content) {
 }
 
 export async function checkQuest(questId) {
-  if (USE_MOCK) return { quest_id: questId, count: 1, state: 'ACTIVE', is_success: false, growth_points_awarded: 1 };
+  if (USE_MOCK) {
+    const quest = mockQuests[0];
+    const count = quest.count + 1;
+
+    mockQuests = [{ ...quest, count }];
+
+    return { quest_id: questId, count, state: 'ACTIVE', is_success: count >= 3, growth_points_awarded: 1 };
+  }
 
   const res = await api.post(`/quests/${questId}/check`);
   return res.data;
 }
 
 export async function abandonQuest(questId) {
-  if (USE_MOCK) return { quest_id: questId, state: 'ABANDONED', count: 0 };
+  if (USE_MOCK) {
+    mockQuests = [];
+    return { quest_id: questId, state: 'ABANDONED', count: 0 };
+  }
 
   const res = await api.post(`/quests/${questId}/abandon`);
   return res.data;
