@@ -1,67 +1,60 @@
 // CY 06 사이클 히스토리 (P1)
-import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { useState, useEffect } from 'react';
+import { ActivityIndicator, ScrollView, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { getFullDate, getDateDifference } from "../../lib/date";
-import { COLORS, FONT, WEIGHT, SPACE, RADIUS } from '../../lib/theme';
-
-
-const MOCK_HISTORY = [
-  {
-    id: 3,
-    startDate: new Date('2026-07-06'),
-    endDate: new Date('2026-07-20'),
-    logDays: 11,
-    questDone: 4,
-    streak: 6,
-    restDays: 7,
-  },
-  {
-    id: 2,
-    startDate: new Date('2026-06-02'),
-    endDate: new Date('2026-06-16'),
-    logDays: 7,
-    questDone: 3,
-    streak: 4,
-    restDays: 7,
-  },
-  {
-    id: 1,
-    startDate: new Date('2026-04-13'),
-    endDate: new Date('2026-05-04'),
-    logDays: 14,
-    questDone: 5,
-    streak: 8,
-    restDays: 7,
-  },
-];
-
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { getCycleHistory } from '../../lib/api/cycles';
 
 
 export default function S32CycleHistory({ navigation }) {
+
+  const [cycles, setCycles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getCycleHistory()
+      .then(setCycles)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScreenHeader navigation={navigation} />
 
       <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.historyTitle}>Healthy Cycle 히스토리</Text>
+        <Text style={styles.historyTitle}>Healthy Cycle 히스토리</Text>
 
-      <Text style={styles.historySub}>지금까지 쌓아온 나의 건강 흐름이에요</Text>
+        <Text style={styles.historySub}>지금까지 쌓아온 나의 건강 흐름이에요</Text>
 
-
-      {MOCK_HISTORY.map((cycle) => (
-
-        <View key={cycle.id} style={styles.historyBox}>
-          <Text style={styles.historyNth}>{cycle.id}번째 사이클</Text>
-          <Text style={styles.historyPeriod}>
-            {getFullDate(cycle.startDate)} ~ {getFullDate(cycle.endDate)} · {getDateDifference(cycle.startDate, cycle.endDate)}일
-          </Text>
-          <Text style={styles.historySummary}>
-            PLUS Log {cycle.logDays}일 · 퀘스트 {cycle.questDone}회 · 최고 연속 {cycle.streak}일
-          </Text>
-        </View>
-
-      ))}
+        {error ? (
+          <Text style={styles.errorText}>히스토리를 불러오지 못했어요</Text>
+        ) : cycles.length === 0 ? (
+          <Text style={styles.errorText}>아직 완료한 사이클이 없어요</Text>
+        ) : (
+          cycles.map((cycle) => (
+            <View key={cycle.cycle_id} style={styles.historyBox}>
+              <Text style={styles.historyNth}>{cycle.cycle_count}번째 사이클</Text>
+              <Text style={styles.historyPeriod}>
+                {getFullDate(new Date(cycle.started_at))} ~ {getFullDate(new Date(cycle.closed_at))}
+              </Text>
+              <Text style={styles.historySummary}>
+                {getDateDifference(new Date(cycle.started_at), new Date(cycle.closed_at))}일 동안 이어갔어요
+              </Text>
+            </View>
+          ))
+        )}
 
       </ScrollView>
     </SafeAreaView>
@@ -116,6 +109,22 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: FONT.body,
     color: COLORS.textSub,
+  },
+
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
+  },
+
+  errorText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
+    textAlign: 'center',
+    paddingVertical: 40,
   },
 
   historySummary:{

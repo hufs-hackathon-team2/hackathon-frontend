@@ -63,6 +63,12 @@ export const MOCK_PREVIOUS_ANALYSIS = {
   completed_quests: ['물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭'],
 };
 
+// GET /cycle/history — 지난 사이클 목록
+export const MOCK_HISTORY = [
+  { cycle_id: 44, cycle_count: 2, started_at: '2026-06-02', closed_at: '2026-06-16' },
+  { cycle_id: 43, cycle_count: 1, started_at: '2026-04-13', closed_at: '2026-05-04' },
+];
+
 // 달력 점을 찍을 날짜 (요청해둔 필드. 오면 응답에 포함될 예정)
 export const MOCK_LOG_DATES = [
   '2026-08-13', '2026-08-14', '2026-08-16',

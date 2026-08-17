@@ -3,6 +3,7 @@ import api, { USE_MOCK } from './client';
 import {
   MOCK_ANALYSIS,
   MOCK_PREVIOUS_ANALYSIS,
+  MOCK_HISTORY,
   MOCK_LOG_DATES,
   MOCK_QUEST_DATES,
   MOCK_PREV_LOG_DATES,
@@ -50,4 +51,12 @@ export async function requestCurrentAnalysis() {
 
   const res = await api.post('/cycle/analysis/current');
   return withDates(res.data, [], []);
+}
+
+// 지난 사이클 목록 (S32)
+export async function getCycleHistory() {
+  if (USE_MOCK) return MOCK_HISTORY;
+
+  const res = await api.get('/cycle/history');
+  return res.data.cycles;
 }
