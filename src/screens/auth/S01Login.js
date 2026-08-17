@@ -11,65 +11,58 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
+import { login } from '../../lib/api/mock/login';
+import { saveToken } from '../../lib/api/token';
+
 export default function S01Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  const [emailError, setEmailError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
-
-  const validateEmail = (value) => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      setEmailError('');
-      return false;
-    }
-
+  const validateEmail = (emailText) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmed)) {
-      setEmailError('올바른 이메일 형식이 아닙니다.');
-      return false;
-    }
-
-    setEmailError('');
-    return true;
+    return emailRegex.test(emailText);
   };
 
-  const handleLogin = () => {
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+    if (email.trim() && !validateEmail(email.trim())) {
+      setErrorMessage('올바른 이메일 형식이 아닙니다.');
+    }
+  };
+
+
+  const handleLogin = async () => {
     setErrorMessage('');
 
-    const trimmedEmail = email.trim();
-
-
-    const isEmailValid = validateEmail(trimmedEmail);
-
-    if (!trimmedEmail || !password) {
+    if (!email.trim() || !password.trim()) {
       setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    if (!isEmailValid) {
+    if (!validateEmail(email.trim())) {
+      setErrorMessage('올바른 이메일 형식이 아닙니다.');
       return;
     }
 
-    const MOCK_USER = {
-      email: 'test@example.com',
-      password: 'password123',
-    };
+    try {
 
-    if (trimmedEmail !== MOCK_USER.email || password !== MOCK_USER.password) {
-      setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
-      return;
+      const data = await login(email, password);
+
+      await saveToken(data.accessToken, data.refreshToken);
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }],
+      });
+    } catch (error) {
+      setErrorMessage(error.message || '로그인에 실패했습니다.');
     }
-
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Main' }],
-    });
   };
 
   return (
@@ -84,37 +77,27 @@ export default function S01Login({ navigation }) {
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
 
-
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
                 style={[
                   styles.input,
                   isEmailFocused && styles.inputFocused,
-                  (emailError || errorMessage) && styles.inputError,
+                  errorMessage ? styles.inputError : null,
                 ]}
                 value={email}
                 placeholder="you@example.com"
                 placeholderTextColor="#757575"
                 onFocus={() => setIsEmailFocused(true)}
-                onBlur={() => {
-                  setIsEmailFocused(false);
-                  validateEmail(email); // 입력 마치고 나가면 즉시 꼽주기
-                }}
+                onBlur={handleEmailBlur}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (emailError) validateEmail(text);
                   if (errorMessage) setErrorMessage('');
                 }}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
-
-              {emailError ? (
-                <Text style={styles.fieldErrorText}>{emailError}</Text>
-              ) : null}
             </View>
-
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
@@ -136,7 +119,6 @@ export default function S01Login({ navigation }) {
                 secureTextEntry
               />
             </View>
-
 
             {errorMessage ? (
               <View style={styles.errorBanner}>
@@ -183,7 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E3ECFF',
   },
   scrollContent: {
-    paddingTop: 60,
+    paddingTop: 60, 
     paddingBottom: 40,
   },
   content: {
@@ -207,8 +189,8 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1.5,
-    borderColor: '#C6D2E7',
+    borderWidth: 1,
+    borderColor: '#CFCCC9',
     borderRadius: 12,
     height: 52,
     paddingHorizontal: 16,
@@ -216,18 +198,12 @@ const styles = StyleSheet.create({
     color: '#1B1A18',
   },
   inputFocused: {
-    borderWidth: 1.8,
-    borderColor: '#5167A4',
+    borderWidth: 1.5,
+    borderColor: '#8ba1c5',
   },
   inputError: {
     borderWidth: 1.5,
     borderColor: '#E53E3E',
-  },
-  fieldErrorText: {
-    fontSize: 12,
-    color: '#E53E3E',
-    marginTop: 6,
-    fontWeight: '500',
   },
   errorBanner: {
     backgroundColor: '#FFF5F5',
