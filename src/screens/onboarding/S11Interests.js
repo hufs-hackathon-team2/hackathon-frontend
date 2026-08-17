@@ -27,7 +27,6 @@ export default function S11Interests({ navigation }) {
 
   const handleNext = () => {
     if (!interestText.trim()) {
-      Alert.alert('알림', '바꾸고 싶은 습관을 입력해 주세요!');
       return;
     }
 
@@ -41,7 +40,6 @@ export default function S11Interests({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.inner}
         >
-          <ScreenHeader navigation={navigation} />
 
           <View style={styles.content}>
             <Text style={styles.title}>어떤 습관을 바꾸고 싶으신가요?</Text>
