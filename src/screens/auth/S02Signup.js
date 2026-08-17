@@ -13,8 +13,8 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '../../components/common/ScreenHeader';
 import { signup, MOCK_USER } from '../../lib/api/mock/auth';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
   useLayoutEffect(() => {
@@ -33,6 +33,9 @@ export default function S02Signup({ navigation }) {
 
   const [isRequiredAgreed, setIsRequiredAgreed] = useState(false);
   const [isOptionalAgreed, setIsOptionalAgreed] = useState(false);
+
+
+
   const [focusedInput, setFocusedInput] = useState(null);
 
   const validateEmail = (value) => {
@@ -161,7 +164,6 @@ export default function S02Signup({ navigation }) {
             <Text style={styles.title}>계정 만들기</Text>
             <Text style={styles.subtitle}>헬플리와 함께 시작해 보세요</Text>
 
-=
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
@@ -185,7 +187,6 @@ export default function S02Signup({ navigation }) {
               ) : null}
             </View>
 
-=
             <View style={styles.inputGroup}>
               <Text style={styles.label}>비밀번호</Text>
               <TextInput
