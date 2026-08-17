@@ -3,6 +3,7 @@
 export const COLORS = {
   // 배경
   bg: '#E3ECFF',
+  todayBg: '#E8F3EC',
 
   //카드
   card: '#E1ECE7',//연초록
@@ -30,6 +31,19 @@ export const COLORS = {
   // 삭제
   danger: '#F6D8D5',
   dangerText: '#2A0C09',
+
+  //점
+  dotLog: '#66C78C',    // 초록 — PLUS Log
+  dotQuest: '#FABF4D',  // 노랑 — 퀘스트 성공
+  dotBoth: '#3E629F',   // 파랑 — 모두 성공
+
+  //키워드
+  chip1: '#DCE7FF',   // 파랑
+  chip2: '#DDEEE5',   // 초록
+  chip3: '#FFF1D6',   // 노랑
+  chip4: '#F3E4F7',   // 연보라
+  chip5: '#FFE3E0',   // 연분홍
+
 };
 
 export const FONT = {
@@ -37,7 +51,7 @@ export const FONT = {
   semibold: 'AstaSansSemiBold',
   bold: 'AstaSansBold',
 
-  title: 22,
+  title: 24,
   cardTitle: 18,
   body: 16,
   caption: 13,
@@ -59,3 +73,4 @@ export const RADIUS = {
   button: 8,
   input: 8,
 };
+
