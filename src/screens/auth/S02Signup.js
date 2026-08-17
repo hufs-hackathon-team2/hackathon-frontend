@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signup, MOCK_USER } from '../../lib/api/mock/auth';
+import { signupAPI } from '../../api/auth';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -135,7 +135,10 @@ export default function S02Signup({ navigation }) {
     }
 
     try {
-      await signup(trimmedEmail, password);
+      await signupAPI({
+        email: trimmedEmail,
+        password: password,
+      });
 
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {
