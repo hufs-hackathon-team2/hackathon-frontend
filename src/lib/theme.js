@@ -42,6 +42,7 @@ export const COLORS = {
   chip2: '#DDEEE5',   // 초록
   chip3: '#FFF1D6',   // 노랑
   chip4: '#F3E4F7',   // 연보라
+  lavender: '#DFE2F7',
   chip5: '#FFE3E0',   // 연분홍
 
 };
@@ -71,7 +72,7 @@ export const SPACE = {
 
 export const RADIUS = {
   card: 20,
-  button: 8,
+  button: 15,
   input: 8,
 };
 
