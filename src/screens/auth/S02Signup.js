@@ -140,7 +140,7 @@ export default function S02Signup({ navigation }) {
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {
           text: '확인',
-          onPress: () => navigation.navigate('Interests'),
+          onPress: () => navigation.navigate('SignupComplete'),
         },
       ]);
     } catch (error) {
