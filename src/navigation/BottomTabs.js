@@ -45,11 +45,7 @@ function CycleStack() {
         component={S31CycleAnalysis}
         options={{ headerShown: true, title: '분석 결과' }}
       />
-      <CycleStackNav.Screen
-        name="CycleHistory"
-        component={S32CycleHistory}
-        options={{ headerShown: true, title: '히스토리' }}
-      />
+      <CycleStackNav.Screen name="CycleHistory" component={S32CycleHistory} />
     </CycleStackNav.Navigator>
   );
 }
