@@ -1,6 +1,6 @@
 // ST 01 설정 조회 · ST 02 알림 설정 · AU 04 로그아웃 · AU 06 회원 탈퇴
 import api, { USE_MOCK } from './client';
-import { MOCK_SETTINGS } from './mock/settings';
+import { MOCK_SETTINGS, MOCK_PASSWORD } from './mock/settings';
 import { getRefreshToken, clearToken } from './token';
 
 // 목데이터일 때 쓰는 가짜 저장소. 앱을 새로고침하면 처음 상태로 돌아간다.
@@ -34,7 +34,9 @@ export async function logout() {
 }
 
 export async function withdraw(password) {
-  if (!USE_MOCK) {
+  if (USE_MOCK) {
+    if (password !== MOCK_PASSWORD) throw new Error('비밀번호가 일치하지 않습니다');
+  } else {
     await api.delete('/users/me', { data: { password } });
   }
 

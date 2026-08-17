@@ -1,3 +1,6 @@
+// 목데이터에서 탈퇴 화면을 시험해보기 위한 비밀번호
+export const MOCK_PASSWORD = 'helply1234';
+
 // GET /settings
 export const MOCK_SETTINGS = {
   nickname: '한서연',

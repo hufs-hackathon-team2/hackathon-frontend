@@ -28,19 +28,32 @@ const DELETED_ITEMS = [
 export default function S73Withdraw({ navigation }) {
   const [password, setPassword] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const isValid = password.trim().length > 0;
 
+  const handleChange = (text) => {
+    setPassword(text);
+    setErrorMessage('');
+  };
+
+  // 쌓여 있던 화면을 모두 버리고 로그인만 남긴다
+  const goToLogin = () => {
+    const root = navigation.getParent()?.getParent() ?? navigation;
+    root.reset({ index: 0, routes: [{ name: 'Login' }] });
+  };
+
   const removeAccount = () => {
     setDeleting(true);
+    setErrorMessage('');
 
     withdraw(password)
       .then(() => {
         Alert.alert('탈퇴가 완료되었습니다', '이용해 주셔서 감사합니다. 모든 데이터가 삭제되었어요.', [
-          { text: '확인', onPress: () => navigation.navigate('Login') },
+          { text: '확인', onPress: goToLogin },
         ]);
       })
-      .catch(() => Alert.alert('탈퇴하지 못했어요', '비밀번호를 다시 확인해주세요'))
+      .catch(() => setErrorMessage('비밀번호가 일치하지 않아요'))
       .finally(() => setDeleting(false));
   };
 
@@ -66,13 +79,17 @@ export default function S73Withdraw({ navigation }) {
             <Text style={styles.description}>계정을 삭제하려면 현재 비밀번호를 입력해주세요.</Text>
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, errorMessage !== '' && styles.inputError]}
               value={password}
-              onChangeText={setPassword}
+              onChangeText={handleChange}
               placeholder="비밀번호"
               placeholderTextColor={COLORS.textSub}
               secureTextEntry={true}
             />
+
+            {errorMessage !== '' && (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            )}
 
             <View style={styles.warningCard}>
               <Text style={styles.warningTitle}>탈퇴 시 다음 데이터가 삭제됩니다</Text>
@@ -142,6 +159,18 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: FONT.subbody,
     color: COLORS.text,
+    marginBottom: 20,
+  },
+
+  inputError: {
+    borderColor: COLORS.dangerStrong,
+    marginBottom: 6,
+  },
+
+  errorText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.dangerStrong,
     marginBottom: 20,
   },
 

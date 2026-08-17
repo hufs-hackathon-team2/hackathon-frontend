@@ -26,6 +26,12 @@ export default function S70Settings({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
+  // 쌓여 있던 화면을 모두 버리고 로그인만 남긴다
+  const goToLogin = () => {
+    const root = navigation.getParent()?.getParent() ?? navigation;
+    root.reset({ index: 0, routes: [{ name: 'Login' }] });
+  };
+
   const handleLogout = () => {
     Alert.alert('로그아웃할까요?', '', [
       { text: '취소', style: 'cancel' },
@@ -33,7 +39,7 @@ export default function S70Settings({ navigation }) {
         text: '로그아웃',
         onPress: () => {
           logout()
-            .then(() => navigation.navigate('Login'))
+            .then(goToLogin)
             .catch(() => Alert.alert('로그아웃하지 못했어요', '잠시 후 다시 시도해주세요'));
         },
       },
