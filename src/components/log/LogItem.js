@@ -1,31 +1,35 @@
 import { Alert, StyleSheet, Text, View,Pressable } from 'react-native';
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 
 const styles = StyleSheet.create({
   logItem: {
-    padding: 10,
-    marginVertical: 10,
+    padding: 5,
+    marginVertical: 5,
   },
   date:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontFamily: FONT.bold,
+    fontSize: FONT.cardTitle,
+    color: COLORS.navigate,
   },
   content:{
     marginBottom: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 10,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.cardWhite,
+    padding: 20,
   },
   contentText:{
-    fontSize: 16,
-    marginBottom: 5,
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.text,
   },
   time:{
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'right',
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    marginBottom: 6,
   },
   dateRow: {
     flexDirection: 'row',
@@ -34,7 +38,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   trash: {
+    fontFamily: FONT.semibold,
     fontSize: 16,
+    color: COLORS.textSub,
     opacity: 0.4,
   },
 
@@ -49,15 +55,15 @@ export default function LogItem({ date, time, content, onDelete }) {
         <Text style={styles.date}>{date}</Text>
 
         <Pressable onPress={onDelete} hitSlop={10}>
-          <Text style={styles.trash}>🗑️</Text>
+          <Text style={styles.trash}>X</Text>
         </Pressable>
 
       </View>
 
       <View style={styles.content}>
 
-        <Text style={styles.contentText}>{content}</Text>
         <Text style={styles.time}>{time}</Text>
+        <Text style={styles.contentText}>{content}</Text>
 
       </View>
     </View>
