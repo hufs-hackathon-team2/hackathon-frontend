@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS } from '../../lib/theme';
+import { COLORS, FONT } from '../../lib/theme';
 
 // 뒤로가기만 있는 헤더. 화면 제목은 각 화면 안에서 그린다.
 export default function ScreenHeader({ navigation, showBack = true }) {
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   back: {
+    fontFamily: FONT.bold,
     fontSize: 20,
-    fontWeight: 'bold',
     color: COLORS.text,
   },
 });

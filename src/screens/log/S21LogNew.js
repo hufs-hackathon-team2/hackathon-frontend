@@ -14,9 +14,12 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
+import { createLog } from '../../lib/api/logs';
+import { COLORS, FONT } from '../../lib/theme';
 
 export default function S21LogNew({ navigation }) {
   const [logContent, setLogContent] = useState('');
+  const [saving, setSaving] = useState(false);
   const maxLength = 200;
 
   useLayoutEffect(() => {
@@ -46,12 +49,19 @@ export default function S21LogNew({ navigation }) {
       return;
     }
 
-    Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
-      {
-        text: '확인',
-        onPress: () => navigation.goBack(),
-      },
-    ]);
+    setSaving(true);
+
+    createLog(logContent.trim())
+      .then(() => {
+        Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
+          {
+            text: '확인',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      })
+      .catch(() => Alert.alert('저장하지 못했어요', '잠시 후 다시 시도해주세요'))
+      .finally(() => setSaving(false));
   };
 
   return (
@@ -83,6 +93,9 @@ export default function S21LogNew({ navigation }) {
                 textAlignVertical="top"
               />
 
+              <Text style={styles.charCount} pointerEvents="none">
+                {logContent.length}/{maxLength}
+              </Text>
             </View>
 
             <Text style={styles.noticeText}>
@@ -90,8 +103,15 @@ export default function S21LogNew({ navigation }) {
             </Text>
 
 
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave} activeOpacity={0.8}>
-              <Text style={styles.saveButtonText}>저장하기</Text>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleSave}
+              disabled={saving}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.saveButtonText}>
+                {saving ? '저장 중...' : '저장하기'}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -116,15 +136,16 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
   title: {
+    fontFamily: FONT.bold,
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1B1A18',
+    color: COLORS.text,
     marginBottom: 12,
     textAlign: 'center',
   },
   subtitle: {
+    fontFamily: FONT.regular,
     fontSize: 14,
-    color: '#1B1A18',
+    color: COLORS.text,
     lineHeight: 20,
     marginBottom: 32,
     textAlign: 'center',
@@ -138,14 +159,26 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     height: 160,
     paddingHorizontal: 20,
-    paddingVertical: 18,
+    paddingTop: 18,
+    paddingBottom: 36,
+    fontFamily: FONT.regular,
     fontSize: 15,
-    color: '#1B1A18',
+    color: COLORS.text,
+  },
+
+  charCount: {
+    position: 'absolute',
+    right: 20,
+    bottom: 12,
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
 
   noticeText: {
+    fontFamily: FONT.regular,
     fontSize: 13,
-    color: '#504D49',
+    color: COLORS.textSub,
     marginBottom: 28,
     textAlign: 'center',
   },
@@ -158,8 +191,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: {
-    color: '#FFFFFF',
+    fontFamily: FONT.semibold,
     fontSize: 15,
-    fontWeight: '600',
+    color: COLORS.navigateText,
   },
 });
