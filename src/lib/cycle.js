@@ -73,8 +73,18 @@ export function getActivityDots(logDates, questDates, colors) {
     marks[date] = { marked: true, dotColor: dotColor };
   });
 
+  // 오늘은 동그란 배경으로 강조 (점이 있으면 점도 그대로 유지)
+  const today = getDateFormat(new Date());
+  marks[today] = {
+    ...marks[today],
+    selected: true,
+    selectedColor: colors.today,
+    selectedTextColor: colors.todayText,
+  };
+
   return marks;
 }
+
 
 export function mergeMarks(...list) {
   const result = {};

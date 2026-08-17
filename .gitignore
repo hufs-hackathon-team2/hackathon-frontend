@@ -56,3 +56,6 @@ AGENTS.md
 .windsurfrules
 .github/copilot-instructions.md
 .aider*
+
+docs/*.csv
+docs/*.pdf

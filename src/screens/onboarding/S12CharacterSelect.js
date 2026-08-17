@@ -1,41 +1,35 @@
 import React, { useState } from 'react';
-
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
-  Image
+  Image,
 } from 'react-native';
-
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 const CHARACTER_DATA = {
   cat: {
     id: 'cat',
     name: '고양이',
-    image: require('../../../assets/cat.png'), 
+    image: require('../../../assets/character/cat-1.png'),
   },
   dog: {
     id: 'dog',
     name: '강아지',
-    image: require('../../../assets/dog.png'), 
+    image: require('../../../assets/character/dog-1.png'),
   },
 };
 
 export default function S12CharacterSelect({ navigation }) {
-
   const [selectedCharacter, setSelectedCharacter] = useState('cat');
 
-
   const handleComplete = () => {
-
     const selectedCharacterObj = CHARACTER_DATA[selectedCharacter];
 
     navigation.reset({
@@ -44,13 +38,12 @@ export default function S12CharacterSelect({ navigation }) {
         {
           name: 'OnboardingComplete',
           params: {
-            character: selectedCharacterObj 
+            character: selectedCharacterObj,
           },
         },
       ],
     });
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,19 +53,8 @@ export default function S12CharacterSelect({ navigation }) {
           style={styles.inner}
         >
 
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>캐릭터 선택</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
+          <ScreenHeader navigation={navigation} />
 
-
-          <View style={styles.divider} />
 
           <View style={styles.content}>
             <Text style={styles.title}>함께할 친구를 골라주세요</Text>
@@ -82,19 +64,31 @@ export default function S12CharacterSelect({ navigation }) {
 
 
             <View style={styles.cardGroup}>
+
               <TouchableOpacity
                 style={[
                   styles.card,
                   selectedCharacter === 'cat' && styles.selectedCard,
                 ]}
-
                 onPress={() => setSelectedCharacter('cat')}
                 activeOpacity={0.8}
               >
-                <View style={styles.imagePlaceholder}>
+                <View style={[
+                  styles.imagePlaceholder,
+                  selectedCharacter === 'cat' && styles.selectedImagePlaceholder
+                ]}>
                   <Image
                     source={CHARACTER_DATA.cat.image}
-                    style={styles.cardImage}
+                    style={[
+                            styles.cardImage,
+                            { 
+                              transform: [
+                                { scale: 1.1 },  
+                                { translateX: 13 },   
+                                { translateY: -5},
+                              ] 
+                            }
+                          ]}
                     resizeMode="contain"
                   />
                 </View>
@@ -108,17 +102,19 @@ export default function S12CharacterSelect({ navigation }) {
                 </Text>
               </TouchableOpacity>
 
+
               <TouchableOpacity
                 style={[
                   styles.card,
                   selectedCharacter === 'dog' && styles.selectedCard,
                 ]}
-
                 onPress={() => setSelectedCharacter('dog')}
                 activeOpacity={0.8}
-
               >
-                <View style={styles.imagePlaceholder}>
+                <View style={[
+                  styles.imagePlaceholder,
+                  selectedCharacter === 'dog' && styles.selectedImagePlaceholder
+                ]}>
                   <Image
                     source={CHARACTER_DATA.dog.image}
                     style={styles.cardImage}
@@ -126,10 +122,7 @@ export default function S12CharacterSelect({ navigation }) {
                   />
                 </View>
                 <Text
-                  style={[
-                    styles.cardText,
-                    selectedCharacter === 'dog' && styles.selectedCardText,
-                  ]}
+                  style={styles.cardText}
                 >
                   강아지
                 </Text>
@@ -140,160 +133,102 @@ export default function S12CharacterSelect({ navigation }) {
             <TouchableOpacity
               style={styles.submitButton}
               onPress={handleComplete}
+              activeOpacity={0.8}
             >
-
-              <Text style={styles.submitButtonText}>
-                선택 완료
-              </Text>
+              <Text style={styles.submitButtonText}>다음</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
-
   );
-
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3ECFF', 
   },
   inner: {
     flex: 1,
   },
   header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    height: 52,
+    justifyContent: 'center',
     paddingHorizontal: 20,
   },
-
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-  },
-
-  headerRightPlaceholder: {
-    width: 20,
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
-  },
-
   content: {
+    flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 32,
+    justifyContent: 'center',
+    paddingBottom: 60,
   },
-
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1E232C',
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1B1A18',
+    textAlign: 'center',
     marginBottom: 8,
   },
-
   subtitle: {
     fontSize: 14,
-    color: '#4A5568',
-    marginBottom: 28,
+    color: '#1B1A18',
+    textAlign: 'center',
+    marginBottom: 32,
   },
-
   cardGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 16,
     marginBottom: 28,
   },
-
   card: {
     flex: 1,
-    backgroundColor: '#F8F9FA',
+    backgroundColor: '#F5F5F5',
     borderWidth: 1.5,
-    borderColor: '#E8ECF4',
-    borderRadius: 12,
+    borderColor: '#CFCCC9',
+    borderRadius: 16,
     padding: 12,
+    alignItems: 'center',
   },
-
   selectedCard: {
-    borderColor: '#1E232C',
-    backgroundColor: '#FFFFFF',
+    borderColor: '#3E629F',
+    backgroundColor: '#CCDDFF',
   },
-
   imagePlaceholder: {
-    width: '90%',
-    alignSelf: 'center',
+    width: '100%',
     aspectRatio: 1,
-    borderRadius: 8,
+    borderRadius: 12,
+    backgroundColor: '#FAFAFA',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 12,
     marginBottom: 12,
-    overflow: 'hidden',
   },
-
-  imagePlaceholderText: {
-    fontSize: 14,
-    color: '#A0AEC0',
+  selectedImagePlaceholder: {
+    backgroundColor: '#E6EEFF',
   },
-
   cardImage: {
     width: '100%',
-    height: '100%', 
+    height: '100%',
   },
-
-  selectedCardText: {
-    fontWeight: '700',
-    color: '#1E232C',
-  },
-
-  inputContainer: {
-    marginBottom: 28,
-  },
-
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1E232C',
-    marginBottom: 8,
-  },
-
-  input: {
-    backgroundColor: '#F8F9FA',
-    borderWidth: 1,
-    borderColor: '#E8ECF4',
-    borderRadius: 8,
-    height: 48,
-    paddingHorizontal: 14,
+  cardText: {
     fontSize: 15,
-    color: '#1E232C',
+    fontWeight: '500',
+    color: '#1B1A18',
+    textAlign: 'center',
   },
-
   submitButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
+    backgroundColor: '#3E629F',
+    borderRadius: 14,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 20,
+    width: '100%',
   },
-
   submitButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
 });
