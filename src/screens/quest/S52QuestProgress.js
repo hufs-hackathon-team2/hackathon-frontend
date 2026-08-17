@@ -1,5 +1,7 @@
 // QS 03 퀘스트 진행 및 완료 (3일 체크리스트, 하루 1회만 체크)
 import { ScrollView, Text, View, Pressable, StyleSheet, Image} from "react-native";
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { CAT_STAGES } from '../../lib/assets';
 
 export default function S52QuestProgress({ navigation, route }) {
 
@@ -8,7 +10,7 @@ export default function S52QuestProgress({ navigation, route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageBox}>
-          <Image source={require('../../../assets/questend.png')} style={styles.character} />
+          <Image source={CAT_STAGES[3]} style={styles.character} />
         </View>
 
         <View>
@@ -17,12 +19,12 @@ export default function S52QuestProgress({ navigation, route }) {
         </View>
 
         <View style={styles.successQuest}>
-          <Text style={styles.successQuestText}>완료한 작심삼일 퀘스트</Text>
+          <Text style={styles.successQuestText}>완료한 퀘스트</Text>
           <Text style={styles.successQuestName}>{title}</Text>
         </View>
 
         <View style={styles.successQuest}>
-          <Text style={styles.successQuestText}>캐릭터 성장 반영</Text>
+          <Text style={styles.sectionLabel}>캐릭터 성장 반영</Text>
 
           <View style={styles.bonusRow}>
 
@@ -32,7 +34,7 @@ export default function S52QuestProgress({ navigation, route }) {
 
             <View style={styles.bonusInfo}>
               <Text style={styles.bonusTitle}>성장 게이지 3칸</Text>
-              <Text style={styles.bonusDesc}>3일 완주 보너스가 더해졌어요</Text>
+              <Text style={styles.bonusDesc}>퀘스트 완료 보너스가 반영되었어요</Text>
             </View>
 
           </View>
@@ -50,102 +52,129 @@ export default function S52QuestProgress({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingHorizontal: SPACE.screen,
+    paddingVertical: SPACE.screen,
+    backgroundColor: COLORS.bg,
+    flexGrow: 1,
   },
 
   imageBox: {
-    height: 220,
-    borderWidth: 1,
-    borderColor: '#D9DDE3',
-    borderStyle: 'dashed',
-    borderRadius: 12,
-    backgroundColor: '#FAFBFC',
+    width: 180,
+    height: 180,
+    alignSelf: 'center',
+    borderRadius: 20,
+    backgroundColor: COLORS.lavender,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginTop: 20,
+    marginBottom: 20,
   },
 
   character: {
-    width: 160,
-    height: 160,
+    width: 120,
+    height: 120,
     resizeMode: 'contain',
   },
 
   questEndBoxText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: FONT.bold,
+    fontSize: FONT.title,
+    color: COLORS.text,
     textAlign: 'center',
     paddingVertical: 10,
   },
+
   questEndBoxDes: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
     textAlign: 'center',
-    fontSize: 16,
     paddingBottom: 20,
   },
-  
+
   successQuest: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 15,
-    marginVertical: 10,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    marginBottom: 10,
+    backgroundColor: COLORS.cardWhite,
   },
+
   successQuestText: {
-    fontSize: 16,
-    paddingBottom: 10,
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    textAlign: 'center',
+    paddingBottom: 6,
   },
+
   successQuestName: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.cardTitle,
+    color: COLORS.navigate,
+    textAlign: 'center',
+  },
+
+  sectionLabel: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    paddingBottom: 6,
   },
 
   bonusRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 4,
   },
 
   bonusBadge: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#E9F7EF',
+    width: 42,
+    height: 42,
+    borderRadius: 999,
+    backgroundColor: COLORS.lavender,
     borderWidth: 1.5,
-    borderColor: '#7EC89A',
+    borderColor: COLORS.navigate,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
   },
+
   bonusBadgeText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2E8159',
-    letterSpacing: -0.5,
+    fontFamily: FONT.bold,
+    fontSize: FONT.subbody,
+    color: COLORS.navigate,
   },
 
   bonusInfo: {
     flex: 1,
   },
+
   bonusTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.text,
     marginBottom: 3,
   },
+
   bonusDesc: {
-    fontSize: 13,
-    color: '#8A919B',
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
 
   confirmButton: {
-    backgroundColor: '#2B3245',
-    borderRadius: 10,
+    backgroundColor: COLORS.navigate,
+    borderRadius: RADIUS.button,
     paddingVertical: 15,
     marginTop: 20,
   },
+
   confirmButtonText: {
-    color: '#fff',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.body,
+    color: COLORS.navigateText,
     textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
   },
 })

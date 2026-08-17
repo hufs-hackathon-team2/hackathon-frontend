@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 export default function QuestRecommend({ title, onStart, disabled }) {
   return (
     <View style={styles.questRecommend}>
       <Text style={styles.title}>{title}</Text>
 
-      <Pressable 
-        style={[styles.startButton, disabled && styles.startButtonDisabled]} 
+      <Pressable
+        style={[styles.startButton, disabled && styles.startButtonDisabled]}
         onPress={onStart}
         disabled={disabled}>
         <Text style={[styles.startButtonText, disabled && styles.startButtonTextDisabled]}>시작</Text>
@@ -17,36 +18,39 @@ export default function QuestRecommend({ title, onStart, disabled }) {
 
 const styles = StyleSheet.create({
   questRecommend: {
-    marginBottom: 20,
+    marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardWhite,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
     flex: 1,
-    fontSize: 15,
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.text,
     marginRight: 10,
   },
   startButton: {
-    backgroundColor: '#2B3245',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: COLORS.primary,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
   },
   startButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.primaryText,
   },
 
   startButtonDisabled: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: COLORS.disabled,
   },
   startButtonTextDisabled: {
-    color: '#aaa',
+    color: COLORS.disabledText,
   },
 });

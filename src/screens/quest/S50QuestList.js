@@ -1,142 +1,190 @@
 // QS 01 AI 퀘스트 제안 (WK 01 에서 미리 생성해둔 5개, 실시간 AI 호출 없음)
 
-import { ScrollView, Text, View, Pressable, StyleSheet, Alert, Image} from "react-native";
+import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateDifference } from "../../lib/date";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import {
+  getActiveQuest,
+  getRecommendations,
+  startQuest,
+  checkQuest,
+  abandonQuest,
+} from '../../lib/api/quests';
 
 
 
-const MOCK_SUGGESTIONS = [
-  { id: 1, title: '아침에 일어나서 물 한 잔 마시기' },
-  { id: 2, title: '하루에 30분 산책하기' },
-  { id: 3, title: '자기 전 10분 스트레칭하기' },
-  { id: 4, title: '10시 이후 과도한 음식 섭취 금지' },
-  { id: 5, title: '헬스 1시간 하기' },
-];
-
-const MOCK_ACTIVE = {
-  id: 3,
-  title: '자기 전 10분 스트레칭하기',
-  doneDays: 2,
-  lastCheckedAt: null,
-};
-
-
-
-export default function S50QuestList({ navigation, route }) {
+export default function S50QuestList({ navigation }) {
 
   const insets = useSafeAreaInsets();
-  const [activeQuest, setactiveQuest] = useState(MOCK_ACTIVE);
-  const [suggestions] = useState(MOCK_SUGGESTIONS);
 
-  const handleStart = (quest) => {
-    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.title}>\n3일 동안 매일 체크해보세요`, [
-      { text: '취소', style: 'cancel' },
-      { text: '시작', onPress: () => setactiveQuest({ ...quest, doneDays: 0 }) },
-    ]);
-  };
-  const handleGiveUp = () => {
-    Alert.alert('퀘스트를 포기할까요?', '포기한 퀘스트는 다시 되돌릴 수 없어요', [
-      { text: '취소', style: 'cancel' },
-      { text: '포기', style: 'destructive', onPress: () => setactiveQuest(null) },
-    ]);
-  };
+  const [activeQuest, setactiveQuest] = useState(null);
+  const [recommend, setRecommend] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [checkedAt, setCheckedAt] = useState(null);
 
-  const checkedToday = activeQuest?.lastCheckedAt != null &&
-    getDateDifference(activeQuest.lastCheckedAt, new Date()) === 0;
-
-  
-  const handleCheckToday = () => {
-    const nextDays = activeQuest.doneDays + 1;
-
-    setactiveQuest({
-      ...activeQuest,
-      doneDays: nextDays,
-      lastCheckedAt: new Date(),
-    });
-
-    if (nextDays === 3) {
-      navigation.navigate('QuestProgress', { title: activeQuest.title });
-      setactiveQuest(null);
-    }
+  const load = () => {
+    Promise.all([getActiveQuest(), getRecommendations()])
+      .then(([quest, rec]) => {
+        setactiveQuest(quest);
+        setRecommend(rec);
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    const newQuest = route.params?.newQuest;
-    if (!newQuest) return;
+    load();
 
-    navigation.setParams({ newQuest: undefined});
+    // 다른 화면에서 퀘스트를 시작하고 돌아왔을 때 다시 받아온다
+    const unsubscribe = navigation.addListener('focus', load);
+    return unsubscribe;
+  }, [navigation]);
 
-    if (activeQuest) {
-      Alert.alert('이미 진행 중인 퀘스트가 있어요', '지금 퀘스트를 포기하면 새로 시작할 수 있어요')
-      
-      return;
-    }
-    setactiveQuest({...newQuest, doneDays:0, lastCheckedAt: null});
-  }, [route.params?.newQuest])
+  const handleStart = (quest) => {
+    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>
+7일 안에 3일만 체크하면 성공!`, [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '시작',
+        onPress: () => {
+          startQuest(quest.quest_content)
+            .then(load)
+            .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
+        },
+      },
+    ]);
+  };
+
+  const handleGiveUp = () => {
+    Alert.alert('퀘스트를 포기할까요?', '포기한 퀘스트는 다시 되돌릴 수 없어요', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '포기',
+        style: 'destructive',
+        onPress: () => {
+          abandonQuest(activeQuest.quest_id)
+            .then(load)
+            .catch(() => Alert.alert('포기하지 못했어요', '잠시 후 다시 시도해주세요'));
+        },
+      },
+    ]);
+  };
+
+  const checkedToday = checkedAt != null &&
+    getDateDifference(checkedAt, new Date()) === 0;
+
+  const handleCheckToday = () => {
+    checkQuest(activeQuest.quest_id)
+      .then((res) => {
+        setCheckedAt(new Date());
+
+        if (res.is_success) {
+          navigation.navigate('QuestProgress', { title: activeQuest.quest_content });
+        }
+
+        load();
+      })
+      .catch(() => Alert.alert('완료하지 못했어요', '잠시 후 다시 시도해주세요'));
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  if (error || !recommend) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>퀘스트를 불러오지 못했어요</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
-      <View>
-        <Text style={styles.header}>작심삼일 퀘스트</Text>
-      </View>
 
       <View>
         <Text style={styles.questTitle}>진행중인 퀘스트</Text>
         {activeQuest ? (
-          <View style={styles.questbox}>
+          <View>
+            <Text style={styles.questDescription}>7일 안에 3번, 하루씩 띄어도 괜찮아요</Text>
 
-            <View style={styles.topRow}>
+            <View style={styles.questbox}>
 
-              <View style={{flex:1}}>
-                <Text style={styles.questName}>{activeQuest.title}</Text>
-                <Text style={styles.questSub}>시작한 지 {activeQuest.doneDays}일째</Text>               
+              <Text style={styles.questName}>{activeQuest.quest_content}</Text>
+              <Text style={styles.questSub}>
+                시작한 지 {activeQuest.days_since_start}일째 · D-{activeQuest.d_day}
+              </Text>
+
+              <View style={styles.dayRow}>
+                {[1, 2, 3].map((day) => {
+                  const done = day <= activeQuest.count;
+                  const isNext = day === activeQuest.count + 1;
+
+                  return (
+                    <View
+                      key={day}
+                      style={[
+                        styles.questDay,
+                        isNext && styles.questDayNext,
+                        done && styles.questDayDone,
+                      ]}
+                    >
+                      {done ? (
+                        <View style={styles.doneMark}>
+                          <Text style={styles.questCheck}>✓</Text>
+                          <Text style={[styles.questDayText, styles.questDayTextActive]}>
+                            {day}회차
+                          </Text>
+                        </View>
+                      ) : (
+                        <Text
+                          style={[
+                            styles.questDayText,
+                            isNext && styles.questDayTextActive,
+                          ]}
+                        >
+                          {day}회차
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
               </View>
-            
-              <Pressable onPress={handleGiveUp} style={styles.giveUpButton}>
-                <Text style={styles.giveUpText}>포기하기</Text>
-              </Pressable>     
+
+              {activeQuest.count < 3 && (
+                <Pressable
+                  style={[styles.checkButton, checkedToday && styles.checkButtonDisabled]}
+                  onPress={handleCheckToday}
+                  disabled={checkedToday}
+                >
+                  <Text
+                    style={[styles.checkButtonText, checkedToday && styles.checkButtonTextDisabled]}
+                  >
+                    {checkedToday ? '오늘은 완료' : '완료'}
+                  </Text>
+                </Pressable>
+              )}
 
             </View>
 
-            <View style={styles.dayRow}>
-              {[1, 2, 3].map((day) => (
-                <View
-                  key={day}
-                  style={[styles.questDay, day <= activeQuest.doneDays && styles.questDayDone]}
-                >
-                  {day <= activeQuest.doneDays ? (
-                    <Image source={require('../../../assets/questend.png')} style={styles.stamp} />
-                  ) : (
-                    <Text style={styles.questDayText}>{day}</Text>
-                  )}
-                </View>
-              ))}
-            </View>
-
-            {activeQuest.doneDays < 3 && (
-              <Pressable
-                style={[styles.checkButton, checkedToday && styles.checkButtonDisabled]}
-                onPress={handleCheckToday}
-                disabled={checkedToday}
-              >
-                <Text
-                  style={[styles.checkButtonText, checkedToday && styles.checkButtonTextDisabled]}
-                >
-                  {checkedToday ? '오늘은 이미 완료했어요' : '오늘 완료하기'}
-                </Text>
-              </Pressable>
-            )}
-
+            <Pressable onPress={handleGiveUp} style={styles.giveUpButton}>
+              <Text style={styles.giveUpText}>포기하기</Text>
+            </Pressable>
           </View>
         ) : (
           <View>
             <Text style={styles.questEmptyText}>진행 중인 퀘스트가 없어요</Text>
           </View>
-          
+
         )}
 
 
@@ -147,29 +195,31 @@ export default function S50QuestList({ navigation, route }) {
             <Text style={styles.questDescription}>진행 중인 퀘스트를 마치면 새 퀘스트를 시작할 수 있어요</Text>
           )}
 
-          {suggestions.length === 0 ? (
+          {!recommend.has_recommendations ? (
             <View style={styles.questEmptybox}>
               <Text style={styles.questEmptyText}>아직 추천 퀘스트가 없어요</Text>
-              <Text style={styles.questEmptyDescription}>이번 주에 Plus log를 2개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.</Text>
+              <Text style={styles.questEmptyDescription}>이번 주에 PLUS Log 를 2개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.</Text>
             </View>            
           ) : (
-            suggestions.map((quest) =>
+            recommend.recommended_quests.map((quest) => (
               <QuestRecommend
-                key={quest.id}
-                title={quest.title}
+                key={quest.recommendation_id}
+                title={quest.quest_content}
                 disabled={activeQuest !== null}
                 onStart={() => handleStart(quest)}
-            />
-            )         
+              />
+            ))
           )}
 
-          <Pressable 
-          style={[styles.questButton,
-          activeQuest !== null && styles.questButtonDisabled]}
-          onPress={() => navigation.navigate('QuestCreate')}
-          disabled={activeQuest !== null}>
+          <Text style={styles.createGuide}>원하는 행동이 없다면 직접 만들어보세요</Text>
+
+          <Pressable
+            style={[styles.questButton, activeQuest !== null && styles.questButtonDisabled]}
+            onPress={() => navigation.navigate('QuestCreate')}
+            disabled={activeQuest !== null}
+          >
             <Text style={[styles.questButtonText, activeQuest !== null && styles.questButtonTextDisabled]}>
-              퀘스트 직접 만들기
+              직접 만들기
             </Text>
           </Pressable>
 
@@ -182,67 +232,91 @@ export default function S50QuestList({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    paddingHorizontal: SPACE.screen,
+    backgroundColor: COLORS.bg,
+    flexGrow: 1,
   },
 
-  header:{
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#ccc',
-    paddingVertical: 10,
-  },
   questTitle:{
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingVertical: 15,
+    fontFamily: FONT.bold,
+    fontSize: FONT.title,
+    color: COLORS.text,
+    paddingTop: 20,
+    paddingBottom: 15,
   },
 
   questbox:{
-    marginBottom: 20,
+    marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardWhite,
   },
 
   questName:{
-    fontSize: 18,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.cardTitle,
+    color: COLORS.text,
     paddingVertical: 4,
   },
 
   questSub:{
-    fontSize: 13,
-    color: '#888',
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    paddingBottom: 4,
   },
 
   dayRow:{
     flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
     marginTop: 12,
-    marginBottom: 12,
-    gap: 10,
+    marginBottom: 16,
   },
 
   questDay:{
-    flex: 1,
-    height: 70,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    alignItems: 'center',      // View 로 바뀌어서 textAlign 대신
+    width: 64,
+    height: 64,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: COLORS.border,
+    alignItems: 'center',
     justifyContent: 'center',
   },
 
-  questDayText:{
-    fontSize: 24,
-    color: '#838383',
+  questDayNext:{
+    borderColor: COLORS.primary,
   },
 
-  stamp:{
-    width: 64,
-    resizeMode: 'contain',
+  questDayDone:{
+    borderStyle: 'solid',
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.chip2,
+  },
+
+  doneMark:{
+    alignItems: 'center',
+    transform: [{ rotate: '-15deg' }],
+  },
+
+  questCheck:{
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.primary,
+  },
+
+  questDayText:{
+    fontFamily: FONT.regular,
+    fontSize: 11,
+    color: COLORS.textSub,
+  },
+
+  questDayTextActive:{
+    fontFamily: FONT.semibold,
+    color: COLORS.primary,
   },
 
   topRow:{
@@ -251,94 +325,122 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
 
-
   giveUpButton:{
-    backgroundColor: '#FFF1F1',
-    borderWidth: 1,
-    borderColor: '#FFD4D4',
-    borderRadius: 20,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
+    alignSelf: 'flex-end',
+    backgroundColor: COLORS.danger,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginVertical: 10,
   },
 
   giveUpText:{
-    fontSize: 12.5,
-    fontWeight: '600',
-    color: '#E03131',
-    letterSpacing: -0.2,
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.dangerText,
+    textAlign: 'center',
   },
 
   questEmptybox:{
     marginBottom: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
-  },
-  questEmptyDescription:{
-    fontSize: 13,
-    color: '#999',
-    textAlign: 'center',
-    lineHeight: 20,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardWhite,
   },
 
   questEmptyText:{
-    fontSize: 16,
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.text,
     textAlign: 'center',
     padding: 7,
   },
 
+  questEmptyDescription:{
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+
+  questDescription:{
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    marginBottom: 15,
+  },
 
   questButton: {
-    backgroundColor: '#2B3245',
-    borderWidth: 1,
-    borderRadius: 15,
-    padding: 10,
-    marginTop: 10,
-  },
-  questButtonText: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  questDescription:{
-    fontSize: 13,
-    color: '#999',
-    marginBottom: 12,
-  },
-  questDayDone:{
-    backgroundColor: '#2B3245',
-    borderColor: '#2B3245',
+    alignSelf: 'center',
+    backgroundColor: COLORS.navigate,
+    borderRadius: RADIUS.button,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 18,
+    marginBottom: 20,
   },
 
-  checkButton: {
-    backgroundColor: '#2B3245',
-    borderRadius: 8,
-    paddingVertical: 12,
-    marginTop: 4,
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
   },
-  checkButtonText: {
-    color: '#fff',
+
+  errorText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
+  },
+
+  createGuide: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
     textAlign: 'center',
-    fontSize: 15,
-    fontWeight: '600',
+    marginTop: 16,
   },
-  checkButtonDisabled: {
-    backgroundColor: '#e0e0e0',
+
+  questButtonText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.body,
+    color: COLORS.navigateText,
+    textAlign: 'center',
   },
-  checkButtonTextDisabled: {
-    color: '#aaa',
-  },
+
   questButtonDisabled: {
-    backgroundColor: '#E0E0E0',
-    borderColor: '#E0E0E0',
+    backgroundColor: COLORS.disabled,
   },
 
   questButtonTextDisabled: {
-    color: '#AAA',
+    color: COLORS.disabledText,
   },
 
+  checkButton: {
+    alignSelf: 'center',
+    backgroundColor: COLORS.primary,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 28,
+    marginTop: 4,
+  },
 
-  
-})
+  checkButtonText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.primaryText,
+    textAlign: 'center',
+  },
+
+  checkButtonDisabled: {
+    backgroundColor: COLORS.disabled,
+  },
+
+  checkButtonTextDisabled: {
+    color: COLORS.disabledText,
+  },
+});

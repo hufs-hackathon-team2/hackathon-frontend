@@ -1,54 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 
 import { getFullDate, getDateDifference } from '../../lib/date';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
+import { COLORS, FONT, WEIGHT, SPACE, RADIUS } from '../../lib/theme';
 
+import { getCurrentAnalysis } from '../../lib/api/cycles';
+import { ActivityIndicator } from 'react-native';
 
-const MOCK_CYCLES = [
-  {
-    id: 2,
-    startDate: new Date('2026-08-03'),
-    endDate: null,
-    status: 'ACTIVE',
-    logDays: 9,
-    questDone: 3,
-    streak: 4,
-    restDays: 0,
-  },
-  {
-    id: 1,
-    startDate: new Date('2026-06-02'),
-    endDate: new Date('2026-06-16'),
-    status: 'CLOSED',
-    logDays: 7,
-    questDone: 3,
-    streak: 4,
-    restDays: 7,
-  },
-];
-
-
-const MOCK_LOG_DATES = [
-  '2026-08-03', '2026-08-04', '2026-08-06',
-  '2026-08-07', '2026-08-08', '2026-08-12',
-  '2026-08-13', '2026-08-14', '2026-08-15',
-];
-
-const MOCK_QUEST_DATES = [
-  '2026-08-04', '2026-08-05', '2026-08-06',
-  '2026-08-07', '2026-08-08', '2026-08-09',
-  '2026-08-13', '2026-08-14', '2026-08-15',
-];
 const MAX_ANALYSIS = 3;
 
-function AnalysisBox({ title, content, unlocked }) {
+const CHIP_COLORS = [
+  COLORS.chip1,
+  COLORS.chip2,
+  COLORS.chip3,
+  COLORS.chip4,
+  COLORS.chip5,
+];
+
+function ActivityChipBox({ title, items, unlocked }) {
   return (
-    <View style={styles.informBox}>
+    <View style={styles.activityBox}>
       <Text style={styles.informTitle}>{title}</Text>
 
       {unlocked ? (
-        <Text style={styles.informSub}>{content}</Text>
+        <View style={styles.chipRow}>
+          {items.map((item, i) => (
+            <View
+              key={item.activity_name}
+              style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
+            >
+              <Text style={styles.chipText}>{item.activity_name}</Text>
+            </View>
+          ))}
+        </View>
       ) : (
         <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
       )}
@@ -56,10 +43,28 @@ function AnalysisBox({ title, content, unlocked }) {
   );
 }
 
-export default function S31CycleCalendar({ navigation }) {
+function AnalysisBox({ title, lines, unlocked, dotColor }) {
+  return (
+    <View style={styles.insightBox}>
+      <Text style={styles.informTitle}>{title}</Text>
 
-  const [cycles] = useState(MOCK_CYCLES);
-  const current = cycles[0];
+      {unlocked ? (
+        <View style={styles.suggestList}>
+          {lines.map((line, i) => (
+            <View key={i} style={styles.suggestRow}>
+              <View style={[styles.suggestDot, { backgroundColor: dotColor }]} />
+              <Text style={styles.suggestText}>{line}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
+      )}
+    </View>
+  );
+}
+
+export default function S31CycleAnalysis ({ navigation }) {
 
 
   const [status, setStatus] = useState('IDLE');
@@ -80,98 +85,144 @@ export default function S31CycleCalendar({ navigation }) {
   if (status === 'PENDING') buttonText = '분석 중이에요…';
   if (usedUp) buttonText = '이번 사이클 분석을 다 썼어요';
 
+  const [analysis, setAnalysis] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    getCurrentAnalysis()
+      .then(setAnalysis)
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, []);
+
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
+  if (error || !analysis) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>분석 정보를 불러오지 못했어요</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScreenHeader navigation={navigation} />
 
-      <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
+      <ScrollView contentContainerStyle={styles.container}>
 
-      <View style={styles.informBox}>
-        <Text style={styles.informSub}>진행 중</Text>
-        <Text style={styles.informTitle}>{current.id}번째 사이클</Text>
+        <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
 
-        <View style={styles.informRow}>
-          <View style={styles.informDetail}>
-            <Text>시작일</Text>
-            <Text>{getFullDate(current.startDate)}</Text>
-          </View>
+        <View style={styles.informBox}>
+          <Text style={styles.informSub}>활동 중</Text>
+          <Text style={styles.informTitle}>사이클 {analysis.cycle_count}회차</Text>
 
-          <View style={styles.informDetail}>
-            <Text>지속일</Text>
-            <Text>{getDateDifference(current.startDate, new Date())}일</Text>
-          </View>
+          <View style={styles.informRow}>
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>시작일</Text>
+              <Text style={styles.detailValue}>{getFullDate(new Date(analysis.started_at))}</Text>
+            </View>
 
-          <View style={styles.informDetail}>
-            <Text>누적 경험치</Text>
-            <Text>+{current.logDays * 1 + current.questDone * 9}</Text>
-          </View>
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>지속일</Text>
+              <Text style={styles.detailValue}>{analysis.active_days}일째</Text>
+            </View>
 
-        </View>
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>상태</Text>
+              <Text style={styles.detailStatus}>활동 중 ↗</Text>
+            </View>
 
-      </View>
-      
-      <View style={styles.informBox}>
-        <Text style={styles.informTitle}>활동 요약</Text>
-
-        <View style={styles.informRow}>
-          <View style={styles.informDetail}>
-            <Text>PLUS Log</Text>
-            <Text>{current.logDays}일</Text>
-          </View>
-          
-          <View style={styles.informDetail}>
-            <Text>퀘스트 성공</Text>
-            <Text>{current.questDone}회</Text>
-          </View>
-
-          <View style={styles.informDetail}>
-            <Text>연속 기록</Text>
-            <Text>{current.streak}일</Text>
-          </View>
-
-          <View style={styles.informDetail}>
-            <Text>휴식일</Text>
-            <Text>{current.restDays}일</Text>
           </View>
 
         </View>
-      </View>
+        
+        <View style={styles.insightBox}>
+          <Text style={styles.informTitle}>활동 요약</Text>
 
-      <CycleCalendar cycle={current} logDates={MOCK_LOG_DATES} questDates={MOCK_QUEST_DATES} />
+          <View style={styles.informRow}>
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>활동일</Text>
+              <Text style={styles.detailValue}>{analysis.active_days}일</Text>
+            </View>
 
-      <AnalysisBox
-        title="활동 흐름 인사이트"
-        content="꾸준히 작은 행동을 이어가고 있어요. 최근 일주일 동안 수면과 식사 관련 기록이 자주 등장했어요. 조금씩 쌓이는 습관이 멋진 변화를 만들고 있답니다"
-        unlocked={status === 'DONE'}
-      />
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>퀘스트 성공</Text>
+              <Text style={styles.detailValue}>{analysis.completed_quests.length}회</Text>
+            </View>
 
-      <AnalysisBox
-        title="자주 기록한 활동"
-        content="수분 섭취, 산책, 스트레칭"
-        unlocked={status === 'DONE'}
-      />
+            <View style={styles.informDetail}>
+              <Text style={styles.detailLabel}>휴식일</Text>
+              <Text style={styles.detailValue}>{analysis.rest_days}일</Text>
+            </View>
 
-        <Pressable
-          style={[styles.HealthyCycleBtn, (status === 'PENDING' || usedUp) && styles.HealthyCycleBtnPending]}
-          onPress={requestAnalysis}
-          disabled={status === 'PENDING' || usedUp}
-        >
-          <Text style={styles.HealthyCycleBtnText}>{buttonText}</Text>
-        </Pressable>
+          </View>
+        </View>
 
-    </ScrollView>
+        <CycleCalendar
+          cycle={{ startDate: new Date(analysis.started_at) }}
+          logDates={analysis.logDates}
+          questDates={analysis.questDates}
+        />
+
+        <AnalysisBox
+          title="활동 흐름 인사이트"
+          lines={analysis.activity_analysis}
+          unlocked={status === 'DONE'}
+          dotColor={COLORS.navigate}
+        />
+
+        <AnalysisBox
+          title="이렇게 해보세요"
+          lines={analysis.personalized_analysis}
+          unlocked={status === 'DONE'}
+          dotColor={COLORS.navigate}
+        />
+
+        <ActivityChipBox
+          title="자주 기록한 활동"
+          items={analysis.top_plus_logs}
+          unlocked={status === 'DONE'}
+        />
+
+          <Pressable
+            style={[styles.HealthyCycleBtn, (status === 'PENDING' || usedUp) && styles.HealthyCycleBtnPending]}
+            onPress={requestAnalysis}
+            disabled={status === 'PENDING' || usedUp}
+          >
+            <Text style={styles.HealthyCycleBtnText}>{buttonText}</Text>
+          </Pressable>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+
   container: {
-    padding: 20,
+    paddingHorizontal: SPACE.screen,
+    backgroundColor: COLORS.bg,
+    flexGrow: 1,
   },
 
   nowCycleTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingVertical: 10,
+    fontFamily: FONT.bold,
+    fontSize: FONT.title,
+    color: COLORS.text,
+    paddingVertical: 15,
   },
 
   HealthyCycleBtn: {
@@ -185,10 +236,10 @@ const styles = StyleSheet.create({
   },
 
   HealthyCycleBtnText: {
-    color: '#FFFFFF',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.body,
+    color: COLORS.primaryText,
     textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
   HealthyCycleBtnPending: {
     backgroundColor: '#B8BDC7',
@@ -196,40 +247,138 @@ const styles = StyleSheet.create({
   },
 
   informBox:{
-    marginBottom: 20,
+    marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    padding: 14,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.card,
+  },
+
+  insightBox:{
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardAlt,
+  },
+  activityBox:{
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    padding: SPACE.card,
+    backgroundColor: COLORS.cardWhite,
   },
 
   informTitle:{
-    fontSize: 18,
-    fontWeight: '600',
+    fontFamily: FONT.semibold,
+    fontSize: FONT.cardTitle,
+    color: COLORS.text,
     paddingVertical: 4,
   },
 
   informSub:{
-    fontSize: 13,
-    color: '#888',
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+  },
+
+  detailLabel: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    marginBottom: 4,
+  },
+
+  detailValue: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.text,
+  },
+  detailStatus: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.primary,
   },
 
   informRow:{
     flexDirection: 'row',
     marginTop: 12,
-    marginBottom: 12,
+    marginBottom: 5,
     gap: 10,
   },
 
   informDetail:{
     flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
   },
 
+  suggestList: {
+    marginTop: 10,
+    gap: 10,
+  },
+
+  suggestRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+
+  suggestDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 999,
+    marginTop: 5,
+  },
+
+  suggestText: {
+    flex: 1,
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.text,
+    lineHeight: 15,
+  },
+
   lockText: {
-    fontSize: 13,
-    color: '#AAA',
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
     fontStyle: 'italic',
   },
+
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACE.screen,
+    backgroundColor: COLORS.bg,
+  },
+
+  errorText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.body,
+    color: COLORS.textSub,
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
+  },
+
+  chip: {
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+  },
+
+  chipText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.text,
+  },
+
 });
