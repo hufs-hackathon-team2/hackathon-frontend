@@ -14,25 +14,45 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function S01Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [emailError, setEmailError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+
+  const validateEmail = (value) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      setEmailError('');
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmed)) {
+      setEmailError('올바른 이메일 형식이 아닙니다.');
+      return false;
+    }
+
+    setEmailError('');
+    return true;
+  };
 
   const handleLogin = () => {
     setErrorMessage('');
 
     const trimmedEmail = email.trim();
 
-    // 1. 빈값 체크
+
+    const isEmailValid = validateEmail(trimmedEmail);
+
     if (!trimmedEmail || !password) {
       setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(trimmedEmail)) {
-      setErrorMessage('올바른 이메일 형식이 아닙니다.');
+    if (!isEmailValid) {
       return;
     }
 
@@ -42,7 +62,7 @@ export default function S01Login({ navigation }) {
     };
 
     if (trimmedEmail !== MOCK_USER.email || password !== MOCK_USER.password) {
-      setErrorMessage('이메일 또는 비밀번호를 확인해주세요.');
+      setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
       return;
     }
 
@@ -64,27 +84,37 @@ export default function S01Login({ navigation }) {
           <View style={styles.content}>
             <Text style={styles.title}>로그인</Text>
 
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
                 style={[
                   styles.input,
                   isEmailFocused && styles.inputFocused,
-                  errorMessage ? styles.inputError : null,
+                  (emailError || errorMessage) && styles.inputError,
                 ]}
                 value={email}
                 placeholder="you@example.com"
                 placeholderTextColor="#757575"
                 onFocus={() => setIsEmailFocused(true)}
-                onBlur={() => setIsEmailFocused(false)}
+                onBlur={() => {
+                  setIsEmailFocused(false);
+                  validateEmail(email); // 입력 마치고 나가면 즉시 꼽주기
+                }}
                 onChangeText={(text) => {
                   setEmail(text);
+                  if (emailError) validateEmail(text);
                   if (errorMessage) setErrorMessage('');
                 }}
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
+
+              {emailError ? (
+                <Text style={styles.fieldErrorText}>{emailError}</Text>
+              ) : null}
             </View>
+
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>비밀번호</Text>
@@ -106,6 +136,7 @@ export default function S01Login({ navigation }) {
                 secureTextEntry
               />
             </View>
+
 
             {errorMessage ? (
               <View style={styles.errorBanner}>
@@ -176,8 +207,8 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#CFCCC9',
+    borderWidth: 1.5,
+    borderColor: '#C6D2E7',
     borderRadius: 12,
     height: 52,
     paddingHorizontal: 16,
@@ -185,12 +216,18 @@ const styles = StyleSheet.create({
     color: '#1B1A18',
   },
   inputFocused: {
-    borderWidth: 1.5,
-    borderColor: '#8ba1c5',
+    borderWidth: 1.8,
+    borderColor: '#5167A4',
   },
   inputError: {
     borderWidth: 1.5,
     borderColor: '#E53E3E',
+  },
+  fieldErrorText: {
+    fontSize: 12,
+    color: '#E53E3E',
+    marginTop: 6,
+    fontWeight: '500',
   },
   errorBanner: {
     backgroundColor: '#FFF5F5',
