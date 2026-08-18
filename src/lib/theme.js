@@ -57,6 +57,7 @@ export const FONT = {
   bold: 'AstaSansBold',
 
   title: 24,
+  subTitle: 20,
   cardTitle: 18,
   body: 16,
   subbody: 14,
@@ -75,7 +76,7 @@ export const SPACE = {
 };
 
 export const RADIUS = {
-  card: 20,
+  card: 25,
   button: 15,
   input: 8,
 };
