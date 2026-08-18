@@ -82,3 +82,18 @@ export function getFullDate(date) {
   return `${year}.${month}.${day}`
 
 }
+
+//이번 주 월요일부터 7일치 날짜
+export function getWeekDates(now = new Date()) {
+  const kst = toKst(now);
+  const weekday = kst.getUTCDay();
+  const back = weekday === 0 ? 6 : weekday - 1;
+
+  const dates = [];
+
+  for (let i = 0; i < 7; i++) {
+    dates.push(getDateFormat(new Date(now.getTime() + (i - back) * oneDay)));
+  }
+
+  return dates;
+}
