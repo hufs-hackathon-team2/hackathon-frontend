@@ -1,0 +1,82 @@
+// 디자인 값 모음. 색·크기를 바꿀 일이 있으면 여기만 고친다.
+
+export const COLORS = {
+  // 배경
+  bg: '#E3ECFF',
+  todayBg: '#E8F3EC',
+
+  //카드
+  card: '#E1ECE7',//연초록
+  cardAlt: '#F5F5F5',
+  cardWhite: '#FFFFFF',
+  cardGray: '#ECEFF5',
+
+  // 글자
+  text: '#1B1A18',
+  textSub: '#504D49',
+  border: '#D5DDE8',
+
+  // 주 버튼
+  primary: '#428A67',
+  primaryText: '#FFFFFF',
+
+  // 이동 버튼 (다른 화면으로)
+  navigate: '#3E629F',
+  navigateText: '#FFFFFF',
+
+  // 비활성 선택버튼
+  disabled: '#CFCCC9',
+  disabledText: '#504D49',
+
+  // 삭제
+  danger: '#F6D8D5',
+  dangerText: '#2A0C09',
+
+  // 탈퇴처럼 되돌릴 수 없는 동작
+  dangerStrong: '#A82F24',
+  dangerStrongText: '#FFFFFF',
+
+  //점
+  dotLog: '#66C78C',    // 초록 — PLUS Log
+  dotQuest: '#FABF4D',  // 노랑 — 퀘스트 성공
+  dotBoth: '#3E629F',   // 파랑 — 모두 성공
+
+  //키워드
+  chip1: '#DCE7FF',   // 파랑
+  chip2: '#DDEEE5',   // 초록
+  chip3: '#FFF1D6',   // 노랑
+  chip4: '#F3E4F7',   // 연보라
+  lavender: '#DFE2F7',
+  chip5: '#FFE3E0',   // 연분홍
+
+};
+
+export const FONT = {
+  regular: 'AstaSans',
+  semibold: 'AstaSansSemiBold',
+  bold: 'AstaSansBold',
+
+  title: 24,
+  cardTitle: 18,
+  body: 16,
+  subbody: 14,
+  caption: 13,
+};
+
+export const WEIGHT = {
+  bold: '700',
+  regular: '400',
+};
+
+export const SPACE = {
+  screen: 20,   // 화면 좌우 여백
+  card: 16,     // 카드 안쪽 여백
+  gap: 12,      // 요소 사이 간격
+};
+
+export const RADIUS = {
+  card: 20,
+  button: 15,
+  input: 8,
+};
+
