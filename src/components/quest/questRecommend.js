@@ -1,10 +1,13 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
-export default function QuestRecommend({ title, onStart, disabled }) {
+export default function QuestRecommend({ title, reason, onStart, disabled }) {
   return (
     <View style={styles.questRecommend}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.textGroup}>
+        <Text style={styles.title}>{title}</Text>
+        {reason ? <Text style={styles.reason}>{reason}</Text> : null}
+      </View>
 
       <Pressable
         style={[styles.startButton, disabled && styles.startButtonDisabled]}
@@ -28,12 +31,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  title: {
+  textGroup: {
     flex: 1,
-    fontFamily: FONT.regular,
+    marginRight: 10,
+  },
+  title: {
+    fontFamily: FONT.semibold,
     fontSize: FONT.subbody,
     color: COLORS.text,
-    marginRight: 10,
+  },
+  reason: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    marginTop: 4,
   },
   startButton: {
     backgroundColor: COLORS.primary,
