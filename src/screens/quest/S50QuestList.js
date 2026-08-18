@@ -46,14 +46,22 @@ export default function S50QuestList({ navigation }) {
 
   const handleStart = (quest) => {
     Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>
-7일 안에 3일만 체크하면 성공!`, [
+    7일 안에 3일만 체크하면 성공!`, [
       { text: '취소', style: 'cancel' },
       {
         text: '시작',
         onPress: () => {
           startQuest(quest.quest_content)
-            .then(load)
+            .then((res) => {
+              if (res.new_cycle_started) {
+                navigation.navigate('Resume');
+                return;
+              }
+
+              load();
+            })
             .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
+
         },
       },
     ]);
@@ -205,6 +213,7 @@ export default function S50QuestList({ navigation }) {
               <QuestRecommend
                 key={quest.recommendation_id}
                 title={quest.quest_content}
+                reason={quest.reason}
                 disabled={activeQuest !== null}
                 onStart={() => handleStart(quest)}
               />

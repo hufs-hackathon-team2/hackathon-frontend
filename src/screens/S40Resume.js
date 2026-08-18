@@ -5,19 +5,23 @@ import { getFullDate, getDateDifference } from "../lib/date";
 import { COLORS, FONT, SPACE, RADIUS } from '../lib/theme';
 import { getPreviousAnalysis } from '../lib/api/cycles';
 import { getRecommendations } from '../lib/api/quests';
+import { getRoom } from '../lib/api/characters';
+import { getCharacterStages, getCharacterSizes, getStageIndex } from '../lib/assets';
 
 export default function S40Resume({ navigation }) {
 
   const [previous, setPrevious] = useState(null);
   const [recommend, setRecommend] = useState(null);
+  const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    Promise.all([getPreviousAnalysis(), getRecommendations()])
-      .then(([cycle, rec]) => {
+    Promise.all([getPreviousAnalysis(), getRecommendations(), getRoom()])
+      .then(([cycle, rec, character]) => {
         setPrevious(cycle);
         setRecommend(rec);
+        setRoom(character);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -42,10 +46,14 @@ export default function S40Resume({ navigation }) {
   const startDate = new Date(previous.started_at);
   const endDate = new Date(previous.closed_at);
 
+  const stageIndex = getStageIndex(room?.current_stage);
+  const characterImage = getCharacterStages(room?.character_type)[stageIndex];
+  const characterSize = getCharacterSizes(room?.character_type)[stageIndex];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageBox}>
-          <Image source={require('../../assets/questend.png')} style={styles.character} />
+          <Image source={characterImage} style={characterSize} resizeMode="contain" />
         </View>
 
         <View>
@@ -78,7 +86,6 @@ export default function S40Resume({ navigation }) {
             </View>
           </View>
 
-          <Text style={styles.summaryDesc}>작은 행동들이 모여 나만의 기록이 됐어요.</Text>
         </View>
 
         <View style={styles.suggestHeader}>
@@ -90,6 +97,7 @@ export default function S40Resume({ navigation }) {
           recommend.recommended_quests.map((quest) => (
             <View key={quest.recommendation_id} style={styles.suggestItem}>
               <Text style={styles.suggestItemText}>{quest.quest_content}</Text>
+              <Text style={styles.suggestItemReason}>{quest.reason}</Text>
             </View>
           ))
         ) : (
@@ -98,7 +106,7 @@ export default function S40Resume({ navigation }) {
           </View>
         )}
 
-        <Pressable style={styles.confirmButton} onPress={() => navigation.goBack()}>
+        <Pressable style={styles.confirmButton} onPress={() => navigation.popTo('Main')}>
           <Text style={styles.confirmButtonText}>새 Healthy Cycle 시작하기</Text>
         </Pressable>
 
@@ -111,25 +119,21 @@ export default function S40Resume({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: SPACE.screen,
+    paddingBottom: 60,
     backgroundColor: COLORS.bg,
     flexGrow: 1,
   },
 
   imageBox: {
-    height: 220,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    width: 180,
+    height: 180,
+    alignSelf: 'center',
     borderRadius: RADIUS.card,
-    backgroundColor: COLORS.cardWhite,
+    backgroundColor: COLORS.lavender,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
-  },
-
-  character: {
-    width: 160,
-    height: 160,
-    resizeMode: 'contain',
+    marginTop: 10,
+    marginBottom: 20,
   },
 
   questEndBoxText: {
@@ -212,12 +216,6 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
-  summaryDesc: {
-    fontFamily: FONT.regular,
-    fontSize: FONT.caption,
-    color: COLORS.textSub,
-    marginTop: 4,
-  },
   suggestItem: {
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -229,9 +227,16 @@ const styles = StyleSheet.create({
   },
 
   suggestItemText: {
-    fontFamily: FONT.regular,
+    fontFamily: FONT.semibold,
     fontSize: FONT.subbody,
     color: COLORS.text,
+    marginBottom: 4,
+  },
+
+  suggestItemReason: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
   suggestHeader: {
     marginTop: 24,
