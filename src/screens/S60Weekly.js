@@ -29,7 +29,7 @@ export default function S60Weekly({ navigation }) {
   const fetchWeeklyData = async () => {
     try {
       setIsError(false);
-      const rawActiveDates = ['2026-08-10', '2026-08-10', '2026-08-12'];
+      const rawActiveDates = ['2026-08-10', '2026-08-10', '2026-08-12', '2026-08-13'];
       const activeDaysCount = new Set(rawActiveDates).size;
 
       const mockResponse = {
@@ -42,13 +42,13 @@ export default function S60Weekly({ navigation }) {
         next_week_recommendations: [
           {
             recommendation_id: 1,
-            quest_content: '물 하루 8잔 마시기',
-            reason: '지난주에도 잘 하셨어요',
+            quest_content: '꾸준히 하면 몸이 달라져요',
+            reason: '',
           },
           {
             recommendation_id: 2,
-            quest_content: '저녁 산책 10분',
-            reason: '꾸준히 하면 몸이 달라져요',
+            quest_content: '짧아도 매일이면 충분해요',
+            reason: '',
           },
         ],
       };
@@ -72,7 +72,7 @@ export default function S60Weekly({ navigation }) {
 
       const uri = await captureRef(cardCaptureRef, {
         format: 'png',
-        quality: 0.9,
+        quality: 1.0,
       });
 
       await MediaLibrary.saveToLibraryAsync(uri);
@@ -88,7 +88,7 @@ export default function S60Weekly({ navigation }) {
     try {
       const uri = await captureRef(cardCaptureRef, {
         format: 'png',
-        quality: 0.9,
+        quality: 1.0,
       });
 
       const available = await Sharing.isAvailableAsync();
@@ -127,7 +127,7 @@ export default function S60Weekly({ navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#1E232C" />
+        <ActivityIndicator size="large" color="#3E629F" />
       </View>
     );
   }
@@ -166,14 +166,15 @@ export default function S60Weekly({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
           <View
             ref={cardCaptureRef}
             collapsable={false}
             style={styles.captureArea}
           >
-            <View style={styles.cardBlock}>
+            <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
+
+            <View style={styles.summaryCardBlock}>
               <Text style={styles.blockTitle}>한 주 요약</Text>
 
               <View style={styles.summaryRow}>
@@ -200,46 +201,30 @@ export default function S60Weekly({ navigation }) {
               </View>
             </View>
 
+            {/* 다음 주 추천 퀘스트 카드 */}
             <View style={styles.cardBlock}>
               <Text style={styles.blockTitle}>다음 주 추천 퀘스트</Text>
-
               <Text style={styles.blockSubTitle}>
                 부담 없이 이어갈 수 있는 행동을 골라봤어요
               </Text>
 
               {weeklyData?.next_week_recommendations.map((quest) => (
-                <View
+                <TouchableOpacity
                   key={quest.recommendation_id}
                   style={styles.questItem}
+                  onPress={() => handleSelectQuest(quest)}
+                  activeOpacity={0.7}
                 >
-                  <View style={styles.questTextGroup}>
-                    <Text style={styles.questTitle}>
-                      {quest.quest_content}
-                    </Text>
-
-                    <Text style={styles.questReason}>
-                      {quest.reason}
-                    </Text>
-                  </View>
-
-                  <TouchableOpacity
-                    style={styles.selectButton}
-                    onPress={() => handleSelectQuest(quest)}
-                  >
-                    <Text style={styles.selectButtonText}>
-                      선택
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  <Text style={styles.questTitle}>
+                    {quest.quest_content}
+                  </Text>
+                </TouchableOpacity>
               ))}
             </View>
           </View>
 
           <View style={styles.cardBlock}>
-            <Text style={styles.shareBlockTitle}>
-              카드 저장 · 공유
-            </Text>
-
+            <Text style={styles.shareBlockTitle}>카드 저장 · 공유</Text>
             <Text style={styles.shareBlockSubTitle}>
               이번 주 카드를 간직하거나 공유해보세요
             </Text>
@@ -248,19 +233,17 @@ export default function S60Weekly({ navigation }) {
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={handleSaveImage}
+                activeOpacity={0.7}
               >
-                <Text style={styles.actionButtonText}>
-                  이미지 저장
-                </Text>
+                <Text style={styles.actionButtonText}>저장</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.actionButton}
                 onPress={handleShare}
+                activeOpacity={0.7}
               >
-                <Text style={styles.actionButtonText}>
-                  공유하기
-                </Text>
+                <Text style={styles.actionButtonText}>공유</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -271,37 +254,139 @@ export default function S60Weekly({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#F8F9FA' },
-  scrollContent: { flexGrow: 1 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  container: { flex: 1, paddingHorizontal: 20, paddingVertical: 16 },
-  screenTitle: { fontSize: 20, fontWeight: 'bold', color: '#1A1D1E', marginBottom: 12 },
-  
-  captureArea: { 
-    backgroundColor: '#F8F9FA', 
-    paddingHorizontal: 20, 
-    marginHorizontal: -20,
-    paddingVertical: 10,
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#E3ECFF',
   },
-  
-  cardBlock: { backgroundColor: '#F8F9FA', borderRadius: 16, borderWidth: 1, borderColor: '#EAECEF', padding: 20, marginBottom: 14 },
-  blockTitle: { fontSize: 20, fontWeight: 'bold', color: '#1A1D1E', marginBottom: 12 },
-  blockSubTitle: { fontSize: 14, color: '#525960', marginTop: -6, marginBottom: 18 },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  summaryItem: { flex: 1 },
-  summaryLabel: { fontSize: 12, color: '#525960', marginBottom: 4 },
-  summaryValue: { fontSize: 15, fontWeight: 'bold', color: '#1A1D1E' },
-  questItem: { backgroundColor: '#FFFFFF', borderRadius: 12, borderWidth: 1, borderColor: '#EAECEF', paddingHorizontal: 18, paddingVertical: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, minHeight: 82 },
-  questTextGroup: { flex: 1 },
-  questTitle: { fontSize: 15, fontWeight: '600', color: '#1A1D1E', marginBottom: 6 },
-  questReason: { fontSize: 13, color: '#72787F', lineHeight: 19 },
-  selectButton: { backgroundColor: '#1E232C', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 6 },
-  selectButtonText: { fontSize: 12, fontWeight: '600', color: '#FFFFFF' },
-  shareBlockTitle: { fontSize: 15, fontWeight: 'bold', color: '#1A1D1E', textAlign: 'center', marginBottom: 4 },
-  shareBlockSubTitle: { fontSize: 12, color: '#72787F', textAlign: 'center', marginBottom: 12 },
-  actionRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
-  actionButton: { flex: 1, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#343A40', borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
-  actionButtonText: { fontSize: 13, fontWeight: '600', color: '#1A1D1E' },
-  emptyCard: { backgroundColor: '#F8F9FA', borderRadius: 16, borderWidth: 1, borderColor: '#EAECEF', paddingVertical: 40, paddingHorizontal: 20, alignItems: 'center' },
-  emptyMessageText: { fontSize: 15, color: '#72787F', textAlign: 'center' },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#E3ECFF',
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+
+  captureArea: {
+    backgroundColor: '#E3ECFF',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 20,
+    marginHorizontal: -16,
+    borderRadius: 24,
+  },
+  screenTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1B1A18',
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+
+  summaryCardBlock: {
+    backgroundColor: '#E8EFE9',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+  },
+
+  cardBlock: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+  },
+  blockTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1B1A18',
+    marginBottom: 12,
+  },
+  blockSubTitle: {
+    fontSize: 13,
+    color: '#555555',
+    marginTop: -4,
+    marginBottom: 16,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  summaryItem: {
+    flex: 1,
+  },
+  summaryLabel: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 6,
+  },
+  summaryValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1B1A18',
+  },
+  questItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#D2D6DC',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 10,
+    justifyContent: 'center',
+  },
+  questTitle: {
+    fontSize: 14,
+    color: '#2C2C2C',
+  },
+  shareBlockTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1B1A18',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  shareBlockSubTitle: {
+    fontSize: 12,
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  actionButton: {
+    backgroundColor: '#F0F2F5',
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 28,
+    alignItems: 'center',
+  },
+  actionButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1B1A18',
+  },
+  emptyCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  emptyMessageText: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
 });
