@@ -201,7 +201,6 @@ export default function S60Weekly({ navigation }) {
               </View>
             </View>
 
-            {/* 다음 주 추천 퀘스트 카드 */}
             <View style={styles.cardBlock}>
               <Text style={styles.blockTitle}>다음 주 추천 퀘스트</Text>
               <Text style={styles.blockSubTitle}>
