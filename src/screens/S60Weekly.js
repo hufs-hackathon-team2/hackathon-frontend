@@ -13,9 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import ScreenHeader from '../components/common/ScreenHeader';
 import { startQuest } from '../lib/api/quests';
-import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -74,7 +72,7 @@ export default function S60Weekly({ navigation }) {
 
       const uri = await captureRef(cardCaptureRef, {
         format: 'png',
-        quality: 0.9,
+        quality: 1.0,
       });
 
       await MediaLibrary.saveToLibraryAsync(uri);
@@ -90,7 +88,7 @@ export default function S60Weekly({ navigation }) {
     try {
       const uri = await captureRef(cardCaptureRef, {
         format: 'png',
-        quality: 0.9,
+        quality: 1.0,
       });
 
       const available = await Sharing.isAvailableAsync();
@@ -137,7 +135,6 @@ export default function S60Weekly({ navigation }) {
   if (isError) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScreenHeader navigation={navigation} />
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -153,7 +150,6 @@ export default function S60Weekly({ navigation }) {
   if (!weeklyData || !weeklyData.is_generated) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScreenHeader navigation={navigation} />
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -168,16 +164,15 @@ export default function S60Weekly({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader navigation={navigation} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
-          <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
           <View
             ref={cardCaptureRef}
             collapsable={false}
             style={styles.captureArea}
           >
+            <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
             <View style={styles.summaryCardBlock}>
               <Text style={styles.blockTitle}>한 주 요약</Text>
@@ -206,7 +201,7 @@ export default function S60Weekly({ navigation }) {
               </View>
             </View>
 
-
+            {/* 다음 주 추천 퀘스트 카드 */}
             <View style={styles.cardBlock}>
               <Text style={styles.blockTitle}>다음 주 추천 퀘스트</Text>
               <Text style={styles.blockSubTitle}>
@@ -227,7 +222,6 @@ export default function S60Weekly({ navigation }) {
               ))}
             </View>
           </View>
-
 
           <View style={styles.cardBlock}>
             <Text style={styles.shareBlockTitle}>카드 저장 · 공유</Text>
@@ -278,15 +272,21 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+
+  captureArea: {
+    backgroundColor: '#E3ECFF',
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 20,
+    marginHorizontal: -16,
+    borderRadius: 24,
+  },
   screenTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#1B1A18',
-    marginTop: 8,
     marginBottom: 20,
-  },
-  captureArea: {
-    backgroundColor: '#E3ECFF',
+    paddingHorizontal: 4,
   },
 
   summaryCardBlock: {
