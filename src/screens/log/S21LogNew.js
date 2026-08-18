@@ -52,11 +52,17 @@ export default function S21LogNew({ navigation }) {
     setSaving(true);
 
     createLog(logContent.trim())
-      .then(() => {
+      .then((res) => {
         Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
           {
             text: '확인',
-            onPress: () => navigation.goBack(),
+            onPress: () => {
+              navigation.goBack();
+
+              if (res.new_cycle_started) {
+                navigation.navigate('Resume');
+              }
+            },
           },
         ]);
       })

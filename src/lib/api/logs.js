@@ -1,6 +1,7 @@
 
 import api, { USE_MOCK } from './client';
 import { MOCK_LOGS } from './mock/logs';
+import { isResting } from './cycles';
 
 export const PAGE_SIZE = 10;
 
@@ -16,14 +17,16 @@ export async function getLogs(page = 1) {
 }
 
 export async function createLog(content) {
+  const wasResting = await isResting();
+
   if (USE_MOCK) {
     const log = {log_id: Date.now(), content, created_at: new Date().toISOString()};
     mockLogs = [log].concat(mockLogs);
-    return log;
+    return { ...log, new_cycle_started: wasResting };
   }
 
   const res = await api.post('/logs', {content});
-  return res.data;
+  return { ...res.data, new_cycle_started: wasResting };
 }
 
 export async function deleteLog(logId) {

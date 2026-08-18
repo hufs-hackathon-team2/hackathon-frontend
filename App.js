@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { COLORS, FONT } from './src/lib/theme';
 
 import BottomTabs from './src/navigation/BottomTabs';
 
@@ -24,6 +25,15 @@ import S60Weekly from './src/screens/S60Weekly';
 import S04SignupComplete from './src/screens/auth/S04SignupComplete';
 
 const Stack = createNativeStackNavigator();
+
+const modalOptions = {
+  presentation: 'modal',
+  headerShown: true,
+  headerStyle: { backgroundColor: COLORS.bg },
+  headerTitleStyle: { fontFamily: FONT.semibold, fontSize: FONT.body, color: COLORS.text },
+  headerShadowVisible: false,
+  headerTintColor: COLORS.text,
+};
 
 export default function App() {
   
@@ -62,17 +72,17 @@ export default function App() {
           <Stack.Screen
             name="QuestProgress"
             component={S52QuestProgress}
-            options={{ headerShown: true, title: '퀘스트 완료', presentation: 'modal' }}
+            options={{ ...modalOptions, title: '퀘스트 완료' }}
           />
           <Stack.Screen
             name="Resume"
             component={S40Resume}
-            options={{ headerShown: true, title: '재개', presentation: 'modal' }}
+            options={{ ...modalOptions, title: '새 사이클 시작' }}
           />
           <Stack.Screen
             name="Weekly"
             component={S60Weekly}
-            options={{ headerShown: true, title: '위클리 카드', presentation: 'modal' }}
+            options={{ ...modalOptions, title: 'Weekly Card' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

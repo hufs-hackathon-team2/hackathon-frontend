@@ -1,6 +1,7 @@
 // QS 01 · QS 02 · QS 03 퀘스트
 import api, { USE_MOCK } from './client';
 import { MOCK_ACTIVE_QUESTS, MOCK_RECOMMENDATIONS } from './mock/quests';
+import { isResting } from './cycles';
 
 let mockQuests = MOCK_ACTIVE_QUESTS;
 
@@ -20,6 +21,8 @@ export async function getRecommendations() {
 }
 
 export async function startQuest(content) {
+  const wasResting = await isResting();
+
   if (USE_MOCK) {
     const quest = {
       quest_id: Date.now(),
@@ -32,11 +35,11 @@ export async function startQuest(content) {
     };
 
     mockQuests = [quest];
-    return quest;
+    return { ...quest, new_cycle_started: wasResting };
   }
 
   const res = await api.post('/quests', { quest_content: content });
-  return res.data;
+  return { ...res.data, new_cycle_started: wasResting };
 }
 
 export async function checkQuest(questId) {

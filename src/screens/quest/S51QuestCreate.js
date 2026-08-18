@@ -49,7 +49,13 @@ export default function S51QuestCreate({ navigation }) {
     setStarting(true);
 
     startQuest(questTitle.trim())
-      .then(() => navigation.goBack())
+      .then((res) => {
+        navigation.goBack();
+
+        if (res.new_cycle_started) {
+          navigation.navigate('Resume');
+        }
+      })
       .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'))
       .finally(() => setStarting(false));
   };

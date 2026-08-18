@@ -110,7 +110,17 @@ export default function S60Weekly({ navigation }) {
 
   const handleSelectQuest = (quest) => {
     startQuest(quest.quest_content)
-      .then(() => navigation.navigate('QuestTab', { screen: 'QuestList' }))
+      .then((res) => {
+        if (res.new_cycle_started) {
+          navigation.navigate('Resume');
+          return;
+        }
+
+        navigation.navigate('Main', {
+          screen: 'QuestTab',
+          params: { screen: 'QuestList' },
+        });
+      })
       .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
   };
 

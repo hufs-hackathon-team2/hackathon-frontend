@@ -60,3 +60,10 @@ export async function getCycleHistory() {
   const res = await api.get('/cycle/history');
   return res.data.cycles;
 }
+
+//휴식기
+export async function isResting() {
+  const analysis = await getCurrentAnalysis();
+  return analysis.rest_started_at !== null;
+}
+
