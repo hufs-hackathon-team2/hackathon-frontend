@@ -5,16 +5,16 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S04ResetPassword({ navigation }) {
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -23,7 +23,7 @@ export default function S04ResetPassword({ navigation }) {
 
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
-
+  const [isemailFocused, setIsemailFocused] = useState(false);
 
   const validateEmail = (value) => {
     const trimmed = value.trim();
@@ -48,6 +48,11 @@ export default function S04ResetPassword({ navigation }) {
   };
 
 
+  const handleBlur = () => {
+    setIsemailFocused(false);
+    validateEmail(email);
+  };
+
   const handleSendResetLink = () => {
     const trimmedEmail = email.trim();
 
@@ -59,15 +64,13 @@ export default function S04ResetPassword({ navigation }) {
     const isValid = validateEmail(trimmedEmail);
     if (!isValid) return;
 
-
-    console.log('재설정 링크 발송 요청 이메일:', trimmedEmail);
     Alert.alert(
       '발송 완료',
       '가입하신 이메일로 비밀번호 재설정 링크를 보냈습니다. 이메일을 확인해 주세요.',
       [
         {
           text: '확인',
-          onPress: () => navigation.navigate('Login'), 
+          onPress: () => navigation.goBack(),
         },
       ]
     );
@@ -75,25 +78,12 @@ export default function S04ResetPassword({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.inner}
         >
-
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={styles.backButtonText}>{'<'}</Text>
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>비밀번호 재설정 화면</Text>
-            <View style={styles.headerRightPlaceholder} />
-          </View>
-
-          <View style={styles.divider} />
-
+          <ScreenHeader navigation={navigation} />
 
           <View style={styles.content}>
             <Text style={styles.title}>비밀번호 재설정</Text>
@@ -101,14 +91,20 @@ export default function S04ResetPassword({ navigation }) {
               가입 시 사용한 이메일을 입력하면 재설정 링크를 보내드립니다.
             </Text>
 
-
             <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
-                style={[styles.input, emailError ? styles.inputError : null]}
+                style={[
+                  styles.input,
+                  isemailFocused && styles.inputFocused,
+                  emailError ? styles.inputError : null,
+                ]}
                 value={email}
-                onChangeText={handleEmailChange}
-                onBlur={() => validateEmail(email)}
+                onChangeText={handleEmailChange} 
+                placeholder="you@example.com"
+                placeholderTextColor="#757575"
+                onFocus={() => setIsemailFocused(true)}
+                onBlur={handleBlur} 
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -117,17 +113,18 @@ export default function S04ResetPassword({ navigation }) {
               ) : null}
             </View>
 
-
             <TouchableOpacity
               style={styles.sendButton}
               onPress={handleSendResetLink}
+              activeOpacity={0.8}
             >
-              <Text style={styles.sendButtonText}>재설정 링크 발송</Text>
+              <Text style={styles.sendButtonText}>재설정 링크 보내기</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.backToLoginButton}
               onPress={() => navigation.navigate('Login')}
+              activeOpacity={0.6}
             >
               <Text style={styles.backToLoginText}>로그인으로 돌아가기</Text>
             </TouchableOpacity>
@@ -141,68 +138,50 @@ export default function S04ResetPassword({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E3ECFF',
   },
   inner: {
     flex: 1,
   },
-  header: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  backButtonText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1E232C',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1E232C',
-  },
-  headerRightPlaceholder: {
-    width: 20,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E8ECF4',
-  },
   content: {
     paddingHorizontal: 24,
-    paddingTop: 32,
+    paddingTop: 28,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1E232C',
-    marginBottom: 8,
+    color: '#1B1A18',
+    marginBottom: 16,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#4A5568',
+    fontSize: 13,
+    color: '#1B1A18',
     lineHeight: 20,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 32,
   },
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1E232C',
+    color: '#1B1A18',
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#DADADA',
-    borderRadius: 8,
-    height: 48,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: '#1E232C',
+    borderColor: '#CFCCC9',
+    borderRadius: 12,
+    height: 52,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#1B1A18',
+    backgroundColor: '#FFFFFF',
+  },
+
+  inputFocused: {
+    borderWidth: 2,
+    borderColor: '#8BA1C5',
   },
   inputError: {
     borderColor: '#E53E3E',
@@ -214,26 +193,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   sendButton: {
-    backgroundColor: '#1E232C',
-    borderRadius: 8,
-    height: 44,
+    backgroundColor: '#3E629F',
+    borderRadius: 12,
+    height: 52,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    width: '100%',
+    marginBottom: 30,
   },
   sendButtonText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
   },
   backToLoginButton: {
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
   },
   backToLoginText: {
     fontSize: 14,
-    color: '#718096',
-    textDecorationLine: 'underline',
+    color: '#3E629F',
+    fontWeight: '500',
   },
 });
