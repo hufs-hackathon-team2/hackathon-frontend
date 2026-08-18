@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signup, MOCK_USER } from '../../lib/api/mock/auth';
+import { signupAPI } from '../../lib/api/auth';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -51,11 +51,11 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    const isExist = MOCK_USER.some((user) => user.username === trimmed);
-    if (isExist) {
-      setEmailError('이미 가입된 이메일이에요');
-      return false;
-    }
+    // const isExist = MOCK_USER.some((user) => user.username === trimmed);
+    // if (isExist) {
+    //   setEmailError('이미 가입된 이메일이에요');
+    //   return false;
+    // }
 
     setEmailError('');
     return true;
@@ -135,7 +135,10 @@ export default function S02Signup({ navigation }) {
     }
 
     try {
-      await signup(trimmedEmail, password);
+      await signupAPI({
+        username: trimmedEmail,
+        password: password,
+      });
 
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {
@@ -145,6 +148,14 @@ export default function S02Signup({ navigation }) {
       ]);
     } catch (error) {
       Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
+
+      if (error.response?.data?.username || error.response?.data?.email) {
+        setEmailError('이미 가입된 이메일이에요');
+      } else {
+        const serverErrorMessage =
+          error.response?.data?.message || '회원가입 처리 중 오류가 발생했습니다.';
+        Alert.alert('회원가입 실패', serverErrorMessage);
+      }
     }
   };
 
@@ -179,6 +190,8 @@ export default function S02Signup({ navigation }) {
                   setFocusedInput(null);
                   validateEmail(email);
                 }}
+                placeholder="you@example.com"
+                placeholderTextColor="#757575"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -203,7 +216,7 @@ export default function S02Signup({ navigation }) {
                   validatePassword(password);
                 }}
                 placeholder="비밀번호"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {passwordError ? (
@@ -231,7 +244,7 @@ export default function S02Signup({ navigation }) {
                   validateConfirmPassword(confirmPassword, password);
                 }}
                 placeholder="비밀번호 확인"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {confirmPasswordError ? (
