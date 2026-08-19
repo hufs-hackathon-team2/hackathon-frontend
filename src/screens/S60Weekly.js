@@ -180,17 +180,12 @@ export default function S60Weekly({ navigation }) {
               </Text>
 
               {weeklyData.next_week_recommendations?.map((quest) => (
-                <TouchableOpacity
-                  key={quest.recommendation_id}
-                  style={styles.questItem}
-                  onPress={() => handleSelectQuest(quest)}
-                  activeOpacity={0.7}
-                >
+                <View key={quest.recommendation_id} style={styles.questItem}>
                   <Text style={styles.questTitle}>{quest.quest_content}</Text>
                   {quest.reason ? (
                     <Text style={styles.questReason}>{quest.reason}</Text>
                   ) : null}
-                </TouchableOpacity>
+                </View>
               ))}
             </View>
           </View>
