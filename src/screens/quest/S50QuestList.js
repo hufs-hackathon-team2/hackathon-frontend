@@ -95,7 +95,10 @@ export default function S50QuestList({ navigation }) {
     checkQuest(activeQuest.quest_id)
       .then((res) => {
         if (res.is_success) {
-          navigation.navigate('QuestProgress', { title: activeQuest.quest_content });
+          navigation.navigate('QuestProgress', {
+            title: activeQuest.quest_content,
+            points: res.growth_points_awarded,
+          });
         }
 
         load();
