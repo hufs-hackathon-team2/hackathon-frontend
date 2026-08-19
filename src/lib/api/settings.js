@@ -28,6 +28,8 @@ export async function logout() {
   if (!USE_MOCK) {
     try {
       const refreshToken = await getRefreshToken();
+
+      // 응답은 refresh 로 오지만 로그아웃 요청은 refresh_token 으로 받는다
       await api.post('/auth/logout/', { refresh_token: refreshToken });
     } catch {
       // 서버 로그아웃이 실패해도 폰에서는 지운다.
