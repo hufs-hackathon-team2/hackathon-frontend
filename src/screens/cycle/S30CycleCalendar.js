@@ -27,12 +27,22 @@ export default function S30CycleCalendar({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
+    setError(false);
+
     getPreviousAnalysis()
       .then(setPrevious)
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    load();
+
+    // 실패한 채로 남지 않도록 화면에 들어올 때마다 다시 불러온다
+    const unsubscribe = navigation.addListener('focus', load);
+    return unsubscribe;
+  }, [navigation]);
 
   if (loading) {
     return (
@@ -42,11 +52,39 @@ export default function S30CycleCalendar({ navigation }) {
     );
   }
 
-  if (error || !previous) {
+  if (error) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>사이클 정보를 불러오지 못했어요</Text>
       </View>
+    );
+  }
+
+  // 첫 사이클이면 완료된 사이클이 아직 없다. 오류가 아니라 정상 상태다.
+  if (!previous) {
+    return (
+      <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
+
+        <Text style={styles.nowCycleTitle}>최근 완료한 Healthy Cycle</Text>
+
+        <View style={styles.cycleBtnRow}>
+          <Pressable style={styles.cycleBtnFill} onPress={() => navigation.navigate('CycleAnalysis')}>
+            <Text style={styles.cycleBtnFillText}>현재 사이클 보기</Text>
+          </Pressable>
+
+          <Pressable style={styles.cycleBtnLine} onPress={() => navigation.navigate('CycleHistory')}>
+            <Text style={styles.cycleBtnLineText}>히스토리 보기</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.informBox}>
+          <Text style={styles.errorText}>
+            아직 완료한 사이클이 없어요{'\n'}
+            첫 사이클을 이어가는 중이에요
+          </Text>
+        </View>
+
+      </ScrollView>
     );
   }
 

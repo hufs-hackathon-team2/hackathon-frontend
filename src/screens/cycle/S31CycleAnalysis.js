@@ -106,7 +106,9 @@ export default function S31CycleAnalysis ({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const load = () => {
+    setError(false);
+
     getCurrentAnalysis()
       .then((result) => {
         setAnalysis(result);
@@ -117,7 +119,15 @@ export default function S31CycleAnalysis ({ navigation }) {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => {
+    load();
+
+    // 실패한 채로 남지 않도록 화면에 들어올 때마다 다시 불러온다
+    const unsubscribe = navigation.addListener('focus', load);
+    return unsubscribe;
+  }, [navigation]);
 
 
   if (loading) {

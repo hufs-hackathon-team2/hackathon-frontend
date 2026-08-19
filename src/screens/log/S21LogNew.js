@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { createLog } from '../../lib/api/logs';
+import { getErrorMessage } from '../../lib/api/error';
 import { COLORS, FONT } from '../../lib/theme';
 
 export default function S21LogNew({ navigation }) {
@@ -70,7 +71,7 @@ export default function S21LogNew({ navigation }) {
           },
         ]);
       })
-      .catch(() => Alert.alert('저장하지 못했어요', '잠시 후 다시 시도해주세요'))
+      .catch((error) => Alert.alert('저장하지 못했어요', getErrorMessage(error)))
       .finally(() => setSaving(false));
   };
 

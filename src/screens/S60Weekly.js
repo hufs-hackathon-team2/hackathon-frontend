@@ -13,9 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-// import ScreenHeader from '../components/common/ScreenHeader';
 import { startQuest } from '../lib/api/quests';
 import { getWeeklyData } from '../lib/api/weekly';
+import { getErrorMessage } from '../lib/api/error';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -37,10 +37,6 @@ export default function S60Weekly({ navigation }) {
       const data = await getWeeklyData();
       setWeeklyData(data);
     } catch (error) {
-      console.error('=== API ERROR DETAILS ===');
-      console.error('Status:', error.response?.status);
-      console.error('Data:', error.response?.data);
-      console.error('Message:', error.message);
       setIsError(true);
     } finally {
       setLoading(false);
@@ -92,6 +88,23 @@ export default function S60Weekly({ navigation }) {
     }
   };
 
+  const handleSelectQuest = (quest) => {
+    startQuest(quest.quest_content)
+      .then((res) => {
+        if (res.new_cycle_started) {
+          navigation.navigate('Resume');
+          return;
+        }
+
+        navigation.navigate('Main', {
+          screen: 'QuestTab',
+          params: { screen: 'QuestList' },
+        });
+      })
+      .catch((error) =>
+        Alert.alert('시작하지 못했어요', getErrorMessage(error))
+      );
+  };
 
   if (loading) {
     return (
@@ -104,7 +117,6 @@ export default function S60Weekly({ navigation }) {
   if (isError) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -120,7 +132,6 @@ export default function S60Weekly({ navigation }) {
   if (!weeklyData || !weeklyData.is_generated) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -135,7 +146,6 @@ export default function S60Weekly({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* <ScreenHeader navigation={navigation} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
 
