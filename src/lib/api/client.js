@@ -31,4 +31,44 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// 로그에 남으면 안 되는 값. 로그인 응답의 토큰이 대표적이다.
+const SECRET_KEYS = ['access', 'refresh', 'access_token', 'refresh_token', 'token', 'password'];
+
+function hideSecret(data) {
+  if (!data || typeof data !== 'object') return data;
+
+  const copy = Array.isArray(data) ? [...data] : { ...data };
+
+  SECRET_KEYS.forEach((key) => {
+    if (copy[key] != null) copy[key] = '***';
+  });
+
+  return copy;
+}
+
+api.interceptors.response.use(
+  (response) => {
+    const method = response.config?.method?.toUpperCase() ?? '?';
+    const url = response.config?.url ?? '?';
+
+    // 성공 응답에만 진짜 토큰이 들어 있다.
+    console.log(`[API] ${method} ${url} → ${response.status}`, hideSecret(response.data));
+
+    return response;
+  },
+  (error) => {
+    const method = error.config?.method?.toUpperCase() ?? '?';
+    const url = error.config?.url ?? '?';
+
+    // 실패하면 서버가 토큰을 주지 않으므로 에러 내용은 그대로 남긴다.
+    if (error.response) {
+      console.log(`[API] ${method} ${url} → ${error.response.status}`, error.response.data);
+    } else {
+      console.log(`[API] ${method} ${url} → 응답 없음`, error.message);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

@@ -22,7 +22,7 @@ export default function Welcome({ navigation }) {
           style={styles.stamp}
           resizeMode="contain"
         />
-        <Text style={styles.logo}>helply</Text>
+        <Text style={styles.logo}>healply</Text>
         <Text style={styles.slogan}>건강한 습관을 쌓는 가장 가벼운 방법</Text>
       </View>
 

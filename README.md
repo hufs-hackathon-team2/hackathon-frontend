@@ -1,4 +1,4 @@
-# helply
+# healply
 
 헬시 플레져를 오래 이어가도록 돕는 모바일 앱입니다.
 
@@ -18,7 +18,7 @@
 
 ```bash
 git clone <저장소 주소>
-cd helply-expo
+cd hackathon-frontend
 npm ci
 cp .env.example .env
 ```
