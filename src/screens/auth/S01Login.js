@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { login } from '../../lib/api/auth';
-import { saveToken } from '../../lib/api/token';
+import { saveToken, saveOnboarded } from '../../lib/api/token';
 
 export default function S01Login({ navigation }) {
   const [username, setUsername] = useState('');
@@ -51,6 +51,9 @@ export default function S01Login({ navigation }) {
       const data = await login(username.trim(), password);
 
       await saveToken(data.access, data.refresh);
+
+      // GET /settings 가 이 값을 안 줘서 스플래시가 쓸 수 있게 저장해둔다
+      await saveOnboarded(data.onboarding_completed);
 
       navigation.reset({
         index: 0,

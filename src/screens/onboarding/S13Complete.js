@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { completeOnboarding } from '../../lib/api/onboarding';
+import { saveOnboarded } from '../../lib/api/token';
 
 export default function S13Complete({ route, navigation }) {
   const { character, characterName } = route.params || {};
@@ -25,6 +26,7 @@ export default function S13Complete({ route, navigation }) {
     setSaving(true);
     try {
       await completeOnboarding();
+      await saveOnboarded(true);
     } catch {
       Alert.alert('시작하지 못했어요', '잠시 후 다시 시도해주세요.');
       setSaving(false);
