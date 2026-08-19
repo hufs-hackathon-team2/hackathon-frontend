@@ -39,6 +39,10 @@ export default function S32CycleHistory({ navigation }) {
     );
   }
 
+  // 종료일이 없으면 아직 진행 중인 사이클이다. 완료 목록에는 넣지 않는다.
+  // 그대로 두면 날짜가 NaN 으로 찍힌다.
+  const completed = (cycles ?? []).filter((cycle) => cycle.started_at && cycle.closed_at);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScreenHeader navigation={navigation} />
@@ -50,10 +54,10 @@ export default function S32CycleHistory({ navigation }) {
 
         {error ? (
           <Text style={styles.errorText}>히스토리를 불러오지 못했어요</Text>
-        ) : cycles.length === 0 ? (
+        ) : completed.length === 0 ? (
           <Text style={styles.errorText}>아직 완료한 사이클이 없어요</Text>
         ) : (
-          cycles.map((cycle) => (
+          completed.map((cycle) => (
             <View key={cycle.cycle_id} style={styles.historyBox}>
               <Text style={styles.historyNth}>{cycle.cycle_count}번째 사이클</Text>
               <Text style={styles.historyPeriod}>
