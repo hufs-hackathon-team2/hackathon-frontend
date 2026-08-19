@@ -211,7 +211,7 @@ export default function S50QuestList({ navigation }) {
               <Text style={styles.questEmptyDescription}>이번 주에 PLUS Log 를 2개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.</Text>
             </View>            
           ) : (
-            recommend.recommended_quests.map((quest) => (
+            recommend.recommended_quests?.map((quest) => (
               <QuestRecommend
                 key={quest.recommendation_id}
                 title={quest.quest_content}
