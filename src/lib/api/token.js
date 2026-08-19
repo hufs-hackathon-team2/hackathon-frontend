@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 const ACCESS = 'accessToken';
 const REFRESH = 'refreshToken';
 const ONBOARDED = 'onboardingCompleted';
+const CHARACTER_NAME = 'characterName';
 
 export async function saveToken(accessToken, refreshToken) {
   await SecureStore.setItemAsync(ACCESS, accessToken);
@@ -32,8 +33,20 @@ export async function getOnboarded() {
   return value === 'true';
 }
 
+// 온보딩에서 지은 캐릭터 이름.
+// GET /characters/me/room 응답에 없어서 지을 때 여기에 담아둔다.
+// 서버가 character_name 을 주기 시작하면 이 두 함수는 지워도 된다.
+export async function saveCharacterName(name) {
+  await SecureStore.setItemAsync(CHARACTER_NAME, name);
+}
+
+export async function getSavedCharacterName() {
+  return SecureStore.getItemAsync(CHARACTER_NAME);
+}
+
 export async function clearToken() {
   await SecureStore.deleteItemAsync(ACCESS);
   await SecureStore.deleteItemAsync(REFRESH);
   await SecureStore.deleteItemAsync(ONBOARDED);
+  await SecureStore.deleteItemAsync(CHARACTER_NAME);
 }
