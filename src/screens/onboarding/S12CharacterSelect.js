@@ -183,11 +183,6 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
   },
-  header: {
-    height: 52,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 24,

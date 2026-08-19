@@ -140,14 +140,6 @@ export default function S01Login({ navigation }) {
             </TouchableOpacity>
 
             <View style={styles.linkContainer}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('ResetPassword')}
-              >
-                <Text style={styles.blueLinkText}>
-                  비밀번호를 잊으셨나요?
-                </Text>
-              </TouchableOpacity>
-
               <View style={styles.signUpRow}>
                 <Text style={styles.grayText}>계정이 없으신가요? </Text>
                 <TouchableOpacity

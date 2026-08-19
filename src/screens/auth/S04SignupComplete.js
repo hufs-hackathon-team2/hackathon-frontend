@@ -50,11 +50,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E3ECFF', 
   },
-  header: {
-    height: 52,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
   content: {
     flex: 1,
     justifyContent: 'center',

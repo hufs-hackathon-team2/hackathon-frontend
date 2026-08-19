@@ -95,6 +95,8 @@ export default function S30CycleCalendar({ navigation }) {
     );
   }
 
+  const completedQuests = (previous.completed_quests ?? []).filter((name) => name?.trim());
+
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
@@ -118,17 +120,17 @@ export default function S30CycleCalendar({ navigation }) {
         <View style={styles.informRow}>
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>시작일</Text>
-            <Text style={styles.detailValue}>{getFullDate(new Date(previous.started_at))}</Text>
+            <Text style={styles.detailValue}>{getFullDate(previous.started_at)}</Text>
           </View>
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>지속일</Text>
-            <Text style={styles.detailValue}>{previous.active_days}일</Text>
+            <Text style={styles.detailValue}>{previous.active_days ?? 0}일</Text>
           </View>
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>결과</Text>
-            <Text style={styles.detailActivity}>경험치 +{previous.active_days * 1 + (previous.completed_quests?.length ?? 0) * 3}</Text>
+            <Text style={styles.detailActivity}>경험치 +{(previous.active_days ?? 0) + (previous.completed_quests?.length ?? 0) * 3}</Text>
           </View>
 
         </View>
@@ -155,7 +157,7 @@ export default function S30CycleCalendar({ navigation }) {
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>활동일</Text>
-            <Text style={styles.detailValue}>{previous.active_days}일</Text>
+            <Text style={styles.detailValue}>{previous.active_days ?? 0}일</Text>
           </View>
 
           <View style={styles.informDetail}>
@@ -165,11 +167,28 @@ export default function S30CycleCalendar({ navigation }) {
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>휴식일</Text>
-            <Text style={styles.detailValue}>{previous.rest_days}일</Text>
+            <Text style={styles.detailValue}>{previous.rest_days ?? 0}일</Text>
           </View>
 
         </View>
 
+      </View>
+
+      <View style={styles.insightBox}>
+        <Text style={styles.informTitle}>완료한 퀘스트</Text>
+
+        {completedQuests.length === 0 ? (
+          <Text style={styles.emptyDescription}>완료한 퀘스트가 없어요</Text>
+        ) : (
+          <View style={styles.suggestList}>
+            {completedQuests.map((name, i) => (
+              <View key={i} style={styles.suggestRow}>
+                <Text style={styles.questCheck}>✓</Text>
+                <Text style={styles.suggestText}>{name}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
 
       <CycleCalendar
@@ -205,15 +224,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACE.screen,
     backgroundColor: COLORS.bg,
     flexGrow: 1,
-  },
-
-  header: {
-    fontFamily: FONT.bold,
-    fontSize: FONT.title,
-    color: COLORS.text,
-    textAlign: 'center',
-    paddingVertical: 10,
-    marginBottom: 5,
   },
 
   nowCycleTitle: {
@@ -366,6 +376,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: COLORS.navigate,
     marginTop: 5,
+  },
+
+  questCheck: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.primary,
+    lineHeight: 15,
   },
 
   suggestText: {

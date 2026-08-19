@@ -13,8 +13,6 @@ import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 
 
-const STAGE_COLORS = ["#EBE2A2", "#C7EBA2", "#A2EBAC", "#A2EBDA", "#A2CEEB", "#A5A2EB", "#D3A2EB"];
-
 const MAX_ASSETS = 14;
 
 
@@ -288,11 +286,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  charactorImage:{
-    marginTop: 20,
-    marginBottom: 10,
-  },
-
   button: {
     alignSelf: 'center',
     backgroundColor: COLORS.navigate,
@@ -381,6 +374,7 @@ const styles = StyleSheet.create({
   stickerBar: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
     paddingHorizontal: 6,
   },
 

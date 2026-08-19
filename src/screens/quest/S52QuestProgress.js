@@ -1,16 +1,29 @@
 // QS 03 퀘스트 진행 및 완료 (3일 체크리스트, 하루 1회만 체크)
 import { ScrollView, Text, View, Pressable, StyleSheet, Image} from "react-native";
+import { useState, useEffect } from 'react';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
-import { CAT_STAGES } from '../../lib/assets';
+import { getCharacterStages, getStageIndex } from '../../lib/assets';
+import { getRoom } from '../../lib/api/characters';
 
 export default function S52QuestProgress({ navigation, route }) {
 
   const title = route.params?.title ?? '퀘스트';
+  const points = route.params?.points;
+
+  // 축하 화면이라 성장이 반영된 지금 모습을 보여준다
+  const [room, setRoom] = useState(null);
+
+  useEffect(() => {
+    getRoom().then(setRoom).catch(() => setRoom(null));
+  }, []);
+
+  const stageIndex = getStageIndex(room?.current_stage);
+  const characterImage = getCharacterStages(room?.character_type)[stageIndex];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageBox}>
-          <Image source={CAT_STAGES[3]} style={styles.character} />
+          {room && <Image source={characterImage} style={styles.character} />}
         </View>
 
         <View>
@@ -29,11 +42,13 @@ export default function S52QuestProgress({ navigation, route }) {
           <View style={styles.bonusRow}>
 
             <View style={styles.bonusBadge}>
-              <Text style={styles.bonusBadgeText}>+3</Text>
+              <Text style={styles.bonusBadgeText}>{points != null ? `+${points}` : '＋'}</Text>
             </View>
 
             <View style={styles.bonusInfo}>
-              <Text style={styles.bonusTitle}>성장 게이지 3칸</Text>
+              <Text style={styles.bonusTitle}>
+                {points != null ? `성장 게이지 ${points}칸` : '성장 게이지 상승'}
+              </Text>
               <Text style={styles.bonusDesc}>퀘스트 완료 보너스가 반영되었어요</Text>
             </View>
 

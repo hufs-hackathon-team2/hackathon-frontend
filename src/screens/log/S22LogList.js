@@ -141,8 +141,8 @@ export default function S22LogList({ navigation }) {
         logs.map((log) => (
           <LogItem
             key={log.log_id}
-            date={getDateDisplay(new Date(log.created_at))}
-            time={getTimeDisplay(new Date(log.created_at))}
+            date={getDateDisplay(log.created_at)}
+            time={getTimeDisplay(log.created_at)}
             content={log.content}
             onDelete={() => handleDelete(log.log_id)}
           />
@@ -213,13 +213,6 @@ const styles = StyleSheet.create({
     color: COLORS.navigateText,
   },
 
-  logItem: {
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 10,
-  },
 
   emptyBox: {
     paddingVertical: 60,

@@ -1,7 +1,7 @@
 // CY 05 재개 화면 (휴식기 이후 첫 활동 시 )
 import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Image } from "react-native";
 import { useState, useEffect } from 'react';
-import { getFullDate, getDateDifference } from "../lib/date";
+import { getFullDate, getDurationDays, EMPTY_DATE } from "../lib/date";
 import { COLORS, FONT, SPACE, RADIUS } from '../lib/theme';
 import { getPreviousAnalysis } from '../lib/api/cycles';
 import { getRecommendations } from '../lib/api/quests';
@@ -16,14 +16,16 @@ export default function S40Resume({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // 이전 사이클만 있으면 화면을 그린다. 추천·캐릭터는 없어도 나머지를 보여준다.
   useEffect(() => {
-    Promise.all([getPreviousAnalysis(), getRecommendations(), getRoom()])
-      .then(([cycle, rec, character]) => {
-        setPrevious(cycle);
-        setRecommend(rec);
-        setRoom(character);
+    Promise.allSettled([getPreviousAnalysis(), getRecommendations(), getRoom()])
+      .then(([cycleRes, recRes, roomRes]) => {
+        setPrevious(cycleRes.status === 'fulfilled' ? cycleRes.value : null);
+        setRecommend(recRes.status === 'fulfilled' ? recRes.value : null);
+        setRoom(roomRes.status === 'fulfilled' ? roomRes.value : null);
+
+        setError(cycleRes.status === 'rejected');
       })
-      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -43,8 +45,8 @@ export default function S40Resume({ navigation }) {
     );
   }
 
-  const startDate = new Date(previous.started_at);
-  const endDate = new Date(previous.closed_at);
+  const startDate = previous.started_at;
+  const endDate = previous.closed_at;
 
   const stageIndex = getStageIndex(room?.current_stage);
   const characterImage = getCharacterStages(room?.character_type)[stageIndex];
@@ -53,7 +55,7 @@ export default function S40Resume({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.imageBox}>
-          <Image source={characterImage} style={characterSize} resizeMode="contain" />
+          {room && <Image source={characterImage} style={characterSize} resizeMode="contain" />}
         </View>
 
         <View>
@@ -66,7 +68,7 @@ export default function S40Resume({ navigation }) {
           <Text style={styles.successQuestName}>{previous.cycle_count}번째 사이클</Text>
 
           <Text style={styles.period}>
-            {getFullDate(startDate)} ~ {getFullDate(endDate)} · {getDateDifference(startDate, endDate)}일
+            {getFullDate(startDate)} ~ {getFullDate(endDate)} · {getDurationDays(startDate, endDate) ?? EMPTY_DATE}일
           </Text>
 
           <View style={styles.summaryRow}>

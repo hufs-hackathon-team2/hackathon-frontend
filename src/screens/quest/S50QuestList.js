@@ -24,7 +24,6 @@ export default function S50QuestList({ navigation }) {
   const [activeQuest, setactiveQuest] = useState(null);
   const [recommend, setRecommend] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   // 진행 중인 퀘스트 조회가 실패해도 추천 목록은 보여준다
   const load = () => {
@@ -32,8 +31,6 @@ export default function S50QuestList({ navigation }) {
       .then(([questRes, recRes]) => {
         setactiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
         setRecommend(recRes.status === 'fulfilled' ? recRes.value : null);
-
-        setError(recRes.status === 'rejected');
       })
       .finally(() => setLoading(false));
   };
@@ -47,7 +44,7 @@ export default function S50QuestList({ navigation }) {
   }, [navigation]);
 
   const handleStart = (quest) => {
-    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>7일 안에 3일만 체크하면 성공!`, [
+    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>\n\n7일 안에 3일만 체크하면 성공!`, [
       { text: '취소', style: 'cancel' },
       {
         text: '시작',
@@ -95,7 +92,10 @@ export default function S50QuestList({ navigation }) {
     checkQuest(activeQuest.quest_id)
       .then((res) => {
         if (res.is_success) {
-          navigation.navigate('QuestProgress', { title: activeQuest.quest_content });
+          navigation.navigate('QuestProgress', {
+            title: activeQuest.quest_content,
+            points: res.growth_points_awarded,
+          });
         }
 
         load();
@@ -107,14 +107,6 @@ export default function S50QuestList({ navigation }) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-      </View>
-    );
-  }
-
-  if (error || !recommend) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>퀘스트를 불러오지 못했어요</Text>
       </View>
     );
   }
@@ -207,11 +199,16 @@ export default function S50QuestList({ navigation }) {
             <Text style={styles.questDescription}>진행 중인 퀘스트를 마치면 새 퀘스트를 시작할 수 있어요</Text>
           )}
 
-          {!recommend.has_recommendations ? (
+          {!recommend ? (
+            <View style={styles.questEmptybox}>
+              <Text style={styles.questEmptyText}>추천 퀘스트를 불러오지 못했어요</Text>
+              <Text style={styles.questEmptyDescription}>잠시 후 다시 들어와 주세요. 직접 만들기는 그대로 쓸 수 있어요.</Text>
+            </View>
+          ) : !recommend.has_recommendations ? (
             <View style={styles.questEmptybox}>
               <Text style={styles.questEmptyText}>아직 추천 퀘스트가 없어요</Text>
               <Text style={styles.questEmptyDescription}>이번 주에 PLUS Log 를 2개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.</Text>
-            </View>            
+            </View>
           ) : (
             recommend.recommended_quests?.map((quest) => (
               <QuestRecommend
@@ -332,12 +329,6 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
 
-  topRow:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-
   giveUpButton:{
     alignSelf: 'flex-end',
     backgroundColor: COLORS.danger,
@@ -402,12 +393,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: SPACE.screen,
     backgroundColor: COLORS.bg,
-  },
-
-  errorText: {
-    fontFamily: FONT.regular,
-    fontSize: FONT.body,
-    color: COLORS.textSub,
   },
 
   createGuide: {

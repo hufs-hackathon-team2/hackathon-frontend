@@ -1,6 +1,6 @@
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { getActivityDots } from '../../lib/cycle';
-import { getDateFormat } from '../../lib/date';
+import { getDateFormat, toDate } from '../../lib/date';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONT, RADIUS } from '../../lib/theme';
 
@@ -32,7 +32,7 @@ export default function CycleCalendar({ cycle, logDates = [], questDates = [] })
     <View>
       <View style={styles.card}>
         <Calendar
-          current={getDateFormat(cycle.startDate)}
+          current={getDateFormat(toDate(cycle.startDate) ?? new Date())}
           markedDates={getActivityDots(logDates, questDates, DOT_COLORS)}
           theme={{
             calendarBackground: COLORS.cardWhite,

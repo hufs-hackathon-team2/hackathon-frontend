@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
-import { getFullDate, getDateDifference } from "../../lib/date";
+import { getFullDate, getDurationDays, EMPTY_DATE } from "../../lib/date";
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import { getCycleHistory } from '../../lib/api/cycles';
 
@@ -59,10 +59,10 @@ export default function S32CycleHistory({ navigation }) {
             <View key={cycle.cycle_id} style={styles.historyBox}>
               <Text style={styles.historyNth}>{cycle.cycle_count}번째 사이클</Text>
               <Text style={styles.historyPeriod}>
-                {getFullDate(new Date(cycle.started_at))} ~ {getFullDate(new Date(cycle.closed_at))}
+                {getFullDate(cycle.started_at)} ~ {getFullDate(cycle.closed_at)}
               </Text>
               <Text style={styles.historySummary}>
-                {getDateDifference(new Date(cycle.started_at), new Date(cycle.closed_at))}일 동안 이어갔어요
+                {getDurationDays(cycle.started_at, cycle.closed_at) ?? EMPTY_DATE}일 동안 이어갔어요
               </Text>
             </View>
           ))
