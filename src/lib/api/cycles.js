@@ -10,12 +10,13 @@ import {
   MOCK_PREV_QUEST_DATES,
 } from './mock/cycles';
 
-// 달력에 점을 찍을 날짜는 아직 서버가 주지 않는다. 요청해둔 상태라 목데이터로 채운다.
+// 달력에 점을 찍을 날짜.
+// 서버가 GET 은 log_dates, POST 는 logDates 로 준다. 둘 다 받아 화면에는 한 이름으로 넘긴다.
 function withDates(analysis, logDates, questDates) {
   return {
     ...analysis,
-    logDates: analysis.logDates ?? logDates,
-    questDates: analysis.questDates ?? questDates,
+    logDates: analysis.logDates ?? analysis.log_dates ?? logDates,
+    questDates: analysis.questDates ?? analysis.quest_dates ?? questDates,
   };
 }
 
@@ -46,10 +47,11 @@ export async function getPreviousAnalysis() {
 }
 
 // 현재 사이클 분석 요청 (3회 초과 시 429)
+// 분석에 5초 안팎이 걸린다. 기본 10초로는 아슬아슬해서 이 요청만 15초로 늘린다.
 export async function requestCurrentAnalysis() {
   if (USE_MOCK) return withDates(MOCK_ANALYSIS, MOCK_LOG_DATES, MOCK_QUEST_DATES);
 
-  const res = await api.post('/cycle/analysis/current/');
+  const res = await api.post('/cycle/analysis/current/', null, { timeout: 15000 });
   return withDates(res.data, [], []);
 }
 

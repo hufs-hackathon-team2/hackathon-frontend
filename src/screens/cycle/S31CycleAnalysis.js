@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 
 import { getFullDate, getDateDifference } from '../../lib/date';
@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { COLORS, FONT, WEIGHT, SPACE, RADIUS } from '../../lib/theme';
 
-import { getCurrentAnalysis } from '../../lib/api/cycles';
+import { getCurrentAnalysis, requestCurrentAnalysis } from '../../lib/api/cycles';
 import { ActivityIndicator } from 'react-native';
 
 const MAX_ANALYSIS = 3;
@@ -70,12 +70,29 @@ export default function S31CycleAnalysis ({ navigation }) {
   const [status, setStatus] = useState('IDLE');
   const [count, setCount] = useState(0);
 
+  // 서버가 분석까지 마치고 결과를 한 번에 준다. 따로 조회하지 않는다.
   const requestAnalysis = () => {
     setStatus('PENDING');
-    setCount(count + 1);
 
-    // API 붙으면 이자리에 fetch
-    setTimeout(() => setStatus('DONE'), 2000);
+    requestCurrentAnalysis()
+      .then((result) => {
+        setAnalysis(result);
+        // 사용 횟수는 서버가 세어 응답에 담아준다
+        setCount((used) => result.analysis_request_count ?? used + 1);
+        setStatus('DONE');
+      })
+      .catch((error) => {
+        setStatus('IDLE');
+
+        // 429 는 이번 사이클 분석 횟수를 다 쓴 것. 횟수 판정은 서버가 한다.
+        if (error.response?.status === 429) {
+          setCount(MAX_ANALYSIS);
+          Alert.alert('분석을 다 썼어요', '이번 사이클에서는 더 요청할 수 없어요');
+          return;
+        }
+
+        Alert.alert('분석하지 못했어요', '잠시 후 다시 시도해주세요');
+      });
   };
 
 
@@ -91,7 +108,13 @@ export default function S31CycleAnalysis ({ navigation }) {
 
   useEffect(() => {
     getCurrentAnalysis()
-      .then(setAnalysis)
+      .then((result) => {
+        setAnalysis(result);
+
+        // 이미 분석을 마친 사이클이면 잠금을 풀어둔다.
+        // 화면을 나갔다 들어와도 결과가 그대로 보인다.
+        if (result.activity_analysis?.length) setStatus('DONE');
+      })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);

@@ -3,7 +3,7 @@
 import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Alert } from "react-native";
 import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
-import { getDateDifference } from "../../lib/date";
+import { getDateFormat } from "../../lib/date";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import {
@@ -24,15 +24,16 @@ export default function S50QuestList({ navigation }) {
   const [recommend, setRecommend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [checkedAt, setCheckedAt] = useState(null);
 
+  // 진행 중인 퀘스트 조회가 실패해도 추천 목록은 보여준다
   const load = () => {
-    Promise.all([getActiveQuest(), getRecommendations()])
-      .then(([quest, rec]) => {
-        setactiveQuest(quest);
-        setRecommend(rec);
+    Promise.allSettled([getActiveQuest(), getRecommendations()])
+      .then(([questRes, recRes]) => {
+        setactiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
+        setRecommend(recRes.status === 'fulfilled' ? recRes.value : null);
+
+        setError(recRes.status === 'rejected');
       })
-      .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
@@ -81,14 +82,13 @@ export default function S50QuestList({ navigation }) {
     ]);
   };
 
-  const checkedToday = checkedAt != null &&
-    getDateDifference(checkedAt, new Date()) === 0;
+  // 오늘 이미 체크했는지는 서버가 준 last_checked 로 판단한다.
+  // 화면 state 로 두면 앱을 껐다 켤 때 초기화돼서 하루 두 번 체크할 수 있다.
+  const checkedToday = activeQuest?.last_checked === getDateFormat(new Date());
 
   const handleCheckToday = () => {
     checkQuest(activeQuest.quest_id)
       .then((res) => {
-        setCheckedAt(new Date());
-
         if (res.is_success) {
           navigation.navigate('QuestProgress', { title: activeQuest.quest_content });
         }

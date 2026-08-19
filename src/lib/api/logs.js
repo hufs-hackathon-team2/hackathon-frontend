@@ -11,7 +11,8 @@ let mockLogs = MOCK_LOGS;
 export async function getLogs(page = 1) {
   if (USE_MOCK) return mockLogs.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const res = await api.get('/logs/', {params: {page}});
+  // cycle_id 없이 현재 사이클 기준으로 동작한다
+  const res = await api.get('/logs/', { params: { page } });
   return res.data.logs;
 
 }

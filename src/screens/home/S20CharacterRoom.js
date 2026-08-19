@@ -26,14 +26,16 @@ export default function S20CharacterRoom({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // 셋 중 하나가 실패해도 나머지는 보여준다. allSettled 라 catch 로 빠지지 않는다.
   const load = () => {
-    Promise.all([getRoom(), getLogs(1), getActiveQuest()])
-      .then(([character, logList, quest]) => {
-        setRoom(character);
-        setLogs(logList);
-        setActiveQuest(quest);
+    Promise.allSettled([getRoom(), getLogs(1), getActiveQuest()])
+      .then(([roomRes, logRes, questRes]) => {
+        setRoom(roomRes.status === 'fulfilled' ? roomRes.value : null);
+        setLogs(logRes.status === 'fulfilled' ? logRes.value ?? [] : []);
+        setActiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
+
+        setError(roomRes.status === 'rejected');
       })
-      .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
@@ -52,20 +54,14 @@ export default function S20CharacterRoom({ navigation }) {
     );
   }
 
-  if (error || !room) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>캐릭터 정보를 불러오지 못했어요</Text>
-      </View>
-    );
-  }
-
-  const stageIndex = getStageIndex(room.current_stage);
-  const characterType = room.character_type;
+  const stageIndex = getStageIndex(room?.current_stage);
+  const characterType = room?.character_type;
   const characterName = getCharacterName(characterType);
-  const shown = room.assets.slice(-MAX_ASSETS);
-  const isMax = room.gauge.current >= room.gauge.max;
-  const percent = Math.round((room.gauge.current / room.gauge.max) * 100);
+  const shown = room?.assets?.slice(-MAX_ASSETS) ?? [];
+
+  const gauge = room?.gauge ?? { current: 0, max: 8 };
+  const isMax = gauge.current >= gauge.max;
+  const percent = Math.round((gauge.current / gauge.max) * 100);
 
   const characterSize = getCharacterSizes(characterType)[stageIndex];
 
@@ -76,8 +72,15 @@ export default function S20CharacterRoom({ navigation }) {
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
-      <Text style={styles.header}>{characterName}의 방</Text>
+      <Text style={styles.header}>{room ? `${characterName}의 방` : '내 방'}</Text>
 
+      {!room && (
+        <View style={styles.roomFallback}>
+          <Text style={styles.errorText}>캐릭터 정보를 불러오지 못했어요</Text>
+        </View>
+      )}
+
+      {room && (
       <View style={styles.roomCard}>
       <ImageBackground
         source={require('../../../assets/homebg.png')}
@@ -126,7 +129,9 @@ export default function S20CharacterRoom({ navigation }) {
 
       </ImageBackground>
       </View>
+      )}
 
+      {room && (
       <View style={styles.growthStrip}>
 
         <View style={styles.growthTop}>
@@ -146,16 +151,17 @@ export default function S20CharacterRoom({ navigation }) {
           />
 
           <View style={styles.gaugeTicks} pointerEvents="none">
-            {Array.from({ length: room.gauge.max }, (_, i) => (
+            {Array.from({ length: gauge.max }, (_, i) => (
               <View
                 key={i}
-                style={[styles.gaugeCell, i === room.gauge.max - 1 && styles.gaugeCellLast]}
+                style={[styles.gaugeCell, i === gauge.max - 1 && styles.gaugeCellLast]}
               />
             ))}
           </View>
         </View>
 
       </View>
+      )}
 
       <View style={styles.weekCard}>
 
@@ -444,6 +450,18 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: 'hidden',
   },
+  roomFallback: {
+    paddingVertical: 40,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.cardWhite,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 8,
+    marginBottom: 20,
+  },
+
   weekCard: {
     flexDirection: 'row',
     alignItems: 'center',
