@@ -3,6 +3,19 @@
 const KST_OFFSET = 9 * 60 * 60 * 1000;
 const oneDay = 24 * 60 * 60 * 1000;
 
+// 서버가 날짜를 null 이나 undefined 로 줄 때를 막는다.
+// new Date(undefined) 는 Invalid Date 지만 new Date(null) 은 1970 년이 되므로
+// 값을 Date 로 바꾸기 전에 걸러야 한다.
+export const EMPTY_DATE = '—';
+
+export function toDate(value) {
+  if (value == null || value === '') return null;
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function toKst(date){
   return new Date(date.getTime() + KST_OFFSET);
 }
@@ -22,9 +35,20 @@ export function getDateDifference(date1, date2) {
   return Math.round((getStartOfDay(date2)-getStartOfDay(date1)) / oneDay);
 }
 
+export function getDurationDays(start, end) {
+  const from = toDate(start);
+  const to = toDate(end);
+  if (!from || !to) return null;
+
+  return getDateDifference(from, to) + 1;
+}
+
 
 //오늘 어제
-export function getDateDisplay(date, now = new Date()) {
+export function getDateDisplay(value, now = new Date()) {
+  const date = toDate(value);
+  if (!date) return EMPTY_DATE;
+
   const diff = getDateDifference(date, now);
   const kst = toKst(date);
   const year = kst.getUTCFullYear();
@@ -46,7 +70,10 @@ export function getDateDisplay(date, now = new Date()) {
 
 //오전 오후
 
-export function getTimeDisplay(date) {
+export function getTimeDisplay(value) {
+  const date = toDate(value);
+  if (!date) return EMPTY_DATE;
+
   const kst = toKst(date);
   const hours = kst.getUTCHours();
   const minutes = kst.getUTCMinutes();
@@ -73,7 +100,10 @@ export function getDateFormat(date) {
 }
 
 //달력 점
-export function getFullDate(date) {
+export function getFullDate(value) {
+  const date = toDate(value);
+  if (!date) return EMPTY_DATE;
+
   const kst = toKst(date);
   const year = kst.getUTCFullYear();
   const month = String(kst.getUTCMonth() + 1).padStart(2, '0');

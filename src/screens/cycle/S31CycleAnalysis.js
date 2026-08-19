@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 
-import { getFullDate, getDateDifference } from '../../lib/date';
+import { getFullDate } from '../../lib/date';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
-import { COLORS, FONT, WEIGHT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 import { getCurrentAnalysis, requestCurrentAnalysis } from '../../lib/api/cycles';
 import { ActivityIndicator } from 'react-native';
@@ -40,6 +40,30 @@ function ActivityChipBox({ title, items, unlocked }) {
               style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
             >
               <Text style={styles.chipText}>{item.plus_log_content}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
+// 완료한 퀘스트는 분석 결과가 아니라 사실 기록이라 잠그지 않는다
+function CompletedQuestBox({ quests }) {
+  const list = (quests ?? []).filter((name) => name?.trim());
+
+  return (
+    <View style={styles.insightBox}>
+      <Text style={styles.informTitle}>완료한 퀘스트</Text>
+
+      {list.length === 0 ? (
+        <Text style={styles.lockText}>아직 완료한 퀘스트가 없어요</Text>
+      ) : (
+        <View style={styles.suggestList}>
+          {list.map((name, i) => (
+            <View key={i} style={styles.suggestRow}>
+              <Text style={styles.questCheck}>✓</Text>
+              <Text style={styles.suggestText}>{name}</Text>
             </View>
           ))}
         </View>
@@ -176,7 +200,7 @@ export default function S31CycleAnalysis ({ navigation }) {
           <View style={styles.informRow}>
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>시작일</Text>
-              <Text style={styles.detailValue}>{getFullDate(new Date(analysis.started_at))}</Text>
+              <Text style={styles.detailValue}>{getFullDate(analysis.started_at)}</Text>
             </View>
 
             <View style={styles.informDetail}>
@@ -209,11 +233,13 @@ export default function S31CycleAnalysis ({ navigation }) {
 
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>휴식일</Text>
-              <Text style={styles.detailValue}>{analysis.rest_days}일</Text>
+              <Text style={styles.detailValue}>{analysis.rest_days ?? 0}일</Text>
             </View>
 
           </View>
         </View>
+
+        <CompletedQuestBox quests={analysis.completed_quests} />
 
         <CycleCalendar
           cycle={{ startDate: new Date(analysis.started_at) }}
@@ -382,6 +408,13 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 999,
     marginTop: 5,
+  },
+
+  questCheck: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.primary,
+    lineHeight: 15,
   },
 
   suggestText: {
