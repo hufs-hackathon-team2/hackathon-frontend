@@ -1,4 +1,3 @@
-// CH 04 캐릭터 완성 축하 — 45칸을 다 채웠을 때 뜨는 팝업
 import { useState } from 'react';
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -158,5 +157,4 @@ const styles = StyleSheet.create({
     color: COLORS.navigateText,
     textAlign: 'center',
   },
-
 });

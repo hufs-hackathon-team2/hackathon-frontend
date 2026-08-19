@@ -1,4 +1,3 @@
-// CH 04 캐릭터 아카이브 — 다 키운 캐릭터를 모아 보는 앨범
 import { useState, useEffect } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,7 +9,6 @@ import { getArchive } from '../../lib/api/characters';
 import { getErrorMessage } from '../../lib/api/error';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
-// 다 키운 캐릭터라 항상 마지막 단계 그림을 쓴다
 const LAST_STAGE = 6;
 
 export default function S81CharacterArchive({ navigation }) {

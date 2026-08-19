@@ -38,7 +38,7 @@ const modalOptions = {
 };
 
 export default function App() {
-  
+
   const [loaded] = useFonts({
     AstaSans: require('./assets/fonts/AstaSans-Regular.ttf'),
     AstaSansSemiBold: require('./assets/fonts/AstaSans-SemiBold.ttf'),
@@ -52,24 +52,24 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-          {/*시작 */}
+
           <Stack.Screen name="Splash" component={S00Splash} />
           <Stack.Screen name="Welcome" component={Welcome} />
 
-          {/*로그인*/}
+
           <Stack.Screen name="Login" component={S01Login} />
           <Stack.Screen name="Signup" component={S02Signup} />
           <Stack.Screen name= "SignupComplete" component={S04SignupComplete}/>
 
-          {/*온보딩*/}
+
           <Stack.Screen name="Interests" component={S11Interests} />
           <Stack.Screen name="CharacterSelect" component={S12CharacterSelect} />
           <Stack.Screen name="OnboardingComplete" component={S13Complete} />
 
-          {/*하단 탭*/}
+
           <Stack.Screen name="Main" component={BottomTabs} />
 
-          {/*팝업 화면 — 탭 바까지 덮어야 해서 여기 둔다*/}
+
           <Stack.Screen
             name="QuestProgress"
             component={S52QuestProgress}
@@ -85,14 +85,14 @@ export default function App() {
             component={S60Weekly}
             options={{ ...modalOptions, title: 'Weekly Card' }}
           />
-          {/*보관해야 다음으로 갈 수 있다. 헤더와 스와이프로 닫히면 다 자란 캐릭터에 갇힌다*/}
+
           <Stack.Screen
             name="CharacterComplete"
             component={S80CharacterComplete}
             options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
           />
 
-          {/*앨범 — 탭 바를 덮고 뒤로가기로 홈에 돌아온다*/}
+
           <Stack.Screen name="CharacterArchive" component={S81CharacterArchive} />
         </Stack.Navigator>
       </NavigationContainer>

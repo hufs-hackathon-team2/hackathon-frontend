@@ -32,7 +32,7 @@ const CHARACTER_DATA = {
 };
 
 export default function S12CharacterSelect({ navigation, route }) {
-  // 캐릭터를 다 키우고 보관한 뒤 다시 고르는 경우. 온보딩이 아니다.
+
   const renew = route.params?.renew === true;
 
   const [selectedCharacter, setSelectedCharacter] = useState('cat');
@@ -46,10 +46,10 @@ export default function S12CharacterSelect({ navigation, route }) {
     }
     setSaving(true);
     try {
-      // 온보딩 완료 처리는 S13 시작하기에서 한다
+
       await saveCharacter(selectedCharacter, characterName.trim());
 
-      // 서버가 방 조회 응답에 이름을 안 줘서 폰에도 남긴다
+
       await saveCharacterName(characterName.trim());
 
       if (renew) {
@@ -83,7 +83,7 @@ export default function S12CharacterSelect({ navigation, route }) {
           style={styles.inner}
         >
 
-          {/* 재선택은 이전 캐릭터를 이미 보관한 뒤라 돌아갈 곳이 없다 */}
+
           {!renew && <ScreenHeader navigation={navigation} />}
 
 

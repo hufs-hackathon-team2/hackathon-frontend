@@ -6,14 +6,11 @@ export const MOCK_ROOM = {
   gauge: { current: 9, max: 10 },
   assets: ['run', 'happy', 'fun', 'walk', 'water', 'yoga', 'salad'],
 
-  // 45칸을 다 채웠는지. true 면 홈이 완성 팝업을 띄운다.
-  // 팝업을 보려면 이 값을 true 로 바꾸고 started_at 을 확인한다.
   is_completed: false,
   started_at: '2026-07-20',
   completed_at: '2026-08-20',
 };
 
-// GET /characters/archive — 다 키워서 보관한 캐릭터
 export const MOCK_ARCHIVE = [
   {
     character_id: 'CHR0000003',

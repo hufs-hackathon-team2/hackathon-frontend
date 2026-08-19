@@ -1,4 +1,4 @@
-// CH 01 캐릭터 방 렌더링 + CH 03 배경 에셋 배치 (홈 탭 첫 화면)
+
 import { ActivityIndicator, ImageBackground, ScrollView, View, Text, StyleSheet, Pressable, Image} from 'react-native';
 import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -65,8 +65,8 @@ export default function S20CharacterRoom({ navigation }) {
 
   const stageIndex = getStageIndex(room?.current_stage);
   const characterType = room?.character_type;
-  // 서버가 이름을 주면 그걸 쓰고, 없으면 온보딩 때 지어 폰에 남긴 이름,
-  // 그것도 없으면 종류별 기본 이름(애옹이 · 누렁이)을 쓴다.
+
+
   const characterName =
     room?.character_name ?? savedName ?? getCharacterName(characterType);
   const shown = room?.assets?.slice(-MAX_ASSETS) ?? [];
