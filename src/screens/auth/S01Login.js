@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { login } from '../../lib/api/auth';
-import { saveToken, saveOnboarded } from '../../lib/api/token';
+import { saveToken } from '../../lib/api/token';
 
 export default function S01Login({ navigation }) {
   const [username, setUsername] = useState('');
@@ -52,9 +52,6 @@ export default function S01Login({ navigation }) {
 
       await saveToken(data.access, data.refresh);
 
-      // 스플래시가 다음에 앱을 켤 때 이 값으로 분기한다
-      await saveOnboarded(data.onboarding_completed);
-
       navigation.reset({
         index: 0,
         routes: [{ name: data.onboarding_completed ? 'Main' : 'Interests' }],
@@ -62,7 +59,6 @@ export default function S01Login({ navigation }) {
     } catch (error) {
       const status = error.response?.status;
 
-      // 401 은 이메일·비밀번호 불일치. 목데이터일 땐 status 가 없어 문구를 그대로 쓴다
       if (!status) setErrorMessage(error.message);
       else if (status === 401) setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
       else setErrorMessage('잠시 후 다시 시도해주세요');

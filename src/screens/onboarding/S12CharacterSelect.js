@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
-import { saveCharacter, completeOnboarding } from '../../lib/api/onboarding';
+import { saveCharacter } from '../../lib/api/onboarding';
 
 const CHARACTER_DATA = {
   cat: {
@@ -41,8 +41,8 @@ export default function S12CharacterSelect({ navigation }) {
     }
     setSaving(true);
     try {
+      // 온보딩 완료 처리는 S13 시작하기에서 한다
       await saveCharacter(selectedCharacter, characterName.trim());
-      await completeOnboarding();
       navigation.reset({
         index: 0,
         routes: [
