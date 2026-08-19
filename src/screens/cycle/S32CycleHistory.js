@@ -39,8 +39,6 @@ export default function S32CycleHistory({ navigation }) {
     );
   }
 
-  // 종료일이 없으면 아직 진행 중인 사이클이다. 완료 목록에는 넣지 않는다.
-  // 그대로 두면 날짜가 NaN 으로 찍힌다.
   const completed = (cycles ?? []).filter((cycle) => cycle.started_at && cycle.closed_at);
 
   return (
