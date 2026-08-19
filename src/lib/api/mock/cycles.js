@@ -22,11 +22,11 @@ export const MOCK_ANALYSIS = {
   ],
 
   top_plus_logs: [
-    { activity_name: '산책', count: 10 },
-    { activity_name: '런닝', count: 7 },
-    { activity_name: '스트레칭', count: 6 },
-    { activity_name: '단백질 섭취', count: 4 },
-    { activity_name: '제로음료 섭취', count: 3 },
+    { asset: 'walk', plus_log_count: 10, plus_log_content: '산책' },
+    { asset: 'run', plus_log_count: 7, plus_log_content: '런닝' },
+    { asset: 'yoga', plus_log_count: 6, plus_log_content: '스트레칭' },
+    { asset: 'meat', plus_log_count: 4, plus_log_content: '단백질 섭취' },
+    { asset: 'bottle', plus_log_count: 3, plus_log_content: '제로음료 섭취' },
   ],
 
   completed_quests: ['물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭'],
@@ -55,9 +55,9 @@ export const MOCK_PREVIOUS_ANALYSIS = {
   ],
 
   top_plus_logs: [
-    { activity_name: '수분 섭취', count: 9 },
-    { activity_name: '산책', count: 7 },
-    { activity_name: '스트레칭', count: 5 },
+    { asset: 'water', plus_log_count: 9, plus_log_content: '수분 섭취' },
+    { asset: 'walk', plus_log_count: 7, plus_log_content: '산책' },
+    { asset: 'yoga', plus_log_count: 5, plus_log_content: '스트레칭' },
   ],
 
   completed_quests: ['물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭'],

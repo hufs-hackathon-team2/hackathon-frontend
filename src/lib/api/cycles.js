@@ -13,10 +13,17 @@ import {
 // 달력에 점을 찍을 날짜.
 // 서버가 GET 은 log_dates, POST 는 logDates 로 준다. 둘 다 받아 화면에는 한 이름으로 넘긴다.
 function withDates(analysis, logDates, questDates) {
+  const log = analysis.logDates ?? analysis.log_dates ?? logDates;
+  const quest = analysis.questDates ?? analysis.quest_dates ?? questDates;
+
   return {
     ...analysis,
-    logDates: analysis.logDates ?? analysis.log_dates ?? logDates,
-    questDates: analysis.questDates ?? analysis.quest_dates ?? questDates,
+    logDates: log,
+    questDates: quest,
+
+    // 서버가 active_days 를 null 로 준다. 날짜 배열에서 직접 센다.
+    // 서버가 값을 채우기 시작하면 그쪽이 우선이라 이 코드는 그대로 둬도 된다.
+    active_days: analysis.active_days ?? new Set([...log, ...quest]).size,
   };
 }
 
