@@ -7,6 +7,7 @@ export const MOCK_ACTIVE_QUESTS = [
     d_day: 5,
     count: 1,
     state: 'ACTIVE',
+    last_checked: '2026-08-17',
   },
 ];
 

@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { signup } from '../../lib/api/auth';
-import { saveToken } from '../../lib/api/token';
+import { saveToken, saveOnboarded } from '../../lib/api/token';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -139,6 +139,9 @@ export default function S02Signup({ navigation }) {
       const data = await signup(trimmedEmail, password, nickname.trim());
 
       await saveToken(data.access, data.refresh);
+
+      // 가입 직후는 무조건 온보딩 전이다
+      await saveOnboarded(false);
 
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {

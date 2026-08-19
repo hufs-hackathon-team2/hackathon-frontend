@@ -2,6 +2,7 @@
 import api, { USE_MOCK } from './client';
 import { MOCK_ACTIVE_QUESTS, MOCK_RECOMMENDATIONS } from './mock/quests';
 import { isResting } from './cycles';
+import { getDateFormat } from '../date';
 
 let mockQuests = MOCK_ACTIVE_QUESTS;
 
@@ -48,7 +49,7 @@ export async function checkQuest(questId) {
     const quest = mockQuests[0];
     const count = quest.count + 1;
 
-    mockQuests = [{ ...quest, count }];
+    mockQuests = [{ ...quest, count, last_checked: getDateFormat(new Date()) }];
 
     return { quest_id: questId, count, state: 'ACTIVE', is_success: count >= 3, growth_points_awarded: 1 };
   }
