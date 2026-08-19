@@ -1,11 +1,12 @@
 // CY 02 사이클 달력 시각화 (휴식기 밴드 표시)
 
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { getFullDate } from '../../lib/date';
+import { getSticker } from '../../lib/assets';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import { getPreviousAnalysis } from '../../lib/api/cycles';
 
@@ -77,10 +78,16 @@ export default function S30CycleCalendar({ navigation }) {
           </Pressable>
         </View>
 
-        <View style={styles.informBox}>
-          <Text style={styles.errorText}>
-            아직 완료한 사이클이 없어요{'\n'}
-            첫 사이클을 이어가는 중이에요
+        <View style={styles.emptyBox}>
+          <View style={styles.emptyIconBadge}>
+            <Image source={getSticker('sprout')} style={styles.emptyIcon} resizeMode="contain" />
+          </View>
+
+          <Text style={styles.emptyTitle}>아직 완료한 사이클이 없어요</Text>
+
+          <Text style={styles.emptyDescription}>
+            지금 첫 사이클을 이어가는 중이에요{'\n'}
+            사이클이 끝나면 여기에서 돌아볼 수 있어요
           </Text>
         </View>
 
@@ -132,7 +139,7 @@ export default function S30CycleCalendar({ navigation }) {
         <Text style={styles.informTitle}>활동 흐름 인사이트</Text>
 
         <View style={styles.suggestList}>
-          {(previous.activity_analysis ?? []).map((line, i) => (
+          {(previous.activity_analysis ?? []).filter((line) => line?.trim()).map((line, i) => (
             <View key={i} style={styles.suggestRow}>
               <View style={styles.suggestDot} />
               <Text style={styles.suggestText}>{line}</Text>
@@ -176,12 +183,14 @@ export default function S30CycleCalendar({ navigation }) {
           <Text style={styles.informTitle}>자주 기록한 활동</Text>
 
           <View style={styles.chipRow}>
-            {(previous.top_plus_logs ?? []).map((item, i) => (
+            {(previous.top_plus_logs ?? [])
+              .filter((item) => item?.plus_log_content?.trim())
+              .map((item, i) => (
               <View
-                key={item.activity_name}
+                key={item.plus_log_content}
                 style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
               >
-                <Text style={styles.chipText}>{item.activity_name}</Text>
+                <Text style={styles.chipText}>{item.plus_log_content}</Text>
               </View>
             ))}
           </View>
@@ -379,5 +388,46 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: FONT.body,
     color: COLORS.textSub,
+  },
+
+  emptyBox: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: SPACE.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.cardWhite,
+    marginBottom: 15,
+  },
+
+  emptyIconBadge: {
+    width: 56,
+    height: 56,
+    borderRadius: 999,
+    backgroundColor: COLORS.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+
+  emptyIcon: {
+    width: 30,
+    height: 30,
+  },
+
+  emptyTitle: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.body,
+    color: COLORS.text,
+    marginBottom: 8,
+  },
+
+  emptyDescription: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });

@@ -45,17 +45,10 @@ export default function S13Complete({ route, navigation }) {
         {character?.image && (
           <View style={styles.imageBox}>
             <Image
-
-                source={character.image}
-
-                style={[styles.characterImage,
-                  {transform: [
-                    {scale: 1.05},
-                    {translateX: 12}
-                  ]}
-                ]}
-                resizeMode="contain"
-              />
+              source={character.image}
+              style={styles.characterImage}
+              resizeMode="contain"
+            />
             </View>
           )}
 

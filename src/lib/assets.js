@@ -239,8 +239,9 @@ export function getCharacterStages(type) {
   return type === 'dog' ? DOG_STAGES : CAT_STAGES;
 }
 
+// 표시 크기는 이미지 픽셀의 절반이다 (@2x 에셋)
 export const CAT_SIZES = [
-  { width: 71, height: 85 },
+  { width: 46, height: 78 },
   { width: 84, height: 108 },
   { width: 84, height: 132 },
   { width: 105, height: 152 },

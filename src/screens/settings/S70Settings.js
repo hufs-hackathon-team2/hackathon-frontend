@@ -67,11 +67,6 @@ export default function S70Settings({ navigation }) {
 
       <Text style={styles.title}>설정</Text>
 
-      <Pressable style={styles.row} onPress={() => navigation.navigate('Notifications')}>
-        <Text style={styles.rowLabel}>알림 설정</Text>
-        <Text style={styles.rowArrow}>{'>'}</Text>
-      </Pressable>
-
       <Pressable style={styles.row} onPress={() => navigation.navigate('ServiceInfo')}>
         <Text style={styles.rowLabel}>서비스 안내</Text>
         <Text style={styles.rowArrow}>{'>'}</Text>

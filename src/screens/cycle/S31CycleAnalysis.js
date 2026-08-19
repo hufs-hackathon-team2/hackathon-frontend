@@ -21,8 +21,8 @@ const CHIP_COLORS = [
 ];
 
 function ActivityChipBox({ title, items, unlocked }) {
-  // 서버가 아직 안 주거나 기록이 없으면 빈 배열로 다룬다
-  const list = items ?? [];
+  // 내용 없는 항목은 빈 칩만 남으므로 걸러낸다
+  const list = (items ?? []).filter((item) => item?.plus_log_content?.trim());
 
   return (
     <View style={styles.activityBox}>
@@ -36,10 +36,10 @@ function ActivityChipBox({ title, items, unlocked }) {
         <View style={styles.chipRow}>
           {list.map((item, i) => (
             <View
-              key={item.activity_name}
+              key={item.plus_log_content}
               style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
             >
-              <Text style={styles.chipText}>{item.activity_name}</Text>
+              <Text style={styles.chipText}>{item.plus_log_content}</Text>
             </View>
           ))}
         </View>
@@ -49,8 +49,8 @@ function ActivityChipBox({ title, items, unlocked }) {
 }
 
 function AnalysisBox({ title, lines, unlocked, dotColor }) {
-  // 서버가 아직 안 주거나 분석 전이면 빈 배열로 다룬다
-  const list = lines ?? [];
+  // 서버가 빈 문자열을 섞어 보내면 글머리 점만 남으므로 걸러낸다
+  const list = (lines ?? []).filter((line) => line?.trim());
 
   return (
     <View style={styles.insightBox}>
@@ -125,7 +125,12 @@ export default function S31CycleAnalysis ({ navigation }) {
 
         // 이미 분석을 마친 사이클이면 잠금을 풀어둔다.
         // 화면을 나갔다 들어와도 결과가 그대로 보인다.
-        if (result.activity_analysis?.length) setStatus('DONE');
+        // 빈 문자열만 들어 있으면 분석 전으로 본다.
+        const hasContent = (result.activity_analysis ?? []).some((line) => line?.trim());
+        if (hasContent) setStatus('DONE');
+
+        // 남은 횟수는 서버가 세어준다
+        if (result.analysis_request_count != null) setCount(result.analysis_request_count);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -176,7 +181,7 @@ export default function S31CycleAnalysis ({ navigation }) {
 
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>지속일</Text>
-              <Text style={styles.detailValue}>{analysis.active_days}일째</Text>
+              <Text style={styles.detailValue}>{analysis.active_days ?? 0}일째</Text>
             </View>
 
             <View style={styles.informDetail}>
@@ -194,7 +199,7 @@ export default function S31CycleAnalysis ({ navigation }) {
           <View style={styles.informRow}>
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>활동일</Text>
-              <Text style={styles.detailValue}>{analysis.active_days}일</Text>
+              <Text style={styles.detailValue}>{analysis.active_days ?? 0}일</Text>
             </View>
 
             <View style={styles.informDetail}>
