@@ -99,6 +99,7 @@ export default function S20CharacterRoom({ navigation }) {
   const weekDates = getWeekDates();
   const loggedDates = logs.map((log) => getDateFormat(new Date(log.created_at)));
   const weekCount = weekDates.filter((date) => loggedDates.includes(date)).length;
+  const today = getDateFormat(new Date());
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
@@ -162,8 +163,11 @@ export default function S20CharacterRoom({ navigation }) {
 
         <View style={styles.charactorContainer}>
           {levelUp && (
-            <View style={styles.bubble}>
-              <Text style={styles.bubbleText}>축하해요! 한 단계 자랐어요 🎉</Text>
+            <View style={styles.bubbleWrap}>
+              <View style={styles.bubble}>
+                <Text style={styles.bubbleText}>축하해요! 한 단계 자랐어요 🎉</Text>
+              </View>
+              <View style={styles.bubbleTail} />
             </View>
           )}
           <Image
@@ -225,7 +229,13 @@ export default function S20CharacterRoom({ navigation }) {
             {weekDates.map((date) => (
               <View
                 key={date}
-                style={[styles.weekDot, loggedDates.includes(date) && styles.weekDotOn]}
+                style={[
+                  styles.weekDot,
+                  date < today && styles.weekDotMissed,
+                  date === today && styles.weekDotIdle,
+                  loggedDates.includes(date) && styles.weekDotOn,
+                  date === today && styles.weekDotToday,
+                ]}
               />
             ))}
           </View>
@@ -258,7 +268,12 @@ export default function S20CharacterRoom({ navigation }) {
             {[0, 1, 2].map((i) => (
               <View
                 key={i}
-                style={[styles.weekDot, activeQuest && i < activeQuest.count && styles.weekDotOn]}
+                style={[
+                  styles.weekDot,
+                  styles.weekDotIdle,
+                  activeQuest && i < activeQuest.count && styles.weekDotOn,
+                  activeQuest && i === activeQuest.count && styles.weekDotToday,
+                ]}
               />
             ))}
           </View>
@@ -348,14 +363,29 @@ const styles = StyleSheet.create({
     padding: SPACE.card,
   },
 
+  bubbleWrap: {
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+
   bubble: {
-    backgroundColor: COLORS.cardWhite,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: COLORS.chip1,
+    borderWidth: 1.5,
+    borderColor: COLORS.navigate,
     borderRadius: 14,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    marginBottom: 8,
+  },
+
+  bubbleTail: {
+    width: 12,
+    height: 12,
+    marginTop: -7,
+    backgroundColor: COLORS.chip1,
+    borderRightWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: COLORS.navigate,
+    transform: [{ rotate: '45deg' }],
   },
 
   bubbleText: {
@@ -608,6 +638,19 @@ const styles = StyleSheet.create({
 
   weekDotOn: {
     backgroundColor: COLORS.navigate,
+  },
+
+  weekDotMissed: {
+    backgroundColor: COLORS.dotOff,
+  },
+
+  weekDotIdle: {
+    backgroundColor: COLORS.cardGray,
+  },
+
+  weekDotToday: {
+    borderWidth: 1.5,
+    borderColor: COLORS.navigate,
   },
 
   gaugeTicks: {
