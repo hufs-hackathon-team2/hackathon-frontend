@@ -13,7 +13,8 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signup, MOCK_USER } from '../../lib/api/mock/auth';
+import { signup } from '../../lib/api/auth';
+import { saveToken, saveOnboarded } from '../../lib/api/token';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -24,6 +25,7 @@ export default function S02Signup({ navigation }) {
   }, [navigation]);
 
   const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -51,12 +53,6 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    const isExist = MOCK_USER.some((user) => user.username === trimmed);
-    if (isExist) {
-      setEmailError('이미 가입된 이메일이에요');
-      return false;
-    }
-
     setEmailError('');
     return true;
   };
@@ -67,7 +63,7 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)\S{8,}$/;
     if (!passwordRegex.test(value)) {
       setPasswordError('8자 이상, 영문과 숫자를 조합해 주세요.');
       return false;
@@ -129,13 +125,23 @@ export default function S02Signup({ navigation }) {
       return;
     }
 
+    if (!nickname.trim()) {
+      Alert.alert('알림', '닉네임을 입력해 주세요.');
+      return;
+    }
+
     if (!isRequiredAgreed) {
       Alert.alert('알림', '필수 약관에 동의해 주세요.');
       return;
     }
 
     try {
-      await signup(trimmedEmail, password);
+      const data = await signup(trimmedEmail, password, nickname.trim());
+
+      await saveToken(data.access, data.refresh);
+
+      // 가입 응답에는 온보딩 여부가 없다. 가입 직후는 무조건 온보딩 전이다.
+      await saveOnboarded(false);
 
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {
@@ -144,7 +150,12 @@ export default function S02Signup({ navigation }) {
         },
       ]);
     } catch (error) {
-      Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
+      const status = error.response?.status;
+      let message = '잠시 후 다시 시도해주세요';
+      if (!status) message = error.message;
+      else if (status === 400) message = '이미 가입된 이메일이에요';
+
+      Alert.alert('회원가입 실패', message);
     }
   };
 
@@ -165,6 +176,31 @@ export default function S02Signup({ navigation }) {
             <Text style={styles.subtitle}>헬플리와 함께 시작해 보세요</Text>
 
             <View style={styles.inputGroup}>
+              <Text style={styles.label}>닉네임</Text>
+
+              <View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    styles.inputWithCount,
+                    focusedInput === 'nickname' && styles.inputFocused,
+                  ]}
+                  value={nickname}
+                  onChangeText={setNickname}
+                  onFocus={() => setFocusedInput('nickname')}
+                  onBlur={() => setFocusedInput(null)}
+                  placeholder="앱에서 사용할 이름"
+                  placeholderTextColor="#A0AEC0"
+                  maxLength={10}
+                />
+
+                <Text style={styles.nicknameCount} pointerEvents="none">
+                  {nickname.length}/10
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>이메일</Text>
               <TextInput
                 style={[
@@ -179,6 +215,8 @@ export default function S02Signup({ navigation }) {
                   setFocusedInput(null);
                   validateEmail(email);
                 }}
+                placeholder="이메일"
+                placeholderTextColor="#A0AEC0"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -330,6 +368,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#1B1A18',
     marginBottom: 8,
+  },
+  inputWithCount: {
+    paddingRight: 56,
+  },
+  nicknameCount: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    height: 52,
+    lineHeight: 52,
+    fontSize: 13,
+    color: '#928c83',
   },
   input: {
     borderWidth: 1,

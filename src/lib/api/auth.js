@@ -1,15 +1,45 @@
-import client from './client';
+// AU 01 회원가입 · AU 02 로그인
+import api, { USE_MOCK } from './client';
+import { MOCK_USERS } from './mock/auth';
 
+// 회원가입 — 응답에 토큰이 함께 온다
+export async function signup(email, password, nickname) {
+  if (USE_MOCK) {
+    const exists = MOCK_USERS.some((user) => user.email === email);
+    if (exists) throw new Error('이미 등록된 이메일입니다.');
 
-export const signupAPI = async (signupData) => {
-  const response = await client.post('/auth/signup/', signupData);
-  return response.data;
-};
+    MOCK_USERS.push({ email, password, nickname });
 
-export const loginAPI = async (usernameValue, passwordValue) => {
-  const response = await client.post('/auth/login/', {
-    username: usernameValue,       
-    password: passwordValue, 
-  });
-  return response.data;
-};
+    return {
+      user_id: 'USR0000001',
+      email,
+      nickname,
+      access: 'mock-access-token',
+      refresh: 'mock-refresh-token',
+    };
+  }
+
+  const res = await api.post('/auth/signup/', { email, password, nickname });
+  return res.data;
+}
+
+export async function login(email, password) {
+  if (USE_MOCK) {
+    const user = MOCK_USERS.find(
+      (item) => item.email === email && item.password === password
+    );
+
+    if (!user) throw new Error('이메일 또는 비밀번호를 확인해주세요.');
+
+    return {
+      user_id: 'USR0000001',
+      email,
+      onboarding_completed: true,
+      access: 'mock-access-token',
+      refresh: 'mock-refresh-token',
+    };
+  }
+
+  const res = await api.post('/auth/login/', { email, password });
+  return res.data;
+}
