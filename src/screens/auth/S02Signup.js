@@ -48,7 +48,7 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(trimmed)) {
       setEmailError('올바른 이메일 형식이 아닙니다.');
       return false;
