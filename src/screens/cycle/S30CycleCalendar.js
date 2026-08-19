@@ -1,4 +1,4 @@
-// CY 02 사이클 달력 시각화 (휴식기 밴드 표시)
+
 
 import { useState, useEffect } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -11,6 +11,9 @@ import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import { getPreviousAnalysis } from '../../lib/api/cycles';
 
 
+
+
+const QUEST_PAGE = 5;
 
 const CHIP_COLORS = [
   COLORS.chip1,
@@ -27,6 +30,7 @@ export default function S30CycleCalendar({ navigation }) {
   const [previous, setPrevious] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [shownQuests, setShownQuests] = useState(QUEST_PAGE);
 
   const load = () => {
     setError(false);
@@ -40,7 +44,7 @@ export default function S30CycleCalendar({ navigation }) {
   useEffect(() => {
     load();
 
-    // 실패한 채로 남지 않도록 화면에 들어올 때마다 다시 불러온다
+
     const unsubscribe = navigation.addListener('focus', load);
     return unsubscribe;
   }, [navigation]);
@@ -61,7 +65,7 @@ export default function S30CycleCalendar({ navigation }) {
     );
   }
 
-  // 첫 사이클이면 완료된 사이클이 아직 없다. 오류가 아니라 정상 상태다.
+
   if (!previous) {
     return (
       <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
@@ -96,6 +100,7 @@ export default function S30CycleCalendar({ navigation }) {
   }
 
   const completedQuests = (previous.completed_quests ?? []).filter((name) => name?.trim());
+  const topLogs = (previous.top_plus_logs ?? []).filter((item) => item?.plus_log_content?.trim());
 
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
@@ -136,7 +141,7 @@ export default function S30CycleCalendar({ navigation }) {
         </View>
 
       </View>
-      
+
       <View style={styles.insightBox}>
         <Text style={styles.informTitle}>활동 흐름 인사이트</Text>
 
@@ -174,23 +179,6 @@ export default function S30CycleCalendar({ navigation }) {
 
       </View>
 
-      <View style={styles.insightBox}>
-        <Text style={styles.informTitle}>완료한 퀘스트</Text>
-
-        {completedQuests.length === 0 ? (
-          <Text style={styles.emptyDescription}>완료한 퀘스트가 없어요</Text>
-        ) : (
-          <View style={styles.suggestList}>
-            {completedQuests.map((name, i) => (
-              <View key={i} style={styles.suggestRow}>
-                <Text style={styles.questCheck}>✓</Text>
-                <Text style={styles.suggestText}>{name}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-
       <CycleCalendar
         cycle={{ startDate: new Date(previous.started_at) }}
         logDates={previous.logDates}
@@ -199,21 +187,57 @@ export default function S30CycleCalendar({ navigation }) {
 
 
         <View style={styles.activityBox}>
-          <Text style={styles.informTitle}>자주 기록한 활동</Text>
+          <Text style={styles.informTitle}>자주 기록한 PLUS Log</Text>
 
-          <View style={styles.chipRow}>
-            {(previous.top_plus_logs ?? [])
-              .filter((item) => item?.plus_log_content?.trim())
-              .map((item, i) => (
-              <View
-                key={item.plus_log_content}
-                style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
-              >
-                <Text style={styles.chipText}>{item.plus_log_content}</Text>
-              </View>
-            ))}
-          </View>
+          {topLogs.length === 0 ? (
+            <Text style={styles.emptyDescription}>기록이 충분하지 않아요</Text>
+          ) : (
+            <View style={styles.activityList}>
+              {topLogs.map((item, i) => (
+                <View
+                  key={item.plus_log_content}
+                  style={[styles.activityRow, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
+                >
+                  <Image source={getSticker(item.asset)} style={styles.activityIcon} resizeMode="contain" />
+
+                  <Text style={styles.activityText} numberOfLines={3}>
+                    {item.plus_log_content}
+                  </Text>
+
+                  <Text style={styles.activityCount}>{item.plus_log_count ?? 0}회</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
+
+      <View style={styles.insightBox}>
+        <Text style={styles.informTitle}>완료한 퀘스트</Text>
+
+        {completedQuests.length === 0 ? (
+          <Text style={styles.emptyDescription}>완료한 퀘스트가 없어요</Text>
+        ) : (
+          <>
+            <View style={styles.suggestList}>
+              {completedQuests.slice(0, shownQuests).map((name, i) => (
+                <View key={i} style={styles.suggestRow}>
+                  <Text style={styles.questCheck}>✓</Text>
+                  <Text style={styles.suggestText}>{name}</Text>
+                </View>
+              ))}
+            </View>
+
+            {completedQuests.length > shownQuests && (
+              <Pressable
+                style={styles.moreButton}
+                onPress={() => setShownQuests(shownQuests + QUEST_PAGE)}
+              >
+                <Text style={styles.moreButtonText}>더보기</Text>
+              </Pressable>
+            )}
+          </>
+        )}
+      </View>
 
     </ScrollView>
   );
@@ -340,23 +364,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  activityList: {
     gap: 8,
     marginTop: 10,
   },
 
-  chip: {
-    paddingVertical: 7,
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
     paddingHorizontal: 14,
-    borderRadius: 999,
+    borderRadius: RADIUS.button,
   },
 
-  chipText: {
+  activityIcon: {
+    width: 20,
+    height: 20,
+  },
+
+  activityText: {
+    flex: 1,
     fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.text,
+    lineHeight: 18,
+  },
+
+  moreButton: {
+    alignSelf: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginTop: 12,
+  },
+
+  moreButtonText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+  },
+
+  activityCount: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
 
   suggestList: {

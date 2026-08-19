@@ -1,4 +1,5 @@
 import api, { USE_MOCK } from './client';
+import { setMockCharacter } from './characters';
 
 export async function saveInterest(interest) {
   if (USE_MOCK) return { interest };
@@ -8,7 +9,10 @@ export async function saveInterest(interest) {
 }
 
 export async function saveCharacter(characterType, characterName) {
-  if (USE_MOCK) return { character_type: characterType, character_name: characterName };
+  if (USE_MOCK) {
+    setMockCharacter(characterType, characterName);
+    return { character_type: characterType, character_name: characterName };
+  }
 
   const res = await api.patch('/users/me/character/', {
     character_type: characterType,

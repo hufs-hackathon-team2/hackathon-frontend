@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 
 import { getFullDate } from '../../lib/date';
+import { getSticker } from '../../lib/assets';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
@@ -11,6 +12,9 @@ import { getCurrentAnalysis, requestCurrentAnalysis } from '../../lib/api/cycles
 import { ActivityIndicator } from 'react-native';
 
 const MAX_ANALYSIS = 3;
+
+
+const QUEST_PAGE = 5;
 
 const CHIP_COLORS = [
   COLORS.chip1,
@@ -21,7 +25,7 @@ const CHIP_COLORS = [
 ];
 
 function ActivityChipBox({ title, items, unlocked }) {
-  // 내용 없는 항목은 빈 칩만 남으므로 걸러낸다
+
   const list = (items ?? []).filter((item) => item?.plus_log_content?.trim());
 
   return (
@@ -33,13 +37,19 @@ function ActivityChipBox({ title, items, unlocked }) {
       ) : list.length === 0 ? (
         <Text style={styles.lockText}>아직 기록이 충분하지 않아요</Text>
       ) : (
-        <View style={styles.chipRow}>
+        <View style={styles.activityList}>
           {list.map((item, i) => (
             <View
               key={item.plus_log_content}
-              style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
+              style={[styles.activityRow, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
             >
-              <Text style={styles.chipText}>{item.plus_log_content}</Text>
+              <Image source={getSticker(item.asset)} style={styles.activityIcon} resizeMode="contain" />
+
+              <Text style={styles.activityText} numberOfLines={3}>
+                {item.plus_log_content}
+              </Text>
+
+              <Text style={styles.activityCount}>{item.plus_log_count ?? 0}회</Text>
             </View>
           ))}
         </View>
@@ -48,32 +58,49 @@ function ActivityChipBox({ title, items, unlocked }) {
   );
 }
 
-// 완료한 퀘스트는 분석 결과가 아니라 사실 기록이라 잠그지 않는다
-function CompletedQuestBox({ quests }) {
+
+function CompletedQuestBox({ quests, unlocked }) {
   const list = (quests ?? []).filter((name) => name?.trim());
+  const [shown, setShown] = useState(QUEST_PAGE);
+
+  const visible = list.slice(0, shown);
+  const hasMore = list.length > shown;
 
   return (
     <View style={styles.insightBox}>
       <Text style={styles.informTitle}>완료한 퀘스트</Text>
 
-      {list.length === 0 ? (
+      {!unlocked ? (
+        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
+      ) : list.length === 0 ? (
         <Text style={styles.lockText}>아직 완료한 퀘스트가 없어요</Text>
       ) : (
-        <View style={styles.suggestList}>
-          {list.map((name, i) => (
-            <View key={i} style={styles.suggestRow}>
-              <Text style={styles.questCheck}>✓</Text>
-              <Text style={styles.suggestText}>{name}</Text>
-            </View>
-          ))}
-        </View>
+        <>
+          <View style={styles.suggestList}>
+            {visible.map((name, i) => (
+              <View key={i} style={styles.suggestRow}>
+                <Text style={styles.questCheck}>✓</Text>
+                <Text style={styles.suggestText}>{name}</Text>
+              </View>
+            ))}
+          </View>
+
+          {hasMore && (
+            <Pressable
+              style={styles.moreButton}
+              onPress={() => setShown(shown + QUEST_PAGE)}
+            >
+              <Text style={styles.moreButtonText}>더보기</Text>
+            </Pressable>
+          )}
+        </>
       )}
     </View>
   );
 }
 
 function AnalysisBox({ title, lines, unlocked, dotColor }) {
-  // 서버가 빈 문자열을 섞어 보내면 글머리 점만 남으므로 걸러낸다
+
   const list = (lines ?? []).filter((line) => line?.trim());
 
   return (
@@ -104,21 +131,21 @@ export default function S31CycleAnalysis ({ navigation }) {
   const [status, setStatus] = useState('IDLE');
   const [count, setCount] = useState(0);
 
-  // 서버가 분석까지 마치고 결과를 한 번에 준다. 따로 조회하지 않는다.
+
   const requestAnalysis = () => {
     setStatus('PENDING');
 
     requestCurrentAnalysis()
       .then((result) => {
         setAnalysis(result);
-        // 사용 횟수는 서버가 세어 응답에 담아준다
+
         setCount((used) => result.analysis_request_count ?? used + 1);
         setStatus('DONE');
       })
       .catch((error) => {
         setStatus('IDLE');
 
-        // 429 는 이번 사이클 분석 횟수를 다 쓴 것. 횟수 판정은 서버가 한다.
+
         if (error.response?.status === 429) {
           setCount(MAX_ANALYSIS);
           Alert.alert('분석을 다 썼어요', '이번 사이클에서는 더 요청할 수 없어요');
@@ -147,14 +174,16 @@ export default function S31CycleAnalysis ({ navigation }) {
       .then((result) => {
         setAnalysis(result);
 
-        // 이미 분석을 마친 사이클이면 잠금을 풀어둔다.
-        // 화면을 나갔다 들어와도 결과가 그대로 보인다.
-        // 빈 문자열만 들어 있으면 분석 전으로 본다.
-        const hasContent = (result.activity_analysis ?? []).some((line) => line?.trim());
-        if (hasContent) setStatus('DONE');
 
-        // 남은 횟수는 서버가 세어준다
-        if (result.analysis_request_count != null) setCount(result.analysis_request_count);
+
+
+        const requested = result.analysis_request_count;
+        const hasContent = (result.activity_analysis ?? []).some((line) => line?.trim());
+
+        if (requested != null ? requested > 0 : hasContent) setStatus('DONE');
+
+
+        if (requested != null) setCount(requested);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -163,7 +192,7 @@ export default function S31CycleAnalysis ({ navigation }) {
   useEffect(() => {
     load();
 
-    // 실패한 채로 남지 않도록 화면에 들어올 때마다 다시 불러온다
+
     const unsubscribe = navigation.addListener('focus', load);
     return unsubscribe;
   }, [navigation]);
@@ -216,7 +245,7 @@ export default function S31CycleAnalysis ({ navigation }) {
           </View>
 
         </View>
-        
+
         <View style={styles.insightBox}>
           <Text style={styles.informTitle}>활동 요약</Text>
 
@@ -239,8 +268,6 @@ export default function S31CycleAnalysis ({ navigation }) {
           </View>
         </View>
 
-        <CompletedQuestBox quests={analysis.completed_quests} />
-
         <CycleCalendar
           cycle={{ startDate: new Date(analysis.started_at) }}
           logDates={analysis.logDates}
@@ -262,8 +289,13 @@ export default function S31CycleAnalysis ({ navigation }) {
         />
 
         <ActivityChipBox
-          title="자주 기록한 활동"
+          title="자주 기록한 PLUS Log"
           items={analysis.top_plus_logs}
+          unlocked={status === 'DONE'}
+        />
+
+        <CompletedQuestBox
+          quests={analysis.completed_quests}
           unlocked={status === 'DONE'}
         />
 
@@ -445,23 +477,53 @@ const styles = StyleSheet.create({
     fontSize: FONT.body,
     color: COLORS.textSub,
   },
-  chipRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  activityList: {
     gap: 8,
     marginTop: 10,
   },
 
-  chip: {
-    paddingVertical: 7,
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
     paddingHorizontal: 14,
-    borderRadius: 999,
+    borderRadius: RADIUS.button,
   },
 
-  chipText: {
+  activityIcon: {
+    width: 20,
+    height: 20,
+  },
+
+  activityText: {
+    flex: 1,
     fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.text,
+    lineHeight: 18,
+  },
+
+  moreButton: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginTop: 12,
+  },
+
+  moreButtonText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
+  },
+
+  activityCount: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
 
 });

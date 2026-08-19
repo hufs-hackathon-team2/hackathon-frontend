@@ -1,6 +1,33 @@
-// GET /cycle/analysis/{cycle_count}
+
+
 
 export const MOCK_ANALYSIS = {
+  cycle_id: 45,
+  cycle_count: 3,
+  active_days: 12,
+  started_at: '2026-08-13',
+  rest_started_at: null,
+  closed_at: null,
+  rest_days: 0,
+
+
+  completed_quests: [
+    '물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭', '계단으로 오르기',
+    '자기 전 휴대폰 안 보기', '점심 후 10분 걷기', '채소 한 접시 더 먹기', '물 마시고 시작하기',
+    '일찍 잠자리에 들기', '엘리베이터 대신 계단', '아침에 창문 열고 환기', '군것질 대신 과일',
+    '출근길 한 정거장 걷기', '자기 전 스트레칭 5분', '커피 대신 물 한 잔', '하루 한 번 심호흡',
+  ],
+
+
+  activity_analysis: [],
+  personalized_analysis: [],
+  top_plus_logs: [],
+
+  analysis_request_count: 0,
+};
+
+
+export const MOCK_ANALYSIS_DONE = {
   cycle_id: 45,
   cycle_count: 3,
   active_days: 12,
@@ -29,10 +56,17 @@ export const MOCK_ANALYSIS = {
     { asset: 'bottle', plus_log_count: 3, plus_log_content: '제로음료 섭취' },
   ],
 
-  completed_quests: ['물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭'],
+  completed_quests: [
+    "물 하루 8잔 마시기", "저녁 산책 10분", "아침 스트레칭", "계단으로 오르기",
+    "자기 전 휴대폰 안 보기", "점심 후 10분 걷기", "채소 한 접시 더 먹기", "물 마시고 시작하기",
+    "일찍 잠자리에 들기", "엘리베이터 대신 계단", "아침에 창문 열고 환기", "군것질 대신 과일",
+    "출근길 한 정거장 걷기", "자기 전 스트레칭 5분", "커피 대신 물 한 잔", "하루 한 번 심호흡",
+  ],
+
+  analysis_request_count: 1,
 };
 
-// 지난 사이클 (종료됨)
+
 export const MOCK_PREVIOUS_ANALYSIS = {
   cycle_id: 44,
   cycle_count: 2,
@@ -60,16 +94,21 @@ export const MOCK_PREVIOUS_ANALYSIS = {
     { asset: 'yoga', plus_log_count: 5, plus_log_content: '스트레칭' },
   ],
 
-  completed_quests: ['물 하루 8잔 마시기', '저녁 산책 10분', '아침 스트레칭'],
+  completed_quests: [
+    "물 하루 8잔 마시기", "저녁 산책 10분", "아침 스트레칭", "계단으로 오르기",
+    "자기 전 휴대폰 안 보기", "점심 후 10분 걷기", "채소 한 접시 더 먹기", "물 마시고 시작하기",
+    "일찍 잠자리에 들기", "엘리베이터 대신 계단", "아침에 창문 열고 환기", "군것질 대신 과일",
+    "출근길 한 정거장 걷기", "자기 전 스트레칭 5분", "커피 대신 물 한 잔", "하루 한 번 심호흡",
+  ],
 };
 
-// GET /cycle/history — 지난 사이클 목록
+
 export const MOCK_HISTORY = [
   { cycle_id: 44, cycle_count: 2, started_at: '2026-06-02', closed_at: '2026-06-16' },
   { cycle_id: 43, cycle_count: 1, started_at: '2026-04-13', closed_at: '2026-05-04' },
 ];
 
-// 달력 점을 찍을 날짜 (요청해둔 필드. 오면 응답에 포함될 예정)
+
 export const MOCK_LOG_DATES = [
   '2026-08-13', '2026-08-14', '2026-08-16',
   '2026-08-17', '2026-08-18', '2026-08-22',
