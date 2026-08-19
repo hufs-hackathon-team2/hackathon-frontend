@@ -12,7 +12,6 @@ import S00Splash from './src/screens/auth/S00Splash';
 import Welcome from './src/screens/auth/Welcome';
 import S01Login from './src/screens/auth/S01Login';
 import S02Signup from './src/screens/auth/S02Signup';
-import S03ResetPassword from './src/screens/auth/S03ResetPassword';
 
 import S11Interests from './src/screens/onboarding/S11Interests';
 import S12CharacterSelect from './src/screens/onboarding/S12CharacterSelect';
@@ -57,7 +56,6 @@ export default function App() {
           {/*로그인*/}
           <Stack.Screen name="Login" component={S01Login} />
           <Stack.Screen name="Signup" component={S02Signup} />
-          <Stack.Screen name="ResetPassword" component={S03ResetPassword} />
           <Stack.Screen name= "SignupComplete" component={S04SignupComplete}/>
 
           {/*온보딩*/}
