@@ -87,7 +87,9 @@ export default function S50QuestList({ navigation }) {
 
   // 오늘 이미 체크했는지는 서버가 준 last_checked 로 판단한다.
   // 화면 state 로 두면 앱을 껐다 켤 때 초기화돼서 하루 두 번 체크할 수 있다.
-  const checkedToday = activeQuest?.last_checked === getDateFormat(new Date());
+  // "2026-08-19" 로도, "2026-08-19T10:30:00Z" 로도 올 수 있어 날짜 부분만 본다.
+  const checkedToday =
+    activeQuest?.last_checked?.slice(0, 10) === getDateFormat(new Date());
 
   const handleCheckToday = () => {
     checkQuest(activeQuest.quest_id)
