@@ -6,6 +6,7 @@ import { getCharacterStages, getCharacterSizes, getSticker, getStageIndex, getCh
 import { getRoom } from '../../lib/api/characters';
 import { getLogs } from '../../lib/api/logs';
 import { getActiveQuest } from '../../lib/api/quests';
+import { getSavedCharacterName } from '../../lib/api/token';
 import { getDateFormat, getWeekDates } from '../../lib/date';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
@@ -25,9 +26,12 @@ export default function S20CharacterRoom({ navigation }) {
   const [activeQuest, setActiveQuest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [savedName, setSavedName] = useState(null);
 
   // 셋 중 하나가 실패해도 나머지는 보여준다. allSettled 라 catch 로 빠지지 않는다.
   const load = () => {
+    getSavedCharacterName().then(setSavedName);
+
     Promise.allSettled([getRoom(), getLogs(1), getActiveQuest()])
       .then(([roomRes, logRes, questRes]) => {
         setRoom(roomRes.status === 'fulfilled' ? roomRes.value : null);
@@ -56,7 +60,10 @@ export default function S20CharacterRoom({ navigation }) {
 
   const stageIndex = getStageIndex(room?.current_stage);
   const characterType = room?.character_type;
-  const characterName = getCharacterName(characterType);
+  // 서버가 이름을 주면 그걸 쓰고, 없으면 온보딩 때 지어 폰에 남긴 이름,
+  // 그것도 없으면 종류별 기본 이름(애옹이 · 누렁이)을 쓴다.
+  const characterName =
+    room?.character_name ?? savedName ?? getCharacterName(characterType);
   const shown = room?.assets?.slice(-MAX_ASSETS) ?? [];
 
   const gauge = room?.gauge ?? { current: 0, max: 8 };

@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { saveCharacter } from '../../lib/api/onboarding';
+import { saveCharacterName } from '../../lib/api/token';
 
 const CHARACTER_DATA = {
   cat: {
@@ -43,6 +44,9 @@ export default function S12CharacterSelect({ navigation }) {
     try {
       // 온보딩 완료 처리는 S13 시작하기에서 한다
       await saveCharacter(selectedCharacter, characterName.trim());
+
+      // 서버가 방 조회 응답에 이름을 안 줘서 폰에도 남긴다
+      await saveCharacterName(characterName.trim());
       navigation.reset({
         index: 0,
         routes: [
