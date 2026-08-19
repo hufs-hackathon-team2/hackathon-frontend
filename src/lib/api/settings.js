@@ -9,7 +9,7 @@ let mockSettings = MOCK_SETTINGS;
 export async function getSettings() {
   if (USE_MOCK) return mockSettings;
 
-  const res = await api.get('/settings');
+  const res = await api.get('/settings/');
   return res.data;
 }
 
@@ -20,14 +20,14 @@ export async function updateNotification(key, enabled) {
     return mockSettings;
   }
 
-  const res = await api.patch('/settings/notifications', { [key]: enabled });
+  const res = await api.patch('/settings/notifications/', { [key]: enabled });
   return res.data;
 }
 
 export async function logout() {
   if (!USE_MOCK) {
     const refreshToken = await getRefreshToken();
-    await api.post('/auth/logout', { refresh_token: refreshToken });
+    await api.post('/auth/logout/', { refresh_token: refreshToken });
   }
 
   await clearToken();
@@ -37,7 +37,7 @@ export async function withdraw(password) {
   if (USE_MOCK) {
     if (password !== MOCK_PASSWORD) throw new Error('비밀번호가 일치하지 않습니다');
   } else {
-    await api.delete('/users/me', { data: { password } });
+    await api.delete('/users/me/', { data: { password } });
   }
 
   await clearToken();
