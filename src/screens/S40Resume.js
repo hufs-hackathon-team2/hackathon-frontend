@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: 'row',
     marginTop: 16,
+    marginLeft: 1,
     marginBottom: 12,
     gap: 10,
   },

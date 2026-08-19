@@ -176,11 +176,11 @@ export default function S60Weekly({ navigation }) {
                 </View>
               </View>
 
-              {weeklyData.rest_NT_content ? (
+              {/* {weeklyData.rest_NT_content ? (
                 <View style={styles.restNtBox}>
                   <Text style={styles.restNtText}>{weeklyData.rest_NT_content}</Text>
                 </View>
-              ) : null}
+              ) : null} */}
             </View>
 
             <View style={styles.cardBlock}>
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   captureArea: {
     backgroundColor: '#E3ECFF',
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 17,
     paddingBottom: 20,
     marginHorizontal: -16,
     borderRadius: 24,
@@ -268,13 +268,13 @@ const styles = StyleSheet.create({
   summaryCardBlock: {
     backgroundColor: '#E8EFE9',
     borderRadius: 20,
-    padding: 20,
+    padding: 23,
     marginBottom: 16,
   },
   weeklySummaryText: {
     fontSize: 14,
-    color: '#333333',
-    marginBottom: 16,
+    color: '#1B1A18',
+    marginBottom: 5,
     lineHeight: 20,
     fontWeight: '500',
   },
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
-    marginBottom: 16,
+    marginBottom: 3,
   },
   blockTitle: {
     fontSize: 18,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#555555',
     marginTop: -4,
-    marginBottom: 16,
+    marginBottom: 13,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -311,6 +311,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 20,
+    marginLeft: 1,
     fontWeight: 'bold',
     color: '#1B1A18',
   },
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D2D6DC',
     paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingVertical: 12,
     marginBottom: 10,
   },
   questTitle: {
@@ -373,6 +374,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#1B1A18',
+
   },
   emptyCard: {
     backgroundColor: '#FFFFFF',
