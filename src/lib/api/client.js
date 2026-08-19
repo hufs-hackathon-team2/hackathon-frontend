@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { getAcessToken } from './token';
+import { getAccessToken } from './token';
 
 
 //서버 배포 url
-export const BASE_URL = "http://localhost:8080"
+export const BASE_URL = "https://meotjinsaja.shop"
 
 //data
 export const USE_MOCK = true;
@@ -14,7 +14,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  const token = await getAcessToken();
+  const token = await getAccessToken();
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

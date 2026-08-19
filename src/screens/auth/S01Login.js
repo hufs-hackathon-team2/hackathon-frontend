@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { login } from '../../lib/api/mock/auth';
+import { login } from '../../lib/api/auth';
 import { saveToken } from '../../lib/api/token';
 
 export default function S01Login({ navigation }) {
@@ -50,14 +50,18 @@ export default function S01Login({ navigation }) {
     try {
       const data = await login(username.trim(), password);
 
-      await saveToken(data.accessToken, data.refreshToken);
+      await saveToken(data.access, data.refresh);
 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Main' }],
+        routes: [{ name: data.onboarding_completed ? 'Main' : 'Interests' }],
       });
     } catch (error) {
-      setErrorMessage(error.message || '로그인에 실패했습니다.');
+      const status = error.response?.status;
+
+      if (!status) setErrorMessage(error.message);
+      else if (status === 401) setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
+      else setErrorMessage('잠시 후 다시 시도해주세요');
     }
   };
 
