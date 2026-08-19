@@ -37,6 +37,8 @@ export const COLORS = {
   dangerStrongText: '#FFFFFF',
 
   //점
+  dotIdle: '#DCE7FF',   // 흰파랑 — 아직 할 수 있는 날
+  dotOff: '#B7C4D8',    // 청회색 — 지나갔는데 기록하지 않은 날
   dotLog: '#66C78C',    // 초록 — PLUS Log
   dotQuest: '#FABF4D',  // 노랑 — 퀘스트 성공
   dotBoth: '#3E629F',   // 파랑 — 모두 성공
