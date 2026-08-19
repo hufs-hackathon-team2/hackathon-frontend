@@ -5,6 +5,10 @@ import { getAccessToken, getOnboarded, clearToken } from '../../lib/api/token';
 import { getSettings } from '../../lib/api/settings';
 import { COLORS, FONT, SPACE } from '../../lib/theme';
 
+// 임시 스위치 — 폰에 남은 토큰을 지울 때만 true.
+// 앱을 한 번 켜면 지워지므로, 다 지운 뒤 반드시 false 로 되돌린다.
+const FORCE_LOGOUT = false;
+
 export default function S00Splash({ navigation }) {
 
   const go = (name) => {
@@ -12,6 +16,12 @@ export default function S00Splash({ navigation }) {
   };
 
   const decide = async () => {
+    if (FORCE_LOGOUT) {
+      await clearToken();
+      go('Welcome');
+      return;
+    }
+
     const token = await getAccessToken();
 
     if (!token) {

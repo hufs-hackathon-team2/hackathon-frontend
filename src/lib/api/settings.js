@@ -26,8 +26,13 @@ export async function updateNotification(key, enabled) {
 
 export async function logout() {
   if (!USE_MOCK) {
-    const refreshToken = await getRefreshToken();
-    await api.post('/auth/logout/', { refresh_token: refreshToken });
+    try {
+      const refreshToken = await getRefreshToken();
+      await api.post('/auth/logout/', { refresh_token: refreshToken });
+    } catch {
+      // 서버 로그아웃이 실패해도 폰에서는 지운다.
+      // 안 그러면 토큰이 남아 로그아웃 자체가 불가능해진다.
+    }
   }
 
   await clearToken();
