@@ -31,4 +31,22 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// 실패한 요청만 남긴다.
+// 성공 응답에는 토큰이 들어 있어서 그대로 찍으면 로그에 노출된다.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const method = error.config?.method?.toUpperCase() ?? '?';
+    const url = error.config?.url ?? '?';
+
+    if (error.response) {
+      console.log(`[API] ${method} ${url} → ${error.response.status}`, error.response.data);
+    } else {
+      console.log(`[API] ${method} ${url} → 응답 없음`, error.message);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;
