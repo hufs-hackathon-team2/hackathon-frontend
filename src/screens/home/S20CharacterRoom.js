@@ -1,6 +1,6 @@
 
 import { ActivityIndicator, ImageBackground, ScrollView, View, Text, StyleSheet, Pressable, Image} from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getCharacterStages, getCharacterSizes, getSticker, getStageIndex, getCharacterName } from '../../lib/assets';
 import { getRoom } from '../../lib/api/characters';
@@ -26,6 +26,8 @@ export default function S20CharacterRoom({ navigation }) {
   const [error, setError] = useState(false);
   const [savedName, setSavedName] = useState(null);
   const [shownComplete, setShownComplete] = useState(false);
+  const [levelUp, setLevelUp] = useState(false);
+  const prevStage = useRef(null);
 
   const load = () => {
     getSavedCharacterName().then(setSavedName);
@@ -39,6 +41,16 @@ export default function S20CharacterRoom({ navigation }) {
         setActiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
 
         setError(roomRes.status === 'rejected');
+
+        const index = getStageIndex(character?.current_stage);
+        if (
+          prevStage.current !== null &&
+          index > prevStage.current &&
+          !character?.is_completed
+        ) {
+          setLevelUp(true);
+        }
+        prevStage.current = index;
 
         if (character?.is_completed && !shownComplete) {
           setShownComplete(true);
@@ -54,6 +66,13 @@ export default function S20CharacterRoom({ navigation }) {
     const unsubscribe = navigation.addListener('focus', load);
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    if (!levelUp) return;
+
+    const timer = setTimeout(() => setLevelUp(false), 2500);
+    return () => clearTimeout(timer);
+  }, [levelUp]);
 
   if (loading) {
     return (
@@ -142,6 +161,11 @@ export default function S20CharacterRoom({ navigation }) {
         </View>
 
         <View style={styles.charactorContainer}>
+          {levelUp && (
+            <View style={styles.bubble}>
+              <Text style={styles.bubbleText}>축하해요! 한 단계 자랐어요 🎉</Text>
+            </View>
+          )}
           <Image
             source={getCharacterStages(characterType)[stageIndex]}
             style={characterSize}
@@ -322,6 +346,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     padding: SPACE.card,
+  },
+
+  bubble: {
+    backgroundColor: COLORS.cardWhite,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+
+  bubbleText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.text,
+    textAlign: 'center',
   },
 
   charactorContainer:{
