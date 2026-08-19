@@ -289,6 +289,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1B1A18',
     marginBottom: 12,
+    marginTop: 1
   },
   blockSubTitle: {
     fontSize: 13,
