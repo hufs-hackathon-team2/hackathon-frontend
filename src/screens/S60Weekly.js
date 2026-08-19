@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import ScreenHeader from '../components/common/ScreenHeader';
+// import ScreenHeader from '../components/common/ScreenHeader';
 import { startQuest } from '../lib/api/quests';
 import { getWeeklyData } from '../lib/api/weekly';
 
@@ -114,7 +114,7 @@ export default function S60Weekly({ navigation }) {
   if (isError) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScreenHeader navigation={navigation} />
+        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -130,7 +130,7 @@ export default function S60Weekly({ navigation }) {
   if (!weeklyData || !weeklyData.is_generated) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ScreenHeader navigation={navigation} />
+        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -145,7 +145,7 @@ export default function S60Weekly({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader navigation={navigation} />
+      {/* <ScreenHeader navigation={navigation} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
 

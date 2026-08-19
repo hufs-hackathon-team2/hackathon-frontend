@@ -1,6 +1,6 @@
-import client from './client'; 
+import api from './client'; 
 
 export const getWeeklyData = async () => {
-  const response = await client.get('/api/v1/weekly'); 
-  return response.data;
+  const response = await client.get('/weekly-card'); 
+  return response.data
 };
