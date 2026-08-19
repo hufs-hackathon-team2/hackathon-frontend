@@ -21,8 +21,8 @@ const CHIP_COLORS = [
 ];
 
 function ActivityChipBox({ title, items, unlocked }) {
-  // 서버가 아직 안 주거나 기록이 없으면 빈 배열로 다룬다
-  const list = items ?? [];
+  // 이름 없는 항목은 빈 칩만 남으므로 걸러낸다
+  const list = (items ?? []).filter((item) => item?.activity_name?.trim());
 
   return (
     <View style={styles.activityBox}>
@@ -49,8 +49,8 @@ function ActivityChipBox({ title, items, unlocked }) {
 }
 
 function AnalysisBox({ title, lines, unlocked, dotColor }) {
-  // 서버가 아직 안 주거나 분석 전이면 빈 배열로 다룬다
-  const list = lines ?? [];
+  // 서버가 빈 문자열을 섞어 보내면 글머리 점만 남으므로 걸러낸다
+  const list = (lines ?? []).filter((line) => line?.trim());
 
   return (
     <View style={styles.insightBox}>
@@ -125,7 +125,9 @@ export default function S31CycleAnalysis ({ navigation }) {
 
         // 이미 분석을 마친 사이클이면 잠금을 풀어둔다.
         // 화면을 나갔다 들어와도 결과가 그대로 보인다.
-        if (result.activity_analysis?.length) setStatus('DONE');
+        // 빈 문자열만 들어 있으면 분석 전으로 본다.
+        const hasContent = (result.activity_analysis ?? []).some((line) => line?.trim());
+        if (hasContent) setStatus('DONE');
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));

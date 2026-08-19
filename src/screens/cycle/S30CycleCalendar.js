@@ -132,7 +132,7 @@ export default function S30CycleCalendar({ navigation }) {
         <Text style={styles.informTitle}>활동 흐름 인사이트</Text>
 
         <View style={styles.suggestList}>
-          {(previous.activity_analysis ?? []).map((line, i) => (
+          {(previous.activity_analysis ?? []).filter((line) => line?.trim()).map((line, i) => (
             <View key={i} style={styles.suggestRow}>
               <View style={styles.suggestDot} />
               <Text style={styles.suggestText}>{line}</Text>
