@@ -15,6 +15,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { startQuest } from '../lib/api/quests';
 import { getWeeklyData } from '../lib/api/weekly';
+import { getErrorMessage } from '../lib/api/error';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -101,10 +102,7 @@ export default function S60Weekly({ navigation }) {
         });
       })
       .catch((error) =>
-        Alert.alert(
-          '시작하지 못했어요',
-          error.response?.data?.detail ?? '잠시 후 다시 시도해주세요'
-        )
+        Alert.alert('시작하지 못했어요', getErrorMessage(error))
       );
   };
 
