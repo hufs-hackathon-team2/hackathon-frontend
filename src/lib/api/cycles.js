@@ -24,7 +24,7 @@ function withDates(analysis, logDates, questDates) {
 export async function getCurrentAnalysis() {
   if (USE_MOCK) return withDates(MOCK_ANALYSIS, MOCK_LOG_DATES, MOCK_QUEST_DATES);
 
-  const res = await api.get('/cycle/analysis/current');
+  const res = await api.get('/cycle/analysis/current/');
   return withDates(res.data, [], []);
 }
 
@@ -32,7 +32,7 @@ export async function getCurrentAnalysis() {
 export async function getAnalysis(cycleCount) {
   if (USE_MOCK) return withDates(MOCK_PREVIOUS_ANALYSIS, MOCK_PREV_LOG_DATES, MOCK_PREV_QUEST_DATES);
 
-  const res = await api.get(`/cycle/analysis/${cycleCount}`);
+  const res = await api.get(`/cycle/analysis/${cycleCount}/`);
   return withDates(res.data, [], []);
 }
 
@@ -41,7 +41,7 @@ export async function getAnalysis(cycleCount) {
 export async function getPreviousAnalysis() {
   if (USE_MOCK) return withDates(MOCK_PREVIOUS_ANALYSIS, MOCK_PREV_LOG_DATES, MOCK_PREV_QUEST_DATES);
 
-  const current = await api.get('/cycle/analysis/current');
+  const current = await api.get('/cycle/analysis/current/');
   return getAnalysis(current.data.cycle_count - 1);
 }
 
@@ -49,7 +49,7 @@ export async function getPreviousAnalysis() {
 export async function requestCurrentAnalysis() {
   if (USE_MOCK) return withDates(MOCK_ANALYSIS, MOCK_LOG_DATES, MOCK_QUEST_DATES);
 
-  const res = await api.post('/cycle/analysis/current');
+  const res = await api.post('/cycle/analysis/current/');
   return withDates(res.data, [], []);
 }
 
@@ -57,7 +57,7 @@ export async function requestCurrentAnalysis() {
 export async function getCycleHistory() {
   if (USE_MOCK) return MOCK_HISTORY;
 
-  const res = await api.get('/cycle/history');
+  const res = await api.get('/cycle/history/');
   return res.data.cycles;
 }
 

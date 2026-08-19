@@ -53,7 +53,11 @@ export default function S21LogNew({ navigation }) {
 
     createLog(logContent.trim())
       .then((res) => {
-        Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
+        const message = res.asset
+          ? '오늘의 기록이 저장되었습니다.\n스티커판에 새 스티커가 붙었어요!'
+          : '오늘의 기록이 저장되었습니다.';
+
+        Alert.alert('저장 완료', message, [
           {
             text: '확인',
             onPress: () => {
