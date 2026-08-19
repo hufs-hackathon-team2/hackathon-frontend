@@ -43,6 +43,10 @@ export async function getPreviousAnalysis() {
   if (USE_MOCK) return withDates(MOCK_PREVIOUS_ANALYSIS, MOCK_PREV_LOG_DATES, MOCK_PREV_QUEST_DATES);
 
   const current = await api.get('/cycle/analysis/current/');
+
+  // 첫 사이클이면 완료된 이전 사이클이 없다. 0 번을 요청하면 404 가 난다.
+  if (current.data.cycle_count <= 1) return null;
+
   return getAnalysis(current.data.cycle_count - 1);
 }
 
