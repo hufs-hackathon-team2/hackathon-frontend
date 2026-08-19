@@ -13,7 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
+// import ScreenHeader from '../components/common/ScreenHeader';
 import { startQuest } from '../lib/api/quests';
+import { getWeeklyData } from '../lib/api/weekly';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
@@ -26,35 +28,19 @@ export default function S60Weekly({ navigation }) {
     fetchWeeklyData();
   }, []);
 
+
   const fetchWeeklyData = async () => {
     try {
+      setLoading(true);
       setIsError(false);
-      const rawActiveDates = ['2026-08-10', '2026-08-10', '2026-08-12', '2026-08-13'];
-      const activeDaysCount = new Set(rawActiveDates).size;
 
-      const mockResponse = {
-        is_generated: true,
-        week_start: '2026-08-10',
-        week_end: '2026-08-16',
-        plus_log_count: 5,
-        success_quest_count: 2,
-        active_days: activeDaysCount,
-        next_week_recommendations: [
-          {
-            recommendation_id: 1,
-            quest_content: '꾸준히 하면 몸이 달라져요',
-            reason: '',
-          },
-          {
-            recommendation_id: 2,
-            quest_content: '짧아도 매일이면 충분해요',
-            reason: '',
-          },
-        ],
-      };
-
-      setWeeklyData(mockResponse);
+      const data = await getWeeklyData();
+      setWeeklyData(data);
     } catch (error) {
+      console.error('=== API ERROR DETAILS ===');
+      console.error('Status:', error.response?.status);
+      console.error('Data:', error.response?.data);
+      console.error('Message:', error.message);
       setIsError(true);
     } finally {
       setLoading(false);
@@ -76,7 +62,6 @@ export default function S60Weekly({ navigation }) {
       });
 
       await MediaLibrary.saveToLibraryAsync(uri);
-
       Alert.alert('저장 완료', '위클리 카드가 갤러리에 저장되었습니다.');
     } catch (error) {
       console.error(error);
@@ -92,7 +77,6 @@ export default function S60Weekly({ navigation }) {
       });
 
       const available = await Sharing.isAvailableAsync();
-
       if (!available) {
         Alert.alert('공유 불가', '이 기기에서는 공유 기능을 사용할 수 없습니다.');
         return;
@@ -108,21 +92,6 @@ export default function S60Weekly({ navigation }) {
     }
   };
 
-  const handleSelectQuest = (quest) => {
-    startQuest(quest.quest_content)
-      .then((res) => {
-        if (res.new_cycle_started) {
-          navigation.navigate('Resume');
-          return;
-        }
-
-        navigation.navigate('Main', {
-          screen: 'QuestTab',
-          params: { screen: 'QuestList' },
-        });
-      })
-      .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
-  };
 
   if (loading) {
     return (
@@ -135,6 +104,7 @@ export default function S60Weekly({ navigation }) {
   if (isError) {
     return (
       <SafeAreaView style={styles.safeArea}>
+        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -150,6 +120,7 @@ export default function S60Weekly({ navigation }) {
   if (!weeklyData || !weeklyData.is_generated) {
     return (
       <SafeAreaView style={styles.safeArea}>
+        {/* <ScreenHeader navigation={navigation} /> */}
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -164,41 +135,42 @@ export default function S60Weekly({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* <ScreenHeader navigation={navigation} /> */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
 
-          <View
-            ref={cardCaptureRef}
-            collapsable={false}
-            style={styles.captureArea}
-          >
+          <View ref={cardCaptureRef} collapsable={false} style={styles.captureArea}>
             <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
             <View style={styles.summaryCardBlock}>
               <Text style={styles.blockTitle}>한 주 요약</Text>
 
+              {weeklyData.weekly_summary ? (
+                <Text style={styles.weeklySummaryText}>{weeklyData.weekly_summary}</Text>
+              ) : null}
+
               <View style={styles.summaryRow}>
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryLabel}>PLUS Log</Text>
-                  <Text style={styles.summaryValue}>
-                    {weeklyData?.plus_log_count}개
-                  </Text>
+                  <Text style={styles.summaryValue}>{weeklyData.plus_log_count}개</Text>
                 </View>
 
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryLabel}>성공 퀘스트</Text>
-                  <Text style={styles.summaryValue}>
-                    {weeklyData?.success_quest_count}개
-                  </Text>
+                  <Text style={styles.summaryValue}>{weeklyData.success_quest_count}개</Text>
                 </View>
 
                 <View style={styles.summaryItem}>
                   <Text style={styles.summaryLabel}>활동일</Text>
-                  <Text style={styles.summaryValue}>
-                    {weeklyData?.active_days}일
-                  </Text>
+                  <Text style={styles.summaryValue}>{weeklyData.active_days}일</Text>
                 </View>
               </View>
+
+              {weeklyData.rest_NT_content ? (
+                <View style={styles.restNtBox}>
+                  <Text style={styles.restNtText}>{weeklyData.rest_NT_content}</Text>
+                </View>
+              ) : null}
             </View>
 
             <View style={styles.cardBlock}>
@@ -207,20 +179,22 @@ export default function S60Weekly({ navigation }) {
                 부담 없이 이어갈 수 있는 행동을 골라봤어요
               </Text>
 
-              {weeklyData?.next_week_recommendations.map((quest) => (
+              {weeklyData.next_week_recommendations?.map((quest) => (
                 <TouchableOpacity
                   key={quest.recommendation_id}
                   style={styles.questItem}
                   onPress={() => handleSelectQuest(quest)}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.questTitle}>
-                    {quest.quest_content}
-                  </Text>
+                  <Text style={styles.questTitle}>{quest.quest_content}</Text>
+                  {quest.reason ? (
+                    <Text style={styles.questReason}>{quest.reason}</Text>
+                  ) : null}
                 </TouchableOpacity>
               ))}
             </View>
           </View>
+
 
           <View style={styles.cardBlock}>
             <Text style={styles.shareBlockTitle}>카드 저장 · 공유</Text>
@@ -271,7 +245,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-
   captureArea: {
     backgroundColor: '#E3ECFF',
     paddingHorizontal: 16,
@@ -287,14 +260,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 4,
   },
-
   summaryCardBlock: {
     backgroundColor: '#E8EFE9',
     borderRadius: 20,
     padding: 20,
     marginBottom: 16,
   },
-
+  weeklySummaryText: {
+    fontSize: 14,
+    color: '#333333',
+    marginBottom: 16,
+    lineHeight: 20,
+    fontWeight: '500',
+  },
   cardBlock: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
@@ -331,6 +309,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#1B1A18',
   },
+  restNtBox: {
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#D2D8D3',
+  },
+  restNtText: {
+    fontSize: 13,
+    color: '#4B6351',
+    lineHeight: 18,
+  },
   questItem: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
@@ -339,11 +328,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 10,
-    justifyContent: 'center',
   },
   questTitle: {
     fontSize: 14,
+    fontWeight: '600',
     color: '#2C2C2C',
+  },
+  questReason: {
+    fontSize: 12,
+    color: '#777777',
+    marginTop: 4,
   },
   shareBlockTitle: {
     fontSize: 16,
