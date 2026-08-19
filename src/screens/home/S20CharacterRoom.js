@@ -157,26 +157,26 @@ export default function S20CharacterRoom({ navigation }) {
 
       </View>
 
-      <View style={styles.statRow}>
+      <View style={styles.weekCard}>
 
-      <View style={styles.statCard}>
-
-        <View style={styles.statTop}>
-          <View style={styles.iconBadge}>
-            <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" />
-          </View>
-          <Text style={styles.statLabel}>이번 주 기록</Text>
+        <View style={styles.iconBadge}>
+          <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" />
         </View>
 
-        <Text style={styles.statCount}>{weekCount}/7일</Text>
+        <View style={styles.cardBody}>
+          <View style={styles.weekHeader}>
+            <Text style={styles.weekLabel}>이번 주 기록</Text>
+            <Text style={styles.weekCount}>{weekCount}/7일</Text>
+          </View>
 
-        <View style={styles.weekDots}>
-          {weekDates.map((date) => (
-            <View
-              key={date}
-              style={[styles.weekDot, loggedDates.includes(date) && styles.weekDotOn]}
-            />
-          ))}
+          <View style={styles.weekDots}>
+            {weekDates.map((date) => (
+              <View
+                key={date}
+                style={[styles.weekDot, loggedDates.includes(date) && styles.weekDotOn]}
+              />
+            ))}
+          </View>
         </View>
 
         <Pressable
@@ -188,26 +188,28 @@ export default function S20CharacterRoom({ navigation }) {
 
       </View>
 
-      <View style={styles.statCard}>
+      <View style={styles.weekCard}>
 
-        <View style={styles.statTop}>
-          <View style={styles.iconBadge}>
-            <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" />
-          </View>
-          <Text style={styles.statLabel}>진행 중인 퀘스트</Text>
+        <View style={styles.iconBadge}>
+          <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" />
         </View>
 
-        <Text style={styles.statCount}>
-          {activeQuest ? `${activeQuest.count}/3회` : '없어요'}
-        </Text>
+        <View style={styles.cardBody}>
+          <View style={styles.weekHeader}>
+            <Text style={styles.weekLabel}>진행 중인 퀘스트</Text>
+            <Text style={styles.weekCount}>
+              {activeQuest ? `${activeQuest.count}/3회` : '없어요'}
+            </Text>
+          </View>
 
-        <View style={styles.weekDots}>
-          {[0, 1, 2].map((i) => (
-            <View
-              key={i}
-              style={[styles.weekDot, activeQuest && i < activeQuest.count && styles.weekDotOn]}
-            />
-          ))}
+          <View style={styles.weekDots}>
+            {[0, 1, 2].map((i) => (
+              <View
+                key={i}
+                style={[styles.weekDot, activeQuest && i < activeQuest.count && styles.weekDotOn]}
+              />
+            ))}
+          </View>
         </View>
 
         <Pressable
@@ -218,8 +220,6 @@ export default function S20CharacterRoom({ navigation }) {
             {activeQuest ? '바로가기' : '시작하기'}
           </Text>
         </Pressable>
-
-      </View>
 
       </View>
 
@@ -444,41 +444,15 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: 'hidden',
   },
-  statRow: {
+  weekCard: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 12,
-  },
-
-  statCard: {
-    flex: 1,
-    padding: 14,
+    alignItems: 'center',
+    padding: SPACE.card,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: RADIUS.card,
     backgroundColor: COLORS.cardWhite,
-  },
-
-  statTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-
-  statLabel: {
-    flex: 1,
-    fontFamily: FONT.semibold,
-    fontSize: FONT.subbody,
-    color: COLORS.text,
-    textAlign: 'left',
-    marginLeft: 8,
-  },
-
-  statCount: {
-    fontFamily: FONT.bold,
-    fontSize: FONT.subTitle,
-    color: COLORS.navigate,
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
   weekHeader: {
@@ -515,11 +489,9 @@ const styles = StyleSheet.create({
   writeButton: {
     backgroundColor: COLORS.navigate,
     borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginLeft: 20,
   },
 
   writeButtonText: {
