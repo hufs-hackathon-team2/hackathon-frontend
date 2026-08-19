@@ -64,7 +64,7 @@ export async function getCycleHistory() {
   if (USE_MOCK) return MOCK_HISTORY;
 
   const res = await api.get('/cycle/history/');
-  return res.data.cycles;
+  return res.data.cycles ?? [];
 }
 
 //휴식기

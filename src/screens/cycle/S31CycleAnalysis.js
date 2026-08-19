@@ -21,13 +21,20 @@ const CHIP_COLORS = [
 ];
 
 function ActivityChipBox({ title, items, unlocked }) {
+  // 서버가 아직 안 주거나 기록이 없으면 빈 배열로 다룬다
+  const list = items ?? [];
+
   return (
     <View style={styles.activityBox}>
       <Text style={styles.informTitle}>{title}</Text>
 
-      {unlocked ? (
+      {!unlocked ? (
+        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
+      ) : list.length === 0 ? (
+        <Text style={styles.lockText}>아직 기록이 충분하지 않아요</Text>
+      ) : (
         <View style={styles.chipRow}>
-          {items.map((item, i) => (
+          {list.map((item, i) => (
             <View
               key={item.activity_name}
               style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
@@ -36,29 +43,32 @@ function ActivityChipBox({ title, items, unlocked }) {
             </View>
           ))}
         </View>
-      ) : (
-        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
       )}
     </View>
   );
 }
 
 function AnalysisBox({ title, lines, unlocked, dotColor }) {
+  // 서버가 아직 안 주거나 분석 전이면 빈 배열로 다룬다
+  const list = lines ?? [];
+
   return (
     <View style={styles.insightBox}>
       <Text style={styles.informTitle}>{title}</Text>
 
-      {unlocked ? (
+      {!unlocked ? (
+        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
+      ) : list.length === 0 ? (
+        <Text style={styles.lockText}>아직 기록이 충분하지 않아요</Text>
+      ) : (
         <View style={styles.suggestList}>
-          {lines.map((line, i) => (
+          {list.map((line, i) => (
             <View key={i} style={styles.suggestRow}>
               <View style={[styles.suggestDot, { backgroundColor: dotColor }]} />
               <Text style={styles.suggestText}>{line}</Text>
             </View>
           ))}
         </View>
-      ) : (
-        <Text style={styles.lockText}>분석을 요청하면 볼 수 있어요</Text>
       )}
     </View>
   );
@@ -189,7 +199,7 @@ export default function S31CycleAnalysis ({ navigation }) {
 
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>퀘스트 성공</Text>
-              <Text style={styles.detailValue}>{analysis.completed_quests.length}회</Text>
+              <Text style={styles.detailValue}>{analysis.completed_quests?.length ?? 0}회</Text>
             </View>
 
             <View style={styles.informDetail}>

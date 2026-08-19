@@ -77,7 +77,7 @@ export default function S40Resume({ navigation }) {
 
             <View style={styles.summaryItem}>
               <Text style={styles.summaryLabel}>퀘스트</Text>
-              <Text style={styles.summaryValue}>{previous.completed_quests.length}회</Text>
+              <Text style={styles.summaryValue}>{previous.completed_quests?.length ?? 0}회</Text>
             </View>
 
             <View style={styles.summaryItem}>
@@ -94,7 +94,7 @@ export default function S40Resume({ navigation }) {
         </View>
 
         {recommend?.has_recommendations ? (
-          recommend.recommended_quests.map((quest) => (
+          recommend.recommended_quests?.map((quest) => (
             <View key={quest.recommendation_id} style={styles.suggestItem}>
               <Text style={styles.suggestItemText}>{quest.quest_content}</Text>
               <Text style={styles.suggestItemReason}>{quest.reason}</Text>
