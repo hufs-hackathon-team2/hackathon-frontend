@@ -103,16 +103,7 @@ export default function S12CharacterSelect({ navigation }) {
                 ]}>
                   <Image
                     source={CHARACTER_DATA.cat.image}
-                    style={[
-                            styles.cardImage,
-                            { 
-                              transform: [
-                                { scale: 1.1 },  
-                                { translateX: 13 },   
-                                { translateY: -5},
-                              ] 
-                            }
-                          ]}
+                    style={styles.cardImage}
                     resizeMode="contain"
                   />
                 </View>
