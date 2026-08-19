@@ -25,13 +25,15 @@ export default function S50QuestList({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // 진행 중인 퀘스트 조회가 실패해도 추천 목록은 보여준다
   const load = () => {
-    Promise.all([getActiveQuest(), getRecommendations()])
-      .then(([quest, rec]) => {
-        setactiveQuest(quest);
-        setRecommend(rec);
+    Promise.allSettled([getActiveQuest(), getRecommendations()])
+      .then(([questRes, recRes]) => {
+        setactiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
+        setRecommend(recRes.status === 'fulfilled' ? recRes.value : null);
+
+        setError(recRes.status === 'rejected');
       })
-      .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
