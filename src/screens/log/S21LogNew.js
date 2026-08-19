@@ -53,7 +53,11 @@ export default function S21LogNew({ navigation }) {
 
     createLog(logContent.trim())
       .then((res) => {
-        Alert.alert('저장 완료', '오늘의 기록이 저장되었습니다.', [
+        const message = res.asset
+          ? '오늘의 기록이 저장되었습니다.\n스티커판에 새 스티커가 붙었어요!'
+          : '오늘의 기록이 저장되었습니다.';
+
+        Alert.alert('저장 완료', message, [
           {
             text: '확인',
             onPress: () => {
@@ -162,14 +166,19 @@ const styles = StyleSheet.create({
   },
   textArea: {
     backgroundColor: '#F0F5FF',
+    borderWidth: 1,
+    borderColor: '#ffffff',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1.5,
     borderRadius: 18,
     height: 160,
     paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 36,
-    fontFamily: FONT.regular,
+    paddingVertical: 18,
     fontSize: 15,
-    color: COLORS.text,
+    color: '#1B1A18',
   },
 
   charCount: {

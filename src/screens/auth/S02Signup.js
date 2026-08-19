@@ -13,8 +13,12 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+<<<<<<< HEAD
 import { signup } from '../../lib/api/auth';
 import { saveToken, saveOnboarded } from '../../lib/api/token';
+=======
+import { signupAPI } from '../../lib/api/auth';
+>>>>>>> origin/dev
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -53,6 +57,15 @@ export default function S02Signup({ navigation }) {
       return false;
     }
 
+<<<<<<< HEAD
+=======
+    // const isExist = MOCK_USER.some((user) => user.username === trimmed);
+    // if (isExist) {
+    //   setEmailError('이미 가입된 이메일이에요');
+    //   return false;
+    // }
+
+>>>>>>> origin/dev
     setEmailError('');
     return true;
   };
@@ -136,12 +149,19 @@ export default function S02Signup({ navigation }) {
     }
 
     try {
+<<<<<<< HEAD
       const data = await signup(trimmedEmail, password, nickname.trim());
 
       await saveToken(data.access, data.refresh);
 
       // 가입 응답에는 온보딩 여부가 없다. 가입 직후는 무조건 온보딩 전이다.
       await saveOnboarded(false);
+=======
+      await signupAPI({
+        username: trimmedEmail,
+        password: password,
+      });
+>>>>>>> origin/dev
 
       Alert.alert('회원가입 완료', '회원가입이 성공적으로 완료되었습니다!', [
         {
@@ -150,12 +170,24 @@ export default function S02Signup({ navigation }) {
         },
       ]);
     } catch (error) {
+<<<<<<< HEAD
       const status = error.response?.status;
       let message = '잠시 후 다시 시도해주세요';
       if (!status) message = error.message;
       else if (status === 400) message = '이미 가입된 이메일이에요';
 
       Alert.alert('회원가입 실패', message);
+=======
+      Alert.alert('회원가입 실패', error.message || '오류가 발생했습니다.');
+
+      if (error.response?.data?.username || error.response?.data?.email) {
+        setEmailError('이미 가입된 이메일이에요');
+      } else {
+        const serverErrorMessage =
+          error.response?.data?.message || '회원가입 처리 중 오류가 발생했습니다.';
+        Alert.alert('회원가입 실패', serverErrorMessage);
+      }
+>>>>>>> origin/dev
     }
   };
 
@@ -215,8 +247,13 @@ export default function S02Signup({ navigation }) {
                   setFocusedInput(null);
                   validateEmail(email);
                 }}
+<<<<<<< HEAD
                 placeholder="이메일"
                 placeholderTextColor="#A0AEC0"
+=======
+                placeholder="you@example.com"
+                placeholderTextColor="#757575"
+>>>>>>> origin/dev
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -241,7 +278,7 @@ export default function S02Signup({ navigation }) {
                   validatePassword(password);
                 }}
                 placeholder="비밀번호"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {passwordError ? (
@@ -269,7 +306,7 @@ export default function S02Signup({ navigation }) {
                   validateConfirmPassword(confirmPassword, password);
                 }}
                 placeholder="비밀번호 확인"
-                placeholderTextColor="#A0AEC0"
+                placeholderTextColor="#757575"
                 secureTextEntry
               />
               {confirmPasswordError ? (
