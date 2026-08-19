@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { login } from '../../lib/api/auth';
 import { saveToken, saveOnboarded } from '../../lib/api/token';
+import { getErrorMessage } from '../../lib/api/error';
 
 export default function S01Login({ navigation }) {
   const [username, setUsername] = useState('');
@@ -60,11 +61,12 @@ export default function S01Login({ navigation }) {
         routes: [{ name: data.onboarding_completed ? 'Main' : 'Interests' }],
       });
     } catch (error) {
-      const status = error.response?.status;
-
-      if (!status) setErrorMessage(error.message);
-      else if (status === 401) setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
-      else setErrorMessage('잠시 후 다시 시도해주세요');
+      // 401 은 이메일·비밀번호 불일치. 그 밖은 서버가 준 문구를 그대로 보여준다.
+      if (error.response?.status === 401) {
+        setErrorMessage('이메일 또는 비밀번호를 확인해주세요');
+      } else {
+        setErrorMessage(getErrorMessage(error));
+      }
     }
   };
 

@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { signup } from '../../lib/api/auth';
 import { saveToken, saveOnboarded } from '../../lib/api/token';
+import { getErrorMessage, getErrorField } from '../../lib/api/error';
 import ScreenHeader from '../../components/common/ScreenHeader';
 
 export default function S02Signup({ navigation }) {
@@ -150,15 +151,12 @@ export default function S02Signup({ navigation }) {
         },
       ]);
     } catch (error) {
-      const status = error.response?.status;
-      let message = '잠시 후 다시 시도해주세요';
+      const message = getErrorMessage(error);
+      const field = getErrorField(error);
 
-      if (!status) {
-        message = error.message;
-      } else if (status === 400) {
-        message = '이미 가입된 이메일이에요';
-        setEmailError(message);
-      }
+      // 어느 칸이 문제인지 알면 그 칸 아래에도 띄운다
+      if (field === 'email') setEmailError(message);
+      if (field === 'password') setPasswordError(message);
 
       Alert.alert('회원가입 실패', message);
     }

@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { startQuest } from '../../lib/api/quests';
+import { getErrorMessage } from '../../lib/api/error';
 
 export default function S51QuestCreate({ navigation }) {
   const [questTitle, setQuestTitle] = useState('');
@@ -56,7 +57,9 @@ export default function S51QuestCreate({ navigation }) {
           navigation.navigate('Resume');
         }
       })
-      .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'))
+      .catch((error) =>
+        Alert.alert('시작하지 못했어요', getErrorMessage(error))
+      )
       .finally(() => setStarting(false));
   };
 

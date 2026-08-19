@@ -4,6 +4,7 @@ import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Alert
 import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateFormat } from "../../lib/date";
+import { getErrorMessage } from "../../lib/api/error";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import {
@@ -60,7 +61,9 @@ export default function S50QuestList({ navigation }) {
 
               load();
             })
-            .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
+            .catch((error) =>
+              Alert.alert('시작하지 못했어요', getErrorMessage(error))
+            );
 
         },
       },
@@ -76,7 +79,7 @@ export default function S50QuestList({ navigation }) {
         onPress: () => {
           abandonQuest(activeQuest.quest_id)
             .then(load)
-            .catch(() => Alert.alert('포기하지 못했어요', '잠시 후 다시 시도해주세요'));
+            .catch((error) => Alert.alert('포기하지 못했어요', getErrorMessage(error)));
         },
       },
     ]);
@@ -95,7 +98,7 @@ export default function S50QuestList({ navigation }) {
 
         load();
       })
-      .catch(() => Alert.alert('완료하지 못했어요', '잠시 후 다시 시도해주세요'));
+      .catch((error) => Alert.alert('완료하지 못했어요', getErrorMessage(error)));
   };
 
   if (loading) {
