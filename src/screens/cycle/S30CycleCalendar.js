@@ -55,9 +55,15 @@ export default function S30CycleCalendar({ navigation }) {
 
       <Text style={styles.nowCycleTitle}>최근 완료한 Healthy Cycle</Text>
 
-      <Pressable style={styles.HealthyCycleBtn} onPress={() => navigation.navigate('CycleAnalysis')}>
-        <Text style={styles.HealthyCycleBtnText}>현재 Healthy Cycle 보기</Text>
-      </Pressable>
+      <View style={styles.cycleBtnRow}>
+        <Pressable style={styles.cycleBtnFill} onPress={() => navigation.navigate('CycleAnalysis')}>
+          <Text style={styles.cycleBtnFillText}>현재 사이클 보기</Text>
+        </Pressable>
+
+        <Pressable style={styles.cycleBtnLine} onPress={() => navigation.navigate('CycleHistory')}>
+          <Text style={styles.cycleBtnLineText}>히스토리 보기</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.informBox}>
 
@@ -143,10 +149,6 @@ export default function S30CycleCalendar({ navigation }) {
           </View>
         </View>
 
-        <Pressable style={styles.HealthyCycleBtn} onPress={() => navigation.navigate('CycleHistory')}>
-          <Text style={styles.HealthyCycleBtnText}>지난 사이클 히스토리 보기</Text>
-        </Pressable>
-
     </ScrollView>
   );
 }
@@ -174,21 +176,41 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 
-  HealthyCycleBtn: {
-    backgroundColor: '#2B3245',
-    borderWidth: 1,
-    borderColor: '#2B3245',
-    borderRadius: 15,
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 15,
+  cycleBtnRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+    marginBottom: 20,
   },
 
-  HealthyCycleBtnText: {
+  cycleBtnFill: {
+    backgroundColor: COLORS.navigate,
+    borderWidth: 1,
+    borderColor: COLORS.navigate,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+  },
+
+  cycleBtnFillText: {
     fontFamily: FONT.semibold,
-    fontSize: FONT.body,
-    color: COLORS.primaryText,
-    textAlign: 'center',
+    fontSize: FONT.subbody,
+    color: COLORS.navigateText,
+  },
+
+  cycleBtnLine: {
+    backgroundColor: COLORS.cardWhite,
+    borderWidth: 1,
+    borderColor: COLORS.navigate,
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+  },
+
+  cycleBtnLineText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subbody,
+    color: COLORS.navigate,
   },
 
   informBox:{

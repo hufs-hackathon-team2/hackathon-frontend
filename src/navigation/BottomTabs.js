@@ -17,6 +17,7 @@ import S70Settings from '../screens/settings/S70Settings';
 import S71Notifications from '../screens/settings/S71Notifications';
 import S72ServiceInfo from '../screens/settings/S72ServiceInfo';
 import S73Withdraw from '../screens/settings/S73Withdraw';
+import S40Resume from '../screens/S40Resume';
 
 
 const ICONS = {
@@ -109,7 +110,7 @@ export default function BottomTabs() {
       })}
     >
       <Tab.Screen name="HomeTab" component={S20CharacterRoom} options={{ title: '홈' }} />
-      <Tab.Screen name="LogTab" component={LogStack} options={{ title: '기록' }} />
+      <Tab.Screen name="LogTab" component={LogStack} options={{ title: 'PLUS Log' }} />
       <Tab.Screen name="QuestTab" component={QuestStack} options={{ title: '퀘스트' }} />
       <Tab.Screen name="CycleTab" component={CycleStack} options={{ title: '사이클' }} />
       <Tab.Screen name="SettingsTab" component={SettingsStack} options={{ title: '설정' }} />
