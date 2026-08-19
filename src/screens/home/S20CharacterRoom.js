@@ -25,18 +25,25 @@ export default function S20CharacterRoom({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [savedName, setSavedName] = useState(null);
+  const [shownComplete, setShownComplete] = useState(false);
 
-  // 셋 중 하나가 실패해도 나머지는 보여준다. allSettled 라 catch 로 빠지지 않는다.
   const load = () => {
     getSavedCharacterName().then(setSavedName);
 
     Promise.allSettled([getRoom(), getLogs(1), getActiveQuest()])
       .then(([roomRes, logRes, questRes]) => {
-        setRoom(roomRes.status === 'fulfilled' ? roomRes.value : null);
+        const character = roomRes.status === 'fulfilled' ? roomRes.value : null;
+
+        setRoom(character);
         setLogs(logRes.status === 'fulfilled' ? logRes.value ?? [] : []);
         setActiveQuest(questRes.status === 'fulfilled' ? questRes.value : null);
 
         setError(roomRes.status === 'rejected');
+
+        if (character?.is_completed && !shownComplete) {
+          setShownComplete(true);
+          navigation.navigate('CharacterComplete', { room: character });
+        }
       })
       .finally(() => setLoading(false));
   };
@@ -77,7 +84,17 @@ export default function S20CharacterRoom({ navigation }) {
   return (
     <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top + 5 }]}>
 
-      <Text style={styles.header}>{room ? `${characterName}의 방` : '내 방'}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>{room ? `${characterName}의 방` : '내 방'}</Text>
+
+        <Pressable
+          style={styles.albumButton}
+          onPress={() => navigation.navigate('CharacterArchive')}
+        >
+          <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" />
+          <Text style={styles.albumText}>앨범</Text>
+        </Pressable>
+      </View>
 
       {!room && (
         <View style={styles.roomFallback}>
@@ -253,12 +270,41 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
   header:{
     fontFamily: FONT.bold,
     fontSize: FONT.title,
     color: COLORS.text,
     paddingTop: 20,
     paddingBottom: 10,
+  },
+
+  albumButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: COLORS.cardWhite,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+  },
+
+  albumIcon: {
+    width: 16,
+    height: 16,
+  },
+
+  albumText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.text,
   },
 
   roomCard:{

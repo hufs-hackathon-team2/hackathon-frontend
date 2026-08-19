@@ -19,6 +19,9 @@ import S13Complete from './src/screens/onboarding/S13Complete';
 
 import S52QuestProgress from './src/screens/quest/S52QuestProgress';
 
+import S80CharacterComplete from './src/screens/home/S80CharacterComplete';
+import S81CharacterArchive from './src/screens/home/S81CharacterArchive';
+
 import S40Resume from './src/screens/S40Resume';
 import S60Weekly from './src/screens/S60Weekly';
 import S04SignupComplete from './src/screens/auth/S04SignupComplete';
@@ -82,6 +85,15 @@ export default function App() {
             component={S60Weekly}
             options={{ ...modalOptions, title: 'Weekly Card' }}
           />
+          {/*보관해야 다음으로 갈 수 있다. 헤더와 스와이프로 닫히면 다 자란 캐릭터에 갇힌다*/}
+          <Stack.Screen
+            name="CharacterComplete"
+            component={S80CharacterComplete}
+            options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
+          />
+
+          {/*앨범 — 탭 바를 덮고 뒤로가기로 홈에 돌아온다*/}
+          <Stack.Screen name="CharacterArchive" component={S81CharacterArchive} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

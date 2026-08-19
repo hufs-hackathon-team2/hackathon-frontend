@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { saveCharacter } from '../../lib/api/onboarding';
 import { saveCharacterName } from '../../lib/api/token';
+import { getErrorMessage } from '../../lib/api/error';
 
 const CHARACTER_DATA = {
   cat: {
@@ -30,7 +31,10 @@ const CHARACTER_DATA = {
   },
 };
 
-export default function S12CharacterSelect({ navigation }) {
+export default function S12CharacterSelect({ navigation, route }) {
+  // 캐릭터를 다 키우고 보관한 뒤 다시 고르는 경우. 온보딩이 아니다.
+  const renew = route.params?.renew === true;
+
   const [selectedCharacter, setSelectedCharacter] = useState('cat');
   const [characterName, setCharacterName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -47,28 +51,26 @@ export default function S12CharacterSelect({ navigation }) {
 
       // 서버가 방 조회 응답에 이름을 안 줘서 폰에도 남긴다
       await saveCharacterName(characterName.trim());
+
+      if (renew) {
+        navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+        return;
+      }
+
       navigation.reset({
         index: 0,
         routes: [
         {
           name: 'OnboardingComplete',
           params: {
-            character: CHARACTER_DATA[selectedCharacter],            
+            character: CHARACTER_DATA[selectedCharacter],
             characterName: characterName.trim(),
           },
         },
       ],
     });
     } catch (error) {
-      const status = error?.response?.status;
-      if (status === 400) {
-        Alert.alert('저장 실패', '입력 내용을 확인해주세요.');
-      } else if (status === 401) {
-        Alert.alert('저장 실패', '로그인이 필요합니다. 다시 로그인해주세요.');
-      } else {
-        Alert.alert('저장 실패', '캐릭터를 저장하지 못했어요. 잠시 후 다시 시도해주세요.');
-      }
-    } finally {
+      Alert.alert('저장 실패', getErrorMessage(error, '캐릭터를 저장하지 못했어요'));
       setSaving(false);
     }
   };
@@ -81,13 +83,18 @@ export default function S12CharacterSelect({ navigation }) {
           style={styles.inner}
         >
 
-          <ScreenHeader navigation={navigation} />
+          {/* 재선택은 이전 캐릭터를 이미 보관한 뒤라 돌아갈 곳이 없다 */}
+          {!renew && <ScreenHeader navigation={navigation} />}
 
 
           <View style={styles.content}>
-            <Text style={styles.title}>함께할 친구를 골라주세요</Text>
+            <Text style={styles.title}>
+              {renew ? '새 친구를 골라주세요' : '함께할 친구를 골라주세요'}
+            </Text>
             <Text style={styles.subtitle}>
-              선택한 캐릭터는 온보딩 완료 후 변경할 수 없어요
+              {renew
+                ? '지난 캐릭터는 앨범에 보관했어요'
+                : '선택한 캐릭터는 온보딩 완료 후 변경할 수 없어요'}
             </Text>
 
 
