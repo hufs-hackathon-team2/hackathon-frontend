@@ -121,7 +121,7 @@ export default function S30CycleCalendar({ navigation }) {
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>결과</Text>
-            <Text style={styles.detailActivity}>경험치 +{previous.active_days * 1 + previous.completed_quests.length * 3}</Text>
+            <Text style={styles.detailActivity}>경험치 +{previous.active_days * 1 + (previous.completed_quests?.length ?? 0) * 3}</Text>
           </View>
 
         </View>
@@ -132,7 +132,7 @@ export default function S30CycleCalendar({ navigation }) {
         <Text style={styles.informTitle}>활동 흐름 인사이트</Text>
 
         <View style={styles.suggestList}>
-          {previous.activity_analysis.map((line, i) => (
+          {(previous.activity_analysis ?? []).map((line, i) => (
             <View key={i} style={styles.suggestRow}>
               <View style={styles.suggestDot} />
               <Text style={styles.suggestText}>{line}</Text>
@@ -153,7 +153,7 @@ export default function S30CycleCalendar({ navigation }) {
 
           <View style={styles.informDetail}>
             <Text style={styles.detailLabel}>퀘스트 성공</Text>
-            <Text style={styles.detailValue}>{previous.completed_quests.length}회</Text>
+            <Text style={styles.detailValue}>{previous.completed_quests?.length ?? 0}회</Text>
           </View>
 
           <View style={styles.informDetail}>
@@ -176,7 +176,7 @@ export default function S30CycleCalendar({ navigation }) {
           <Text style={styles.informTitle}>자주 기록한 활동</Text>
 
           <View style={styles.chipRow}>
-            {previous.top_plus_logs.map((item, i) => (
+            {(previous.top_plus_logs ?? []).map((item, i) => (
               <View
                 key={item.activity_name}
                 style={[styles.chip, { backgroundColor: CHIP_COLORS[i % CHIP_COLORS.length] }]}
