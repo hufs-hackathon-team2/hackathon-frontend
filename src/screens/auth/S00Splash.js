@@ -7,7 +7,6 @@ import { COLORS, FONT, SPACE } from '../../lib/theme';
 
 export default function S00Splash({ navigation }) {
 
-  // 쌓인 화면 없이 목적지 하나만 남긴다
   const go = (name) => {
     navigation.reset({ index: 0, routes: [{ name }] });
   };
@@ -21,9 +20,8 @@ export default function S00Splash({ navigation }) {
     }
 
     try {
-      // 토큰이 아직 살아 있는지 확인하면서 온보딩 여부도 같이 받아온다
       const settings = await getSettings();
-      go(settings.onboardingCompleted ? 'Main' : 'Interests');
+      go(settings.onboarding_completed ? 'Main' : 'Interests');
     } catch {
       go('Welcome');
     }

@@ -5,7 +5,8 @@ export const MOCK_PASSWORD = 'helply1234';
 export const MOCK_SETTINGS = {
   nickname: '한서연',
   email: 'seoyn95@hufs.ac.kr',
-  onboardingCompleted: true,
+  // 목 모드에서 온보딩 흐름을 확인하려면 false 로 바꾼다
+  onboarding_completed: true,
   restart_notification: true,
   activity_notification: true,
 };

@@ -1,15 +1,18 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { completeOnboarding } from '../../lib/api/onboarding';
 
 export default function S13Complete({ route, navigation }) {
-  const { character } = route.params || {};
+  const { character, characterName } = route.params || {};
+  const [saving, setSaving] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -17,8 +20,17 @@ export default function S13Complete({ route, navigation }) {
     });
   }, [navigation]);
 
-  const handleStart = () => {
-    console.log('온보딩 완료! 메인 홈 화면으로 이동');
+  // 온보딩이 끝나는 시점은 여기다. 다음에 앱을 켜면 스플래시가 이 값을 보고 홈으로 보낸다.
+  const handleStart = async () => {
+    setSaving(true);
+    try {
+      await completeOnboarding();
+    } catch {
+      Alert.alert('시작하지 못했어요', '잠시 후 다시 시도해주세요.');
+      setSaving(false);
+      return;
+    }
+
     navigation.reset({
       index: 0,
       routes: [{ name: 'Main' }],
@@ -47,6 +59,10 @@ export default function S13Complete({ route, navigation }) {
 
         <Text style={styles.mainTitle}>준비 완료!</Text>
 
+        {characterName && (                                             
+          <Text style={styles.characterName}>{characterName}</Text>     
+        )} 
+
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>
             작은 건강 행동을 기록하고 캐릭터를 함께 성장시키세요
@@ -64,11 +80,14 @@ export default function S13Complete({ route, navigation }) {
         </Text>
 
         <TouchableOpacity
-          style={styles.startButton}
+          style={[styles.startButton, saving && styles.startButtonDisabled]}
           onPress={handleStart}
           activeOpacity={0.8}
+          disabled={saving}
         >
-          <Text style={styles.startButtonText}>시작하기</Text>
+          <Text style={styles.startButtonText}>
+            {saving ? '준비 중...' : '시작하기'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -100,6 +119,13 @@ const styles = StyleSheet.create({
     width: 100, 
     height: 100,
   },
+  characterName: {                                                      
+    fontSize: 18,                                                       
+    fontWeight: 'bold',                                                 
+    color: '#3E629F',                                                   
+    marginBottom: 20,                                                   
+    textAlign: 'center',                                                
+  },     
   mainTitle: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -132,6 +158,9 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  startButtonDisabled: {
+    backgroundColor: '#A0A0A0',
   },
   startButtonText: {
     color: '#FFFFFF', 

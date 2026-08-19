@@ -226,11 +226,13 @@ const styles = StyleSheet.create({
   },
 
   HealthyCycleBtn: {
-    backgroundColor: '#2B3245',
+    alignSelf: 'center',
+    backgroundColor: COLORS.navigate,
     borderWidth: 1,
-    borderColor: '#2B3245',
-    borderRadius: 15,
-    padding: 10,
+    borderColor: COLORS.navigate,
+    borderRadius: 999,
+    paddingVertical: 14,
+    paddingHorizontal: 28,
     marginTop: 5,
     marginBottom: 15,
   },
@@ -238,12 +240,12 @@ const styles = StyleSheet.create({
   HealthyCycleBtnText: {
     fontFamily: FONT.semibold,
     fontSize: FONT.body,
-    color: COLORS.primaryText,
+    color: COLORS.navigateText,
     textAlign: 'center',
   },
   HealthyCycleBtnPending: {
-    backgroundColor: '#B8BDC7',
-    borderColor: '#B8BDC7',
+    backgroundColor: COLORS.disabled,
+    borderColor: COLORS.disabled,
   },
 
   informBox:{

@@ -45,8 +45,7 @@ export default function S50QuestList({ navigation }) {
   }, [navigation]);
 
   const handleStart = (quest) => {
-    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>
-    7일 안에 3일만 체크하면 성공!`, [
+    Alert.alert('이 퀘스트를 시작할까요?', `<${quest.quest_content}>7일 안에 3일만 체크하면 성공!`, [
       { text: '취소', style: 'cancel' },
       {
         text: '시작',

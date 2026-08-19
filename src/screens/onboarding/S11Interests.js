@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '../../components/common/ScreenHeader';
+import { saveInterest } from '../../lib/api/onboarding';
 
 export default function S11Interests({ navigation }) {
   useLayoutEffect(() => {
@@ -23,14 +23,32 @@ export default function S11Interests({ navigation }) {
   }, [navigation]);
 
   const [interestText, setInterestText] = useState('');
+  const [saving, setSaving] = useState(false);
   const maxLength = 100;
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!interestText.trim()) {
+      Alert.alert('관심 영역 입력', '관심 영역을 입력해주세요.');
       return;
     }
 
-    navigation.navigate('CharacterSelect');
+    setSaving(true);
+    try {
+      await saveInterest(interestText.trim());
+      navigation.navigate('CharacterSelect');
+    } catch (error) {
+      const status = error?.response?.status;
+      if (status === 400) {
+        Alert.alert('저장 실패', '관심 영역은 100자 이하로 입력해주세요.');
+      } else if (status === 401) {
+        Alert.alert('저장 실패', '로그인이 필요합니다. 다시 로그인해주세요.');
+      } else {
+        Alert.alert('저장 실패', '관심 영역을 저장하지 못했어요. 잠시 후 다시 시도해주세요.');
+      }
+    } finally {
+      setSaving(false);
+    }
+
   };
 
   return (
@@ -63,11 +81,14 @@ export default function S11Interests({ navigation }) {
 
 
             <TouchableOpacity
-              style={styles.nextButton}
+              style={[styles.nextButton, saving && styles.nextButtonDisabled]}
               onPress={handleNext}
               activeOpacity={0.8}
+              disabled={saving}
             >
-              <Text style={styles.nextButtonText}>다음</Text>
+              <Text style={styles.nextButtonText}>
+                {saving ? '저장 중...' : '다음'}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -136,5 +157,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
+  },
+  nextButtonDisabled: {
+    backgroundColor: '#A0A0A0', 
   },
 });
