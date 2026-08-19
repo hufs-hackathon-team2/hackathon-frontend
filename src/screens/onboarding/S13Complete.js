@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { saveOnboarded } from '../../lib/api/token';
 
 export default function S13Complete({ route, navigation }) {
-  const { character } = route.params || {};
+  const { character, characterName } = route.params || {};              
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -17,8 +18,10 @@ export default function S13Complete({ route, navigation }) {
     });
   }, [navigation]);
 
-  const handleStart = () => {
-    console.log('온보딩 완료! 메인 홈 화면으로 이동');
+  const handleStart = async () => {
+    // 온보딩이 끝나는 시점은 여기다. 다음에 앱을 켜면 스플래시가 이 값을 보고 홈으로 보낸다.
+    await saveOnboarded(true);
+
     navigation.reset({
       index: 0,
       routes: [{ name: 'Main' }],
@@ -46,6 +49,10 @@ export default function S13Complete({ route, navigation }) {
           )}
 
         <Text style={styles.mainTitle}>준비 완료!</Text>
+
+        {characterName && (                                             
+          <Text style={styles.characterName}>{characterName}</Text>     
+        )} 
 
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>
@@ -100,6 +107,13 @@ const styles = StyleSheet.create({
     width: 100, 
     height: 100,
   },
+  characterName: {                                                      
+    fontSize: 18,                                                       
+    fontWeight: 'bold',                                                 
+    color: '#3E629F',                                                   
+    marginBottom: 20,                                                   
+    textAlign: 'center',                                                
+  },     
   mainTitle: {
     fontSize: 22,
     fontWeight: 'bold',
