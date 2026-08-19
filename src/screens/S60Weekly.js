@@ -37,6 +37,10 @@ export default function S60Weekly({ navigation }) {
       const data = await getWeeklyData();
       setWeeklyData(data);
     } catch (error) {
+      console.error('=== API ERROR DETAILS ===');
+      console.error('Status:', error.response?.status);
+      console.error('Data:', error.response?.data);
+      console.error('Message:', error.message);
       setIsError(true);
     } finally {
       setLoading(false);
@@ -88,20 +92,6 @@ export default function S60Weekly({ navigation }) {
     }
   };
 
-  const handleSelectQuest = (quest) => {
-    startQuest(quest.quest_content)
-      .then((res) => {
-        if (res.new_cycle_started) {
-          navigation.navigate('Resume');
-          return;
-        }
-        navigation.navigate('Main', {
-          screen: 'QuestTab',
-          params: { screen: 'QuestList' },
-        });
-      })
-      .catch(() => Alert.alert('시작하지 못했어요', '이미 진행 중인 퀘스트가 있어요'));
-  };
 
   if (loading) {
     return (
