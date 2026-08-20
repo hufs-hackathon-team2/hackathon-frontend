@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#E3ECFF"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#3E629F"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.seoyn95.healply"
@@ -35,7 +35,9 @@
           "photosPermission": "위클리 카드를 사진첩에 저장하기 위해 사용합니다.",
           "savePhotosPermission": "위클리 카드를 사진첩에 저장하기 위해 사용합니다.",
           "isAccessMediaLocationEnabled": false,
-          "granularPermissions": ["photo"]
+          "granularPermissions": [
+            "photo"
+          ]
         }
       ]
     ],
