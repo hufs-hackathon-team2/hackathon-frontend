@@ -272,11 +272,20 @@ export const STAGE_INDEX = {
   '2-big': 3,
   '3-small': 4,
   '3-big': 5,
-  '4': 6,
+  '4-final': 6,
 };
 
 export function getStageIndex(stage) {
-  return STAGE_INDEX[stage] ?? 0;
+  if (STAGE_INDEX[stage] != null) return STAGE_INDEX[stage];
+
+  // 표에 없는 값이 와도 맨 앞 숫자로 단계를 짐작한다.
+  // 못 찾을 때 0 을 돌려주면 다 큰 캐릭터가 아기로 보인다.
+  const level = Number(String(stage ?? '').split('-')[0]);
+
+  if (!Number.isFinite(level) || level < 1) return 0;
+
+  const last = CAT_STAGES.length - 1;
+  return Math.min(level * 2 - 2, last);
 }
 
 //캐릭터 이름

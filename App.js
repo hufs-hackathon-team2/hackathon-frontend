@@ -25,6 +25,7 @@ import S81CharacterArchive from './src/screens/home/S81CharacterArchive';
 
 import S40Resume from './src/screens/S40Resume';
 import S60Weekly from './src/screens/S60Weekly';
+import S03ResetPassword from './src/screens/auth/S03ResetPassword';
 import S04SignupComplete from './src/screens/auth/S04SignupComplete';
 
 const Stack = createNativeStackNavigator();
@@ -61,6 +62,7 @@ export default function App() {
           <Stack.Screen name="Login" component={S01Login} />
           <Stack.Screen name="Signup" component={S02Signup} />
           <Stack.Screen name= "SignupComplete" component={S04SignupComplete}/>
+          <Stack.Screen name="ResetPassword" component={S03ResetPassword} />
 
 
           <Stack.Screen name="Interests" component={S11Interests} />

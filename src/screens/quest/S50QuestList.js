@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateFormat } from "../../lib/date";
 import useDelayedBusy from "../../lib/useDelayedBusy";
+import { SCORE } from "../../lib/score";
 import { getErrorMessage } from "../../lib/api/error";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
@@ -100,10 +101,13 @@ export default function S50QuestList({ navigation }) {
     checkQuest(activeQuest.quest_id)
       .then((res) => {
         // 3회를 다 채우면 서버가 state 를 DONE 으로 바꿔 보낸다.
+        // 완주 화면이 보너스를 알려주니 그때는 알림을 띄우지 않는다.
         if (res.state === 'DONE') {
           navigation.navigate('QuestProgress', {
             title: res.quest_content ?? activeQuest.quest_content,
           });
+        } else {
+          Alert.alert('체크했어요', `성장 +${SCORE.questCheck}`);
         }
 
         load();

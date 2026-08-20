@@ -4,7 +4,6 @@ import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 export const MAX_ASSETS = 16;
 
-
 export default function CharacterRoomCard({ characterType, currentStage, assets, children }) {
 
   const stageIndex = getStageIndex(currentStage);
@@ -163,12 +162,6 @@ const styles = StyleSheet.create({
     fontFamily: FONT.semibold,
     fontSize: 11,
     color: '#3D3750',
-  },
-
-  stickerCount: {
-    fontFamily: FONT.semibold,
-    fontSize: 11,
-    color: '#5A5470',
   },
 
   stickerBar: {

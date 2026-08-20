@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { createLog } from '../../lib/api/logs';
 import { getErrorMessage, getErrorDetails } from '../../lib/api/error';
+import { SCORE } from '../../lib/score';
 import { COLORS, FONT } from '../../lib/theme';
 
 export default function S21LogNew({ navigation }) {
@@ -54,9 +55,11 @@ export default function S21LogNew({ navigation }) {
 
     createLog(logContent.trim())
       .then((res) => {
-        const message = res.asset
+        const saved = res.asset
           ? '오늘의 기록이 저장되었습니다.\n스티커판에 새 스티커가 붙었어요!'
           : '오늘의 기록이 저장되었습니다.';
+
+        const message = `${saved}\n\n성장 +${SCORE.log}`;
 
         Alert.alert('저장 완료', message, [
           {

@@ -88,7 +88,7 @@ export default function S11Interests({ navigation }) {
           <View style={styles.content}>
             <Text style={styles.title}>어떤 습관을 바꾸고 싶으신가요?</Text>
             <Text style={styles.subtitle}>
-              건강에 도움이 될 활동을 자유롭게 적어주세요
+              바꾸고 싶은 습관을 자유롭게 적어주세요
             </Text>
 
             <View style={styles.inputContainer}>
