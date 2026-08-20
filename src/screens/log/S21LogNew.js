@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { createLog } from '../../lib/api/logs';
-import { getErrorMessage } from '../../lib/api/error';
+import { getErrorMessage, getErrorDetails } from '../../lib/api/error';
 import { COLORS, FONT } from '../../lib/theme';
 
 export default function S21LogNew({ navigation }) {
@@ -30,7 +30,7 @@ export default function S21LogNew({ navigation }) {
   }, [navigation]);
 
   // 위험 키워드 예시
-  const DANGER_KEYWORDS = ['폭식', '자해', '구토'];
+  const DANGER_KEYWORDS = ['폭식', '자해', '구토', '약물', '알코올', '흡연', '자살', '먹토'];
 
   const handleSave = () => {
     if (!logContent.trim()) {
@@ -71,7 +71,13 @@ export default function S21LogNew({ navigation }) {
           },
         ]);
       })
-      .catch((error) => Alert.alert('저장하지 못했어요', getErrorMessage(error)))
+      .catch((error) => {
+        // 위험 키워드처럼 서버가 이유를 따로 줄 때는 같이 보여준다
+        const details = getErrorDetails(error);
+        const message = getErrorMessage(error);
+
+        Alert.alert('저장하지 못했어요', details ? `${message}\n\n${details}` : message);
+      })
       .finally(() => setSaving(false));
   };
 
