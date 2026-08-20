@@ -2,19 +2,14 @@
 import { ActivityIndicator, ImageBackground, ScrollView, View, Text, StyleSheet, Pressable, Image} from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getCharacterStages, getCharacterSizes, getSticker, getStageIndex, getCharacterName } from '../../lib/assets';
+import { getSticker, getStageIndex, getCharacterName } from '../../lib/assets';
 import { getRoom } from '../../lib/api/characters';
 import { getLogs } from '../../lib/api/logs';
 import { getActiveQuest } from '../../lib/api/quests';
 import { getSavedCharacterName } from '../../lib/api/token';
 import { getDateFormat, getWeekDates } from '../../lib/date';
+import CharacterRoomCard from '../../components/home/CharacterRoomCard';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
-
-
-
-
-const MAX_ASSETS = 14;
-
 
 export default function S20CharacterRoom({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -85,16 +80,12 @@ export default function S20CharacterRoom({ navigation }) {
   const stageIndex = getStageIndex(room?.current_stage);
   const characterType = room?.character_type;
 
-
   const characterName =
     room?.character_name ?? savedName ?? getCharacterName(characterType);
-  const shown = room?.assets?.slice(-MAX_ASSETS) ?? [];
 
   const gauge = room?.gauge ?? { current: 0, max: 8 };
   const isMax = gauge.current >= gauge.max;
   const percent = Math.round((gauge.current / gauge.max) * 100);
-
-  const characterSize = getCharacterSizes(characterType)[stageIndex];
 
   const weekDates = getWeekDates();
   const loggedDates = logs.map((log) => getDateFormat(new Date(log.created_at)));
@@ -123,45 +114,11 @@ export default function S20CharacterRoom({ navigation }) {
       )}
 
       {room && (
-      <View style={styles.roomCard}>
-      <ImageBackground
-        source={require('../../../assets/homebg.png')}
-        style={styles.roomFill}
-        resizeMode="cover"
-      >
-
-        <View style={styles.boardWrap}>
-
-          <View style={styles.boardNail} />
-          <View style={[styles.boardString, styles.boardStringLeft]} />
-          <View style={[styles.boardString, styles.boardStringRight]} />
-
-          <View style={styles.stickerSection}>
-            <View style={styles.boardInner}>
-
-              <View style={styles.stickerHeader}>
-                <Text style={styles.stickerLabel}>스티커판 ⭐</Text>
-                <Text style={styles.stickerCount}>{shown.length}/{MAX_ASSETS}</Text>
-              </View>
-
-              <View style={styles.stickerBar}>
-                {Array.from({ length: MAX_ASSETS }, (_, i) => (
-                  <View key={i} style={styles.slot}>
-                    <View style={styles.slotInner}>
-                      {shown[i] ? (
-                        <Image source={getSticker(shown[i])} style={styles.slotImage} resizeMode="contain" />
-                      ) : null}
-                    </View>
-                  </View>
-                ))}
-              </View>
-
-            </View>
-          </View>
-
-        </View>
-
-        <View style={styles.charactorContainer}>
+        <CharacterRoomCard
+          characterType={characterType}
+          currentStage={room.current_stage}
+          assets={room.assets}
+        >
           {levelUp && (
             <View style={styles.bubbleWrap}>
               <View style={styles.bubble}>
@@ -170,15 +127,7 @@ export default function S20CharacterRoom({ navigation }) {
               <View style={styles.bubbleTail} />
             </View>
           )}
-          <Image
-            source={getCharacterStages(characterType)[stageIndex]}
-            style={characterSize}
-            resizeMode="contain"
-          />
-        </View>
-
-      </ImageBackground>
-      </View>
+        </CharacterRoomCard>
       )}
 
       {room && (
@@ -346,23 +295,6 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
-  roomCard:{
-    width: '100%',
-    aspectRatio: 0.98,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: RADIUS.card,
-    overflow: 'hidden',
-    marginTop: 8,
-    marginBottom: 12,
-  },
-
-  roomFill:{
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: SPACE.card,
-  },
-
   bubbleWrap: {
     alignItems: 'center',
     marginBottom: 6,
@@ -395,14 +327,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  charactorContainer:{
-    position: 'absolute',
-    left: '10%',
-    bottom: '10%',
-    width: '40%',
-    alignItems: 'center',
-  },
-
   button: {
     alignSelf: 'center',
     backgroundColor: COLORS.navigate,
@@ -416,100 +340,6 @@ const styles = StyleSheet.create({
     fontFamily: FONT.semibold,
     fontSize: FONT.body,
     color: COLORS.navigateText,
-  },
-
-  boardWrap: {
-    position: 'absolute',
-    top: '4%',
-    right: '4%',
-    width: '52%',
-    alignItems: 'center',
-    paddingTop: 16,
-  },
-
-  boardNail: {
-    width: 7,
-    height: 7,
-    borderRadius: 999,
-    backgroundColor: '#8B85A0',
-  },
-
-  boardString: {
-    position: 'absolute',
-    top: 6,
-    width: 1.5,
-    height: 24,
-    backgroundColor: '#8B85A0',
-  },
-
-  boardStringLeft: {
-    left: '38%',
-    transform: [{ rotate: '28deg' }],
-  },
-
-  boardStringRight: {
-    right: '38%',
-    transform: [{ rotate: '-28deg' }],
-  },
-
-  stickerSection: {
-    alignSelf: 'stretch',
-    backgroundColor: '#9891AC',
-    borderRadius: 10,
-    padding: 6,
-    shadowColor: '#1B1A18',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.22,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-
-  boardInner: {
-    backgroundColor: '#D8D3E4',
-    borderRadius: 6,
-    paddingBottom: 6,
-  },
-
-  stickerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 8,
-  },
-  stickerLabel: {
-    fontFamily: FONT.semibold,
-    fontSize: 11,
-    color: '#3D3750',
-  },
-  stickerCount: {
-    fontFamily: FONT.semibold,
-    fontSize: 11,
-    color: '#5A5470',
-  },
-  stickerBar: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: 6,
-  },
-
-  slot: {
-    width: "25%",
-    aspectRatio: 1,
-    padding: 4,
-  },
-  slotInner: {
-    flex: 1,
-    borderRadius: 6,
-    backgroundColor: COLORS.cardGray,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  slotImage: {
-    width: '78%',
-    height: '78%',
   },
 
   iconBadge: {

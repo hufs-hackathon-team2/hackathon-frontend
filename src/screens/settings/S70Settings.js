@@ -1,14 +1,17 @@
 // ST 01 설정 화면 + AU 04 로그아웃
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 import { getSettings, logout } from '../../lib/api/settings';
+import { getRoom } from '../../lib/api/characters';
+import { getCharacterStages, getStageIndex } from '../../lib/assets';
 
 export default function S70Settings({ navigation }) {
   const insets = useSafeAreaInsets();
 
   const [settings, setSettings] = useState(null);
+  const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -67,6 +70,29 @@ export default function S70Settings({ navigation }) {
 
       <Text style={styles.title}>설정</Text>
 
+      <View style={styles.profileCard}>
+        <View style={styles.avatar}>
+          {room ? (
+            <Image
+              source={getCharacterStages(room.character_type)[getStageIndex(room.current_stage)]}
+              style={styles.avatarImage}
+              resizeMode="contain"
+            />
+          ) : (
+            <Text style={styles.avatarLetter}>{settings.nickname?.slice(0, 1) ?? '?'}</Text>
+          )}
+        </View>
+
+        <View style={styles.profileText}>
+          <Text style={styles.nickname} numberOfLines={1}>
+            {settings.nickname ?? '이름 없음'}
+          </Text>
+          <Text style={styles.email} numberOfLines={1}>
+            {settings.email ?? '—'}
+          </Text>
+        </View>
+      </View>
+
       <Pressable style={styles.row} onPress={() => navigation.navigate('ServiceInfo')}>
         <Text style={styles.rowLabel}>서비스 안내</Text>
         <Text style={styles.rowArrow}>{'>'}</Text>
@@ -98,6 +124,56 @@ const styles = StyleSheet.create({
     fontSize: FONT.title,
     color: COLORS.text,
     paddingVertical: 20,
+  },
+
+  profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: SPACE.card,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.cardWhite,
+  },
+
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 999,
+    backgroundColor: COLORS.bg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+
+  avatarImage: {
+    width: '72%',
+    height: '72%',
+  },
+
+  avatarLetter: {
+    fontFamily: FONT.bold,
+    fontSize: FONT.subTitle,
+    color: COLORS.navigate,
+  },
+
+  profileText: {
+    flex: 1,
+  },
+
+  nickname: {
+    fontFamily: FONT.bold,
+    fontSize: FONT.cardTitle,
+    color: COLORS.text,
+    marginBottom: 4,
+  },
+
+  email: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.caption,
+    color: COLORS.textSub,
   },
 
   row: {

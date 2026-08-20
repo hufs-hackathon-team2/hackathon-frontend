@@ -29,8 +29,7 @@ function withDates(analysis, logDates, questDates) {
 }
 
 
-// 완료한 퀘스트는 분석 응답이 아니라 사이클별 퀘스트 목록에서 가져온다.
-// 분석을 요청하기 전에도 보여줘야 하기 때문이다.
+
 async function withCycleQuests(analysis) {
   if (analysis.cycle_id == null) return analysis;
 

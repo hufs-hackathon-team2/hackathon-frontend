@@ -103,6 +103,8 @@ export default function S11Interests({ navigation }) {
                 maxLength={maxLength}
                 textAlignVertical="top"
               />
+
+              <Text style={styles.counter}>{interestText.length}/100</Text>
             </View>
 
 
@@ -165,6 +167,13 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     marginBottom: 28,
+  },
+  counter: {
+    position: 'absolute',
+    right: 16,
+    bottom: 12,
+    fontSize: 12,
+    color: '#8A94A6',
   },
   textArea: {
     backgroundColor: '#F0F5FF',

@@ -8,7 +8,6 @@ import { COLORS, FONT } from '../lib/theme';
 import S20CharacterRoom from '../screens/home/S20CharacterRoom';
 import S21LogNew from '../screens/log/S21LogNew';
 import S22LogList from '../screens/log/S22LogList';
-import S30CycleCalendar from '../screens/cycle/S30CycleCalendar';
 import S31CycleAnalysis from '../screens/cycle/S31CycleAnalysis';
 import S32CycleHistory from '../screens/cycle/S32CycleHistory';
 import S50QuestList from '../screens/quest/S50QuestList';
@@ -55,7 +54,7 @@ const CycleStackNav = createNativeStackNavigator();
 function CycleStack() {
   return (
     <CycleStackNav.Navigator screenOptions={{ headerShown: false }}>
-      <CycleStackNav.Screen name="CycleCalendar" component={S30CycleCalendar} />
+      
       <CycleStackNav.Screen
         name="CycleAnalysis"
         component={S31CycleAnalysis}
