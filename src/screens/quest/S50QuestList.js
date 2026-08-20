@@ -38,7 +38,6 @@ export default function S50QuestList({ navigation }) {
   useEffect(() => {
     load();
 
-    // 다른 화면에서 퀘스트를 시작하고 돌아왔을 때 다시 받아온다
     const unsubscribe = navigation.addListener('focus', load);
     return unsubscribe;
   }, [navigation]);
@@ -82,19 +81,16 @@ export default function S50QuestList({ navigation }) {
     ]);
   };
 
-  // 오늘 이미 체크했는지는 서버가 준 last_checked 로 판단한다.
-  // 화면 state 로 두면 앱을 껐다 켤 때 초기화돼서 하루 두 번 체크할 수 있다.
-  // "2026-08-19" 로도, "2026-08-19T10:30:00Z" 로도 올 수 있어 날짜 부분만 본다.
   const checkedToday =
     activeQuest?.last_checked?.slice(0, 10) === getDateFormat(new Date());
 
   const handleCheckToday = () => {
     checkQuest(activeQuest.quest_id)
       .then((res) => {
-        if (res.is_success) {
+        // 3회를 다 채우면 서버가 state 를 DONE 으로 바꿔 보낸다.
+        if (res.state === 'DONE') {
           navigation.navigate('QuestProgress', {
-            title: activeQuest.quest_content,
-            points: res.growth_points_awarded,
+            title: res.quest_content ?? activeQuest.quest_content,
           });
         }
 
@@ -207,7 +203,10 @@ export default function S50QuestList({ navigation }) {
           ) : !recommend.has_recommendations ? (
             <View style={styles.questEmptybox}>
               <Text style={styles.questEmptyText}>아직 추천 퀘스트가 없어요</Text>
-              <Text style={styles.questEmptyDescription}>이번 주에 PLUS Log 를 2개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.</Text>
+              <Text style={styles.questEmptyDescription}>
+                이번 주에 PLUS Log 를 {recommend.required_log_count ?? 2}개 이상 남기면 다음 주에 맞춤 퀘스트를 받을 수 있어요.
+                지금까지 {recommend.plus_log_count ?? 0}개 남겼어요.
+              </Text>
             </View>
           ) : (
             recommend.recommended_quests?.map((quest) => (

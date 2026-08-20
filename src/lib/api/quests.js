@@ -49,9 +49,18 @@ export async function checkQuest(questId) {
     const quest = mockQuests[0];
     const count = quest.count + 1;
 
-    mockQuests = [{ ...quest, count, last_checked: getDateFormat(new Date()) }];
+    const state = count >= 3 ? 'DONE' : 'ACTIVE';
+    const lastChecked = getDateFormat(new Date());
 
-    return { quest_id: questId, count, state: 'ACTIVE', is_success: count >= 3, growth_points_awarded: 1 };
+    mockQuests = state === 'DONE' ? [] : [{ ...quest, count, last_checked: lastChecked }];
+
+    return {
+      quest_id: questId,
+      state,
+      count,
+      last_checked: lastChecked,
+      quest_content: quest.quest_content,
+    };
   }
 
   const res = await api.post(`/quests/${questId}/check/`);
