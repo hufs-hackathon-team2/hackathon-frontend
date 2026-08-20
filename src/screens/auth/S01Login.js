@@ -148,6 +148,14 @@ export default function S01Login({ navigation }) {
                   <Text style={styles.blueLinkText}>회원가입</Text>
                 </TouchableOpacity>
               </View>
+
+              <TouchableOpacity
+                style={styles.resetRow}
+                onPress={() => navigation.navigate('ResetPassword')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.grayText}>비밀번호를 잊으셨나요?</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -238,6 +246,10 @@ const styles = StyleSheet.create({
   },
   signUpRow: {
     flexDirection: 'row',
+    alignItems: 'center',
+  },
+  resetRow: {
+    marginTop: 14,
     alignItems: 'center',
   },
   grayText: {

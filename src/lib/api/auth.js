@@ -23,6 +23,24 @@ export async function signup(email, password, nickname) {
   return res.data;
 }
 
+// AU 05 비밀번호 재설정 — 메일로 토큰을 받아 새 비밀번호로 바꾼다
+export async function requestPasswordReset(email) {
+  if (USE_MOCK) return { detail: '메일을 보냈어요' };
+
+  const res = await api.post('/auth/password-reset/', { email });
+  return res.data;
+}
+
+export async function confirmPasswordReset(token, newPassword) {
+  if (USE_MOCK) return { detail: '비밀번호를 바꿨어요' };
+
+  const res = await api.post('/auth/password-reset/confirm/', {
+    token,
+    new_password: newPassword,
+  });
+  return res.data;
+}
+
 export async function login(email, password) {
   if (USE_MOCK) {
     const user = MOCK_USERS.find(
