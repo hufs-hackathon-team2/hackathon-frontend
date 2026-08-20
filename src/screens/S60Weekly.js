@@ -13,14 +13,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import { startQuest } from '../lib/api/quests';
 import { getWeeklyData } from '../lib/api/weekly';
 import { getErrorMessage } from '../lib/api/error';
+import { getRoom } from '../lib/api/characters';
+import CharacterRoomCard from '../components/home/CharacterRoomCard';
 
 export default function S60Weekly({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [weeklyData, setWeeklyData] = useState(null);
+  const [room, setRoom] = useState(null);
 
   const cardCaptureRef = useRef(null);
 
@@ -28,14 +30,17 @@ export default function S60Weekly({ navigation }) {
     fetchWeeklyData();
   }, []);
 
-
   const fetchWeeklyData = async () => {
     try {
       setLoading(true);
       setIsError(false);
 
-      const data = await getWeeklyData();
-      setWeeklyData(data);
+      const [weeklyRes, roomRes] = await Promise.allSettled([getWeeklyData(), getRoom()]);
+
+      if (weeklyRes.status === 'rejected') throw weeklyRes.reason;
+
+      setWeeklyData(weeklyRes.value);
+      setRoom(roomRes.status === 'fulfilled' ? roomRes.value : null);
     } catch (error) {
       setIsError(true);
     } finally {
@@ -88,24 +93,6 @@ export default function S60Weekly({ navigation }) {
     }
   };
 
-  const handleSelectQuest = (quest) => {
-    startQuest(quest.quest_content)
-      .then((res) => {
-        if (res.new_cycle_started) {
-          navigation.navigate('Resume');
-          return;
-        }
-
-        navigation.navigate('Main', {
-          screen: 'QuestTab',
-          params: { screen: 'QuestList' },
-        });
-      })
-      .catch((error) =>
-        Alert.alert('시작하지 못했어요', getErrorMessage(error))
-      );
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -152,6 +139,14 @@ export default function S60Weekly({ navigation }) {
           <View ref={cardCaptureRef} collapsable={false} style={styles.captureArea}>
             <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
 
+            {room && (
+              <CharacterRoomCard
+                characterType={room.character_type}
+                currentStage={room.current_stage}
+                assets={room.assets}
+              />
+            )}
+
             <View style={styles.summaryCardBlock}>
               <Text style={styles.blockTitle}>한 주 요약</Text>
 
@@ -183,28 +178,7 @@ export default function S60Weekly({ navigation }) {
               ) : null}
             </View>
 
-            <View style={styles.cardBlock}>
-              <Text style={styles.blockTitle}>다음 주 추천 퀘스트</Text>
-              <Text style={styles.blockSubTitle}>
-                부담 없이 이어갈 수 있는 행동을 골라봤어요
-              </Text>
-
-              {weeklyData.next_week_recommendations?.map((quest) => (
-                <TouchableOpacity
-                  key={quest.recommendation_id}
-                  style={styles.questItem}
-                  onPress={() => handleSelectQuest(quest)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.questTitle}>{quest.quest_content}</Text>
-                  {quest.reason ? (
-                    <Text style={styles.questReason}>{quest.reason}</Text>
-                  ) : null}
-                </TouchableOpacity>
-              ))}
-            </View>
           </View>
-
 
           <View style={styles.cardBlock}>
             <Text style={styles.shareBlockTitle}>카드 저장 · 공유</Text>
@@ -261,7 +235,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 20,
     marginHorizontal: -16,
-    borderRadius: 24,
+    borderRadius: 40,
   },
   screenTitle: {
     fontSize: 22,
@@ -295,12 +269,6 @@ const styles = StyleSheet.create({
     color: '#1B1A18',
     marginBottom: 12,
   },
-  blockSubTitle: {
-    fontSize: 13,
-    color: '#555555',
-    marginTop: -4,
-    marginBottom: 16,
-  },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -329,25 +297,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#4B6351',
     lineHeight: 18,
-  },
-  questItem: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#D2D6DC',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 10,
-  },
-  questTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2C2C2C',
-  },
-  questReason: {
-    fontSize: 12,
-    color: '#777777',
-    marginTop: 4,
   },
   shareBlockTitle: {
     fontSize: 16,
