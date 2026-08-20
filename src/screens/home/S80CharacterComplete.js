@@ -14,7 +14,16 @@ export default function S80CharacterComplete({ navigation, route }) {
   const [saving, setSaving] = useState(false);
 
   const name = room.character_name ?? '캐릭터';
-  const days = getDurationDays(room.started_at, room.completed_at);
+  // 서버가 함께한 일수를 준다. 방은 숫자, 아카이브는 문자열로 온다.
+  // 완료 전에는 null 이라 그때는 날짜로 직접 센다.
+  const fromServer =
+    room.days_together == null || room.days_together === ''
+      ? NaN
+      : Number(room.days_together);
+
+  const days = Number.isFinite(fromServer)
+    ? fromServer
+    : getDurationDays(room.started_at, room.completed_at);
 
   const handleArchive = () => {
     setSaving(true);

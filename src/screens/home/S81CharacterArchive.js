@@ -91,6 +91,10 @@ export default function S81CharacterArchive({ navigation }) {
                 </Text>
 
                 <Text style={styles.date}>{getFullDate(character.completed_at)}</Text>
+
+                {character.days_together != null && (
+                  <Text style={styles.days}>{character.days_together}일 함께</Text>
+                )}
               </View>
             ))}
           </View>
@@ -180,6 +184,13 @@ const styles = StyleSheet.create({
     fontFamily: FONT.regular,
     fontSize: FONT.caption,
     color: COLORS.textSub,
+    marginTop: 2,
+  },
+
+  days: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.navigate,
     marginTop: 2,
   },
 
