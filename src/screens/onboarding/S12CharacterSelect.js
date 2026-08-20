@@ -40,17 +40,26 @@ export default function S12CharacterSelect({ navigation, route }) {
   const [saving, setSaving] = useState(false);
 
   const handleComplete = async () => {
-    if (!characterName.trim()) {
+    const name = characterName.trim();
+
+    if (!name) {
       Alert.alert('캐릭터 이름 입력', '캐릭터 이름을 입력해주세요.');
       return;
     }
+
+    // 서버가 2~10자만 받는다.
+    if (name.length < 2) {
+      Alert.alert('캐릭터 이름 입력', '이름은 2자 이상으로 지어주세요.');
+      return;
+    }
+
     setSaving(true);
     try {
 
-      await saveCharacter(selectedCharacter, characterName.trim());
+      await saveCharacter(selectedCharacter, name);
 
 
-      await saveCharacterName(characterName.trim());
+      await saveCharacterName(name);
 
       if (renew) {
         navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
@@ -64,7 +73,7 @@ export default function S12CharacterSelect({ navigation, route }) {
           name: 'OnboardingComplete',
           params: {
             character: CHARACTER_DATA[selectedCharacter],
-            characterName: characterName.trim(),
+            characterName: name,
           },
         },
       ],
@@ -163,7 +172,7 @@ export default function S12CharacterSelect({ navigation, route }) {
                 onChangeText={setCharacterName}                         
                 placeholder="캐릭터 이름을 입력해주세요"                
                 placeholderTextColor="#8A94A6"                          
-                maxLength={20}                                          
+                maxLength={10}                                          
               />                                                        
             </View>   
 

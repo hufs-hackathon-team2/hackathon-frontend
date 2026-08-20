@@ -14,6 +14,7 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveInterest } from '../../lib/api/onboarding';
+import { clearToken } from '../../lib/api/token';
 
 export default function S11Interests({ navigation }) {
   useLayoutEffect(() => {
@@ -51,6 +52,22 @@ export default function S11Interests({ navigation }) {
 
   };
 
+  // 온보딩은 뒤로 갈 스택이 없다. 저장이 계속 실패하면 여기서 못 빠져나가므로
+  // 토큰을 지우고 처음 화면으로 돌아갈 길을 하나 열어 둔다.
+  const handleExit = () => {
+    Alert.alert('다른 계정으로 시작할까요?', '지금 계정에서 로그아웃되고 처음 화면으로 돌아갑니다.', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '나가기',
+        style: 'destructive',
+        onPress: async () => {
+          await clearToken();
+          navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
+        },
+      },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -58,6 +75,15 @@ export default function S11Interests({ navigation }) {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.inner}
         >
+
+          <View style={styles.topBar}>
+            <TouchableOpacity
+              onPress={handleExit}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Text style={styles.exitText}>다른 계정으로 시작</Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.content}>
             <Text style={styles.title}>어떤 습관을 바꾸고 싶으신가요?</Text>
@@ -104,6 +130,17 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
+  },
+  topBar: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    paddingHorizontal: 20,
+  },
+  exitText: {
+    fontSize: 13,
+    color: '#504D49',
+    textDecorationLine: 'underline',
   },
   content: {
     flex: 1,

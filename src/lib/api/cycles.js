@@ -29,6 +29,28 @@ function withDates(analysis, logDates, questDates) {
 }
 
 
+// 완료한 퀘스트는 분석 응답이 아니라 사이클별 퀘스트 목록에서 가져온다.
+// 분석을 요청하기 전에도 보여줘야 하기 때문이다.
+async function withCycleQuests(analysis) {
+  if (analysis.cycle_id == null) return analysis;
+
+  try {
+    const res = await api.get(`/cycles/${analysis.cycle_id}/quests/`);
+    const quests = res.data.quests ?? [];
+
+    const done = quests
+      .filter((quest) => quest.state === 'DONE')
+      .sort((a, b) => (b.last_checked ?? '').localeCompare(a.last_checked ?? ''))
+      .map((quest) => quest.quest_content);
+
+    return { ...analysis, completed_quests: done };
+  } catch {
+    // 목록 조회가 실패하면 분석 응답에 들어 있던 값을 그대로 쓴다.
+    return analysis;
+  }
+}
+
+
 let mockAnalysis = MOCK_ANALYSIS;
 
 
@@ -36,7 +58,7 @@ export async function getCurrentAnalysis() {
   if (USE_MOCK) return withDates(mockAnalysis, MOCK_LOG_DATES, MOCK_QUEST_DATES);
 
   const res = await api.get('/cycle/analysis/current/');
-  return withDates(res.data, [], []);
+  return withCycleQuests(withDates(res.data, [], []));
 }
 
 
@@ -44,7 +66,7 @@ export async function getAnalysis(cycleCount) {
   if (USE_MOCK) return withDates(MOCK_PREVIOUS_ANALYSIS, MOCK_PREV_LOG_DATES, MOCK_PREV_QUEST_DATES);
 
   const res = await api.get(`/cycle/analysis/${cycleCount}/`);
-  return withDates(res.data, [], []);
+  return withCycleQuests(withDates(res.data, [], []));
 }
 
 
@@ -69,7 +91,7 @@ export async function requestCurrentAnalysis() {
   }
 
   const res = await api.post('/cycle/analysis/current/', null, { timeout: 15000 });
-  return withDates(res.data, [], []);
+  return withCycleQuests(withDates(res.data, [], []));
 }
 
 

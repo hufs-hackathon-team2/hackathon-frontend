@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "헬플리",
-    "slug": "helply",
+    "slug": "healply",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.seoyn95.healply"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,6 +29,11 @@
     "plugins": [
       "expo-secure-store",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "37a1a146-6aa4-4f91-ae11-aa8bd4b599d0"
+      }
+    }
   }
 }
