@@ -2,14 +2,15 @@ import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { getCharacterStages, getCharacterSizes, getSticker, getStageIndex } from '../../lib/assets';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
-export const MAX_ASSETS = 14;
+export const MAX_ASSETS = 16;
 
-// 홈과 위클리 카드가 같은 방을 그린다.
-// children 은 캐릭터 위에 얹는 것 (단계 상승 말풍선) 이다.
+
 export default function CharacterRoomCard({ characterType, currentStage, assets, children }) {
 
   const stageIndex = getStageIndex(currentStage);
-  const shown = assets?.slice(-MAX_ASSETS) ?? [];
+  // 서버는 최신순으로 준다 (0번이 방금 붙인 것).
+  // 앞에서 16개를 자른 뒤 뒤집어서, 판이 왼쪽부터 차례로 차 보이게 한다.
+  const shown = assets?.slice(0, MAX_ASSETS).reverse() ?? [];
   const characterSize = getCharacterSizes(characterType)[stageIndex];
 
   return (
@@ -30,8 +31,7 @@ export default function CharacterRoomCard({ characterType, currentStage, assets,
             <View style={styles.boardInner}>
 
               <View style={styles.stickerHeader}>
-                <Text style={styles.stickerLabel}>스티커판 ⭐</Text>
-                <Text style={styles.stickerCount}>{shown.length}/{MAX_ASSETS}</Text>
+                <Text style={styles.stickerLabel}>사이클 스티커판 ⭐</Text>
               </View>
 
               <View style={styles.stickerBar}>
