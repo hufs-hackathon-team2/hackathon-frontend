@@ -48,23 +48,27 @@ function hideSecret(data) {
 
 api.interceptors.response.use(
   (response) => {
-    const method = response.config?.method?.toUpperCase() ?? '?';
-    const url = response.config?.url ?? '?';
+    if (__DEV__) {
+      const method = response.config?.method?.toUpperCase() ?? '?';
+      const url = response.config?.url ?? '?';
 
-    // 성공 응답에만 진짜 토큰이 들어 있다.
-    console.log(`[API] ${method} ${url} → ${response.status}`, hideSecret(response.data));
+      // 성공 응답에만 진짜 토큰이 들어 있다.
+      console.log(`[API] ${method} ${url} → ${response.status}`, hideSecret(response.data));
+    }
 
     return response;
   },
   (error) => {
-    const method = error.config?.method?.toUpperCase() ?? '?';
-    const url = error.config?.url ?? '?';
+    if (__DEV__) {
+      const method = error.config?.method?.toUpperCase() ?? '?';
+      const url = error.config?.url ?? '?';
 
-    // 실패하면 서버가 토큰을 주지 않으므로 에러 내용은 그대로 남긴다.
-    if (error.response) {
-      console.log(`[API] ${method} ${url} → ${error.response.status}`, error.response.data);
-    } else {
-      console.log(`[API] ${method} ${url} → 응답 없음`, error.message);
+      // 실패하면 서버가 토큰을 주지 않으므로 에러 내용은 그대로 남긴다.
+      if (error.response) {
+        console.log(`[API] ${method} ${url} → ${error.response.status}`, error.response.data);
+      } else {
+        console.log(`[API] ${method} ${url} → 응답 없음`, error.message);
+      }
     }
 
     return Promise.reject(error);
