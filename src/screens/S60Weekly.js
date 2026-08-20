@@ -103,7 +103,7 @@ export default function S60Weekly({ navigation }) {
 
   if (isError) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -118,7 +118,7 @@ export default function S60Weekly({ navigation }) {
 
   if (!weeklyData || !weeklyData.is_generated) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['bottom']}>
         <View style={styles.container}>
           <Text style={styles.screenTitle}>이번 주 위클리 카드</Text>
           <View style={styles.emptyCard}>
@@ -132,7 +132,7 @@ export default function S60Weekly({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.container}>
 
