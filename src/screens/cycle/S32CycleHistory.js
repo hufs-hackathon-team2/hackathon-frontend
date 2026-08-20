@@ -1,6 +1,6 @@
 // CY 06 사이클 히스토리 (P1)
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, ScrollView, Text, View, StyleSheet } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { getFullDate, getDurationDays, EMPTY_DATE } from "../../lib/date";
@@ -56,15 +56,23 @@ export default function S32CycleHistory({ navigation }) {
           <Text style={styles.errorText}>아직 완료한 사이클이 없어요</Text>
         ) : (
           completed.map((cycle) => (
-            <View key={cycle.cycle_id} style={styles.historyBox}>
-              <Text style={styles.historyNth}>{cycle.cycle_count}번째 사이클</Text>
+            <Pressable
+              key={cycle.cycle_id}
+              style={styles.historyBox}
+              onPress={() => navigation.navigate('CycleDetail', { cycle })}
+            >
+              <View style={styles.historyTop}>
+                <Text style={styles.historyNth}>{cycle.cycle_count}번째 사이클</Text>
+                <Text style={styles.historyArrow}>{'›'}</Text>
+              </View>
+
               <Text style={styles.historyPeriod}>
                 {getFullDate(cycle.started_at)} ~ {getFullDate(cycle.closed_at)}
               </Text>
               <Text style={styles.historySummary}>
                 {getDurationDays(cycle.started_at, cycle.closed_at) ?? EMPTY_DATE}일 동안 이어갔어요
               </Text>
-            </View>
+            </Pressable>
           ))
         )}
 
@@ -109,6 +117,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.cardWhite,
   },
 
+  historyTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  historyArrow: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.subTitle,
+    color: COLORS.textSub,
+  },
   historyNth:{
     fontFamily: FONT.semibold,
     fontSize: FONT.cardTitle,

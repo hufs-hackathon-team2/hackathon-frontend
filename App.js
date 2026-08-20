@@ -19,6 +19,7 @@ import S13Complete from './src/screens/onboarding/S13Complete';
 
 import S52QuestProgress from './src/screens/quest/S52QuestProgress';
 
+import S33CycleDetail from './src/screens/cycle/S33CycleDetail';
 import S80CharacterComplete from './src/screens/home/S80CharacterComplete';
 import S81CharacterArchive from './src/screens/home/S81CharacterArchive';
 
@@ -92,6 +93,12 @@ export default function App() {
             options={{ presentation: 'modal', headerShown: false, gestureEnabled: false }}
           />
 
+
+          <Stack.Screen
+            name="CycleDetail"
+            component={S33CycleDetail}
+            options={{ presentation: 'modal', headerShown: false }}
+          />
 
           <Stack.Screen name="CharacterArchive" component={S81CharacterArchive} />
         </Stack.Navigator>
