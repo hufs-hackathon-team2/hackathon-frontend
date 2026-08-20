@@ -28,10 +28,6 @@ export default function S33CycleDetail({ navigation, route }) {
       .finally(() => setLoading(false));
   }, [cycle.cycle_count]);
 
-  // 이미 끝난 사이클이라 분석이 있으면 그대로 보여준다.
-  const requested = analysis?.analysis_request_count;
-  const unlocked = requested != null ? requested > 0 : analysis != null;
-
   const days = getDurationDays(cycle.started_at, cycle.closed_at);
 
   return (
@@ -94,26 +90,26 @@ export default function S33CycleDetail({ navigation, route }) {
             <AnalysisBox
               title="활동 흐름 인사이트"
               lines={analysis?.activity_analysis}
-              unlocked={unlocked}
+              unlocked
               dotColor={COLORS.dotLog}
             />
 
             <AnalysisBox
               title="맞춤 제안"
               lines={analysis?.personalized_analysis}
-              unlocked={unlocked}
+              unlocked
               dotColor={COLORS.dotQuest}
             />
 
             <ActivityChipBox
               title="자주 기록한 PLUS Log"
               items={analysis?.top_plus_logs}
-              unlocked={unlocked}
+              unlocked
             />
 
             <CompletedQuestBox
               quests={analysis?.completed_quests}
-              unlocked={unlocked}
+              unlocked
             />
           </>
         )}
@@ -140,6 +136,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT.semibold,
     fontSize: FONT.subbody,
     color: COLORS.textSub,
+    marginTop: 25,
   },
 
   container: {

@@ -6,7 +6,6 @@ import { ActivityChipBox, CompletedQuestBox, AnalysisBox } from '../../component
 import { getFullDate } from '../../lib/date';
 import { getSticker } from '../../lib/assets';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScreenHeader from '../../components/common/ScreenHeader';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
 
 import { getCurrentAnalysis, requestCurrentAnalysis } from '../../lib/api/cycles';
@@ -95,11 +94,18 @@ export default function S31CycleAnalysis ({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScreenHeader navigation={navigation} />
-
       <ScrollView contentContainerStyle={styles.container}>
 
-        <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
+
+          <Pressable
+            style={styles.historyButton}
+            onPress={() => navigation.navigate('CycleHistory')}
+          >
+            <Text style={styles.historyButtonText}>히스토리</Text>
+          </Pressable>
+        </View>
 
         <View style={styles.informBox}>
           <Text style={styles.informSub}>활동 중</Text>
@@ -203,6 +209,26 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  historyButton: {
+    backgroundColor: COLORS.cardWhite,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+  },
+
+  historyButtonText: {
+    fontFamily: FONT.semibold,
+    fontSize: FONT.caption,
+    color: COLORS.text,
+  },
   nowCycleTitle: {
     fontFamily: FONT.bold,
     fontSize: FONT.title,
