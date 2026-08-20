@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getSticker } from '../../lib/assets';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 const QUEST_PAGE = 5;
 
@@ -75,7 +75,7 @@ export function CompletedQuestBox({ quests, unlocked }) {
 
           {hasMore && (
             <Pressable
-              style={styles.moreButton}
+              style={({ pressed }) => [styles.moreButton, pressed && PRESSED]}
               onPress={() => setShown(shown + QUEST_PAGE)}
             >
               <Text style={styles.moreButtonText}>더보기</Text>

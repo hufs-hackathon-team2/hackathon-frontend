@@ -1,6 +1,6 @@
 // AU 03 자동 로그인 / 토큰 확인 — 앱의 진입 화면 (App.js initialRouteName)
 import { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import { getAccessToken, getOnboarded, clearToken } from '../../lib/api/token';
 import { getSettings } from '../../lib/api/settings';
 import { COLORS, FONT, SPACE } from '../../lib/theme';
@@ -48,7 +48,15 @@ export default function S00Splash({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>헬플리</Text>
+      <View style={styles.logoRow}>
+        <Image
+          source={require('../../../assets/healply_logo.png')}
+          style={styles.logoMark}
+          resizeMode="contain"
+        />
+        <Text style={styles.logo}>헬플리</Text>
+      </View>
+
       <ActivityIndicator size="large" color={COLORS.primary} />
     </View>
   );
@@ -63,10 +71,24 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bg,
   },
 
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 28,
+  },
+
+  // 원본이 68px 이라 그보다 크게 늘리면 흐려진다.
+  logoMark: {
+    width: 60,
+    height: 60,
+    borderRadius: 15,
+  },
+
   logo: {
     fontFamily: FONT.bold,
-    fontSize: 32,
-    color: COLORS.text,
-    marginBottom: 24,
+    fontSize: 38,
+    color: COLORS.navigate,
+    letterSpacing: -1,
   },
 });

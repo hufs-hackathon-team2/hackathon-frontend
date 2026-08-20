@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 export default function QuestRecommend({ title, reason, onStart, disabled }) {
   return (
@@ -10,7 +10,7 @@ export default function QuestRecommend({ title, reason, onStart, disabled }) {
       </View>
 
       <Pressable
-        style={[styles.startButton, disabled && styles.startButtonDisabled]}
+        style={({ pressed }) => [styles.startButton, disabled && styles.startButtonDisabled, pressed && PRESSED]}
         onPress={onStart}
         disabled={disabled}>
         <Text style={[styles.startButtonText, disabled && styles.startButtonTextDisabled]}>시작</Text>

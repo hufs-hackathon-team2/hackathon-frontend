@@ -5,7 +5,7 @@ import { getCharacterStages } from '../../lib/assets';
 import { getFullDate, getDurationDays, EMPTY_DATE } from '../../lib/date';
 import { archiveCharacter } from '../../lib/api/characters';
 import { getErrorMessage } from '../../lib/api/error';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 const LAST_STAGE = 6;
 
@@ -57,7 +57,7 @@ export default function S80CharacterComplete({ navigation, route }) {
       </View>
 
       <Pressable
-        style={[styles.archiveButton, saving && styles.archiveButtonDisabled]}
+        style={({ pressed }) => [styles.archiveButton, saving && styles.archiveButtonDisabled, pressed && PRESSED]}
         onPress={handleArchive}
         disabled={saving}
       >

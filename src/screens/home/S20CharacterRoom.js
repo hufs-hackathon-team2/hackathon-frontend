@@ -9,7 +9,7 @@ import { getActiveQuest } from '../../lib/api/quests';
 import { getSavedCharacterName } from '../../lib/api/token';
 import { getDateFormat, getWeekDates } from '../../lib/date';
 import CharacterRoomCard from '../../components/home/CharacterRoomCard';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 export default function S20CharacterRoom({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -99,10 +99,10 @@ export default function S20CharacterRoom({ navigation }) {
         <Text style={styles.header}>{room ? `${characterName}의 방` : '내 방'}</Text>
 
         <Pressable
-          style={styles.albumButton}
+          style={({ pressed }) => [styles.albumButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('CharacterArchive')}
         >
-          <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" />
+          <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" fadeDuration={0} />
           <Text style={styles.albumText}>앨범</Text>
         </Pressable>
       </View>
@@ -134,7 +134,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.growthStrip}>
 
         <View style={styles.growthTop}>
-          <Image source={getSticker('sprout')} style={styles.growthIcon} resizeMode="contain" />
+          <Image source={getSticker('sprout')} style={styles.growthIcon} resizeMode="contain" fadeDuration={0} />
           <Text style={styles.growthLevel}>Lv.{stageIndex + 1}</Text>
           <Text style={styles.growthValue}>
             {isMax ? '성장 완료' : `${percent}%`}
@@ -165,7 +165,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.weekCard}>
 
         <View style={styles.iconBadge}>
-          <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" />
+          <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" fadeDuration={0} />
         </View>
 
         <View style={styles.cardBody}>
@@ -191,7 +191,7 @@ export default function S20CharacterRoom({ navigation }) {
         </View>
 
         <Pressable
-          style={styles.writeButton}
+          style={({ pressed }) => [styles.writeButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('LogTab')}
         >
           <Text style={styles.writeButtonText}>기록하기</Text>
@@ -202,7 +202,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.weekCard}>
 
         <View style={styles.iconBadge}>
-          <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" />
+          <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" fadeDuration={0} />
         </View>
 
         <View style={styles.cardBody}>
@@ -229,7 +229,7 @@ export default function S20CharacterRoom({ navigation }) {
         </View>
 
         <Pressable
-          style={styles.writeButton}
+          style={({ pressed }) => [styles.writeButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('QuestTab')}
         >
           <Text style={styles.writeButtonText}>
@@ -240,7 +240,7 @@ export default function S20CharacterRoom({ navigation }) {
       </View>
 
       <Pressable
-        style={styles.button}
+        style={({ pressed }) => [styles.button, pressed && PRESSED]}
         onPress={() => navigation.navigate('Weekly')}
       >
         <Text style={styles.buttonText}>위클리 카드 보기</Text>

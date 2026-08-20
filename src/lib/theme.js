@@ -53,6 +53,11 @@ export const COLORS = {
 
 };
 
+// Pressable 은 눌러도 아무 표시가 없다. 모든 버튼에 이 스타일을 같이 준다.
+export const PRESSED = {
+  opacity: 0.6,
+};
+
 export const FONT = {
   regular: 'AstaSans',
   semibold: 'AstaSansSemiBold',

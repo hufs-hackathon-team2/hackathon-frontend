@@ -2,7 +2,7 @@
 import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Image } from "react-native";
 import { useState, useEffect } from 'react';
 import { getFullDate, getDurationDays, EMPTY_DATE } from "../lib/date";
-import { COLORS, FONT, SPACE, RADIUS } from '../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../lib/theme';
 import { getPreviousAnalysis } from '../lib/api/cycles';
 import { getRecommendations } from '../lib/api/quests';
 import { getRoom } from '../lib/api/characters';
@@ -108,7 +108,7 @@ export default function S40Resume({ navigation }) {
           </View>
         )}
 
-        <Pressable style={styles.confirmButton} onPress={() => navigation.popTo('Main')}>
+        <Pressable style={({ pressed }) => [styles.confirmButton, pressed && PRESSED]} onPress={() => navigation.popTo('Main')}>
           <Text style={styles.confirmButtonText}>새 Healthy Cycle 시작하기</Text>
         </Pressable>
 

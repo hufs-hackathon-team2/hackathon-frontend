@@ -4,7 +4,7 @@ import { getDateDisplay, getTimeDisplay, getDateDifference } from '../../lib/dat
 import { getLogs, deleteLog, PAGE_SIZE } from '../../lib/api/logs';
 import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 
 
@@ -106,7 +106,7 @@ export default function S22LogList({ navigation }) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>기록을 불러오지 못했어요</Text>
-        <Pressable style={styles.retryButton} onPress={loadLogs}>
+        <Pressable style={({ pressed }) => [styles.retryButton, pressed && PRESSED]} onPress={loadLogs}>
           <Text style={styles.retryText}>다시 시도</Text>
         </Pressable>
       </View>
@@ -121,7 +121,7 @@ export default function S22LogList({ navigation }) {
           <Text style={styles.logtitle}>PLUS Log 기록</Text>
 
           <Pressable
-            style={[styles.addButton, wroteToday && styles.addButtonDisabled]}
+            style={({ pressed }) => [styles.addButton, wroteToday && styles.addButtonDisabled, pressed && PRESSED]}
             onPress={() => navigation.navigate('LogNew')}
             disabled={wroteToday}
           >
@@ -151,7 +151,7 @@ export default function S22LogList({ navigation }) {
 
 
     {hasMore && (
-      <Pressable style={styles.moreButton} onPress={loadMore}>
+      <Pressable style={({ pressed }) => [styles.moreButton, pressed && PRESSED]} onPress={loadMore}>
         <Text style={styles.moreButtonText}>더보기</Text>
       </Pressable>
     )}

@@ -1,14 +1,18 @@
 // QS 03 퀘스트 진행 및 완료 (3일 체크리스트, 하루 1회만 체크)
 import { ScrollView, Text, View, Pressable, StyleSheet, Image} from "react-native";
 import { useState, useEffect } from 'react';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { getCharacterStages, getStageIndex } from '../../lib/assets';
 import { getRoom } from '../../lib/api/characters';
 
 export default function S52QuestProgress({ navigation, route }) {
 
   const title = route.params?.title ?? '퀘스트';
-  const points = route.params?.points;
+
+  // 퀘스트를 성공한 날은 체크 2점 + 성공 보너스 3점.
+  // 서버가 지급 점수를 응답에 주지 않아서 규칙대로 적어 둔다.
+  const QUEST_SUCCESS_SCORE = 5;
+  const points = route.params?.points ?? QUEST_SUCCESS_SCORE;
 
   // 축하 화면이라 성장이 반영된 지금 모습을 보여준다
   const [room, setRoom] = useState(null);
@@ -55,7 +59,7 @@ export default function S52QuestProgress({ navigation, route }) {
           </View>
         </View>
 
-        <Pressable style={styles.confirmButton} onPress={() => navigation.goBack()}>
+        <Pressable style={({ pressed }) => [styles.confirmButton, pressed && PRESSED]} onPress={() => navigation.goBack()}>
           <Text style={styles.confirmButtonText}>확인</Text>
         </Pressable>
 

@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, Text, View,Pressable } from 'react-native';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 
 const styles = StyleSheet.create({
@@ -54,7 +54,11 @@ export default function LogItem({ date, time, content, onDelete }) {
 
         <Text style={styles.date}>{date}</Text>
 
-        <Pressable onPress={onDelete} hitSlop={10}>
+        <Pressable
+          onPress={onDelete}
+          hitSlop={10}
+          style={({ pressed }) => pressed && PRESSED}
+        >
           <Text style={styles.trash}>X</Text>
         </Pressable>
 

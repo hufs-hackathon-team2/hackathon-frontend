@@ -22,6 +22,30 @@ export function getErrorMessage(error, fallback = '잠시 후 다시 시도해�
   return TRANSLATED[raw] ?? raw;
 }
 
+// 서버가 대표 문구 말고 이유를 따로 더 보내줄 때가 있다.
+// 필드 이름을 가리지 않고, 대표 문구에 없는 내용만 모아서 돌려준다.
+export function getErrorDetails(error) {
+  const data = error?.response?.data;
+
+  if (!data || typeof data !== 'object') return null;
+
+  // 대표 문구로 이미 쓰인 값은 빼야 같은 말이 두 번 나오지 않는다
+  const main = data.detail ?? data.error ?? firstFieldError(data);
+  const parts = [];
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (key === 'detail' || key === 'error') return;
+
+    const text = Array.isArray(value) ? value.filter(Boolean).join(', ') : value;
+
+    if (typeof text === 'string' && text.trim() && text !== main) {
+      parts.push(text.trim());
+    }
+  });
+
+  return parts.length ? parts.join('\n') : null;
+}
+
 // { "password": ["This password is too common."] } 처럼 필드별로 올 때 첫 문구를 꺼낸다
 function firstFieldError(data) {
   for (const value of Object.values(data)) {

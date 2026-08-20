@@ -39,7 +39,12 @@ export default function CharacterRoomCard({ characterType, currentStage, assets,
                   <View key={i} style={styles.slot}>
                     <View style={styles.slotInner}>
                       {shown[i] ? (
-                        <Image source={getSticker(shown[i])} style={styles.slotImage} resizeMode="contain" />
+                        <Image
+                          source={getSticker(shown[i])}
+                          style={styles.slotImage}
+                          resizeMode="contain"
+                          fadeDuration={0}
+                        />
                       ) : null}
                     </View>
                   </View>
@@ -58,6 +63,7 @@ export default function CharacterRoomCard({ characterType, currentStage, assets,
             source={getCharacterStages(characterType)[stageIndex]}
             style={characterSize}
             resizeMode="contain"
+            fadeDuration={0}
           />
         </View>
 

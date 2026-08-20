@@ -15,7 +15,7 @@ import {
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { withdraw } from '../../lib/api/settings';
 
 const DELETED_ITEMS = [
@@ -102,7 +102,7 @@ export default function S73Withdraw({ navigation }) {
             <Text style={styles.notice}>삭제한 데이터는 복구할 수 없습니다.</Text>
 
             <Pressable
-              style={[styles.withdrawButton, !isValid && styles.withdrawButtonDisabled]}
+              style={({ pressed }) => [styles.withdrawButton, !isValid && styles.withdrawButtonDisabled, pressed && PRESSED]}
               onPress={handleWithdraw}
               disabled={!isValid || deleting}
             >
