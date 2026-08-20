@@ -251,13 +251,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D5DDE8',
     borderRadius: 20,
-    padding: 20,
+    padding: 23,
     marginVertical: 16,
   },
   weeklySummaryText: {
     fontSize: 14,
-    color: '#333333',
-    marginBottom: 16,
+    color: '#1B1A18',
+    marginBottom: 5,
     lineHeight: 20,
     fontWeight: '500',
   },
@@ -267,13 +267,14 @@ const styles = StyleSheet.create({
     borderColor: '#D5DDE8',
     borderRadius: 20,
     padding: 20,
-    marginBottom: 16,
+    marginBottom: 3,
   },
   blockTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1B1A18',
     marginBottom: 12,
+    marginTop: 1
   },
   summaryRow: {
     flexDirection: 'row',
@@ -290,6 +291,7 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 20,
+    marginLeft: 1,
     fontWeight: 'bold',
     color: '#1B1A18',
   },
@@ -322,6 +324,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#1B1A18',
+
   },
   emptyCard: {
     backgroundColor: '#FFFFFF',
