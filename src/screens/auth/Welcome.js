@@ -1,17 +1,8 @@
 // 앱 첫 화면 — 로그인 전 진입점
-import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 export default function Welcome({ navigation }) {
-
-  // 개발용 — 로그인 없이 화면을 확인할 때 쓴다
-  const handleAdmin = () => {
-    Alert.alert('개발용 이동', '어디로 갈까요?', [
-      { text: '온보딩', onPress: () => navigation.navigate('Interests') },
-      { text: '홈', onPress: () => navigation.navigate('Main') },
-      { text: '취소', style: 'cancel' },
-    ]);
-  };
 
   return (
     <View style={styles.container}>
@@ -35,10 +26,6 @@ export default function Welcome({ navigation }) {
 
       <Pressable style={({ pressed }) => [styles.signupButton, pressed && PRESSED]} onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>회원가입</Text>
-      </Pressable>
-
-      <Pressable style={({ pressed }) => [styles.adminButton, pressed && PRESSED]} onPress={handleAdmin}>
-        <Text style={styles.adminText}>관리자</Text>
       </Pressable>
 
     </View>
@@ -117,15 +104,4 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
-  adminButton: {
-    marginTop: 40,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-
-  adminText: {
-    fontFamily: FONT.regular,
-    fontSize: FONT.caption,
-    color: COLORS.textSub,
-  },
 });

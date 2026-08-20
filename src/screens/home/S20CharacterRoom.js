@@ -102,7 +102,7 @@ export default function S20CharacterRoom({ navigation }) {
           style={({ pressed }) => [styles.albumButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('CharacterArchive')}
         >
-          <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" />
+          <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" fadeDuration={0} />
           <Text style={styles.albumText}>앨범</Text>
         </Pressable>
       </View>
@@ -134,7 +134,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.growthStrip}>
 
         <View style={styles.growthTop}>
-          <Image source={getSticker('sprout')} style={styles.growthIcon} resizeMode="contain" />
+          <Image source={getSticker('sprout')} style={styles.growthIcon} resizeMode="contain" fadeDuration={0} />
           <Text style={styles.growthLevel}>Lv.{stageIndex + 1}</Text>
           <Text style={styles.growthValue}>
             {isMax ? '성장 완료' : `${percent}%`}
@@ -165,7 +165,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.weekCard}>
 
         <View style={styles.iconBadge}>
-          <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" />
+          <Image source={getSticker('fire')} style={styles.badgeIcon} resizeMode="contain" fadeDuration={0} />
         </View>
 
         <View style={styles.cardBody}>
@@ -202,7 +202,7 @@ export default function S20CharacterRoom({ navigation }) {
       <View style={styles.weekCard}>
 
         <View style={styles.iconBadge}>
-          <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" />
+          <Image source={getSticker('target')} style={styles.badgeIcon} resizeMode="contain" fadeDuration={0} />
         </View>
 
         <View style={styles.cardBody}>
