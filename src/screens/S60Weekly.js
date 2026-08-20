@@ -248,6 +248,8 @@ const styles = StyleSheet.create({
   },
   summaryCardBlock: {
     backgroundColor: '#E8EFE9',
+    borderWidth: 1,
+    borderColor: '#D5DDE8',
     borderRadius: 20,
     padding: 20,
     marginVertical: 16,
@@ -261,6 +263,8 @@ const styles = StyleSheet.create({
   },
   cardBlock: {
     backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D5DDE8',
     borderRadius: 20,
     padding: 20,
     marginBottom: 16,
@@ -321,6 +325,8 @@ const styles = StyleSheet.create({
   },
   emptyCard: {
     backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D5DDE8',
     borderRadius: 20,
     paddingVertical: 40,
     paddingHorizontal: 20,
