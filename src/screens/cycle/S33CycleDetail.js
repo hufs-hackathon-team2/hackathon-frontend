@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityChipBox, CompletedQuestBox, AnalysisBox } from '../../components/cycle/AnalysisBoxes';
 import { getFullDate, getDurationDays, EMPTY_DATE } from '../../lib/date';
+import useDelayedBusy from '../../lib/useDelayedBusy';
 import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { getAnalysis } from '../../lib/api/cycles';
 
@@ -30,6 +31,9 @@ export default function S33CycleDetail({ navigation, route }) {
 
   const days = getDurationDays(cycle.started_at, cycle.closed_at);
 
+  // 머리말은 이미 보이니, 1초 안에 오면 스피너 없이 바로 내용을 채운다
+  const showLoading = useDelayedBusy(loading);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
 
@@ -56,9 +60,11 @@ export default function S33CycleDetail({ navigation, route }) {
         </Text>
 
         {loading ? (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          </View>
+          showLoading ? (
+            <View style={styles.center}>
+              <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+          ) : null
         ) : error ? (
           <View style={styles.fallback}>
             <Text style={styles.fallbackText}>분석을 불러오지 못했어요</Text>

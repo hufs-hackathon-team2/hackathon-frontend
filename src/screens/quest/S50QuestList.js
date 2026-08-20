@@ -4,6 +4,7 @@ import { ActivityIndicator, ScrollView, Text, View, Pressable, StyleSheet, Alert
 import { useState, useEffect } from "react";
 import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateFormat } from "../../lib/date";
+import useDelayedBusy from "../../lib/useDelayedBusy";
 import { getErrorMessage } from "../../lib/api/error";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
@@ -25,6 +26,9 @@ export default function S50QuestList({ navigation }) {
   const [recommend, setRecommend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+
+  // 1초 넘게 걸릴 때만 스피너를 띄운다
+  const showBusy = useDelayedBusy(busy);
 
   // 진행 중인 퀘스트 조회가 실패해도 추천 목록은 보여준다
   const load = () => {
@@ -108,11 +112,11 @@ export default function S50QuestList({ navigation }) {
       .finally(() => setBusy(false));
   };
 
-  if (loading || busy) {
+  if (loading || showBusy) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        {busy && <Text style={styles.busyText}>잠시만 기다려주세요</Text>}
+        <Text style={styles.busyText}>잠시만 기다려주세요</Text>
       </View>
     );
   }
