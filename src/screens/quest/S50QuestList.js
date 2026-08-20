@@ -24,6 +24,7 @@ export default function S50QuestList({ navigation }) {
   const [activeQuest, setactiveQuest] = useState(null);
   const [recommend, setRecommend] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
 
   // 진행 중인 퀘스트 조회가 실패해도 추천 목록은 보여준다
   const load = () => {
@@ -48,6 +49,8 @@ export default function S50QuestList({ navigation }) {
       {
         text: '시작',
         onPress: () => {
+          setBusy(true);
+
           startQuest(quest.quest_content)
             .then((res) => {
               if (res.new_cycle_started) {
@@ -59,8 +62,8 @@ export default function S50QuestList({ navigation }) {
             })
             .catch((error) =>
               Alert.alert('시작하지 못했어요', getErrorMessage(error))
-            );
-
+            )
+            .finally(() => setBusy(false));
         },
       },
     ]);
@@ -73,9 +76,12 @@ export default function S50QuestList({ navigation }) {
         text: '포기',
         style: 'destructive',
         onPress: () => {
+          setBusy(true);
+
           abandonQuest(activeQuest.quest_id)
             .then(load)
-            .catch((error) => Alert.alert('포기하지 못했어요', getErrorMessage(error)));
+            .catch((error) => Alert.alert('포기하지 못했어요', getErrorMessage(error)))
+            .finally(() => setBusy(false));
         },
       },
     ]);
@@ -85,6 +91,8 @@ export default function S50QuestList({ navigation }) {
     activeQuest?.last_checked?.slice(0, 10) === getDateFormat(new Date());
 
   const handleCheckToday = () => {
+    setBusy(true);
+
     checkQuest(activeQuest.quest_id)
       .then((res) => {
         // 3회를 다 채우면 서버가 state 를 DONE 으로 바꿔 보낸다.
@@ -96,13 +104,15 @@ export default function S50QuestList({ navigation }) {
 
         load();
       })
-      .catch((error) => Alert.alert('완료하지 못했어요', getErrorMessage(error)));
+      .catch((error) => Alert.alert('완료하지 못했어요', getErrorMessage(error)))
+      .finally(() => setBusy(false));
   };
 
-  if (loading) {
+  if (loading || busy) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" color={COLORS.primary} />
+        {busy && <Text style={styles.busyText}>잠시만 기다려주세요</Text>}
       </View>
     );
   }
@@ -384,6 +394,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginTop: 18,
     marginBottom: 20,
+  },
+
+  busyText: {
+    fontFamily: FONT.regular,
+    fontSize: FONT.subbody,
+    color: COLORS.textSub,
+    marginTop: 14,
   },
 
   center: {
