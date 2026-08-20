@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { PRESSED } from '../../lib/theme';
 
 /**
  * 아직 안 만든 화면용 임시 컴포넌트.
@@ -17,7 +18,7 @@ export default function Placeholder({ id, title, spec, navigation, links = [] })
         {links.map((link) => (
           <Pressable
             key={link.to}
-            style={styles.button}
+            style={({ pressed }) => [styles.button, pressed && PRESSED]}
             onPress={() => navigation.navigate(link.to)}
           >
             <Text style={styles.buttonText}>{link.label}</Text>

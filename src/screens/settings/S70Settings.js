@@ -2,7 +2,7 @@
 import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { getSettings, logout } from '../../lib/api/settings';
 import { getRoom } from '../../lib/api/characters';
 import { getCharacterStages, getStageIndex } from '../../lib/assets';
@@ -93,17 +93,17 @@ export default function S70Settings({ navigation }) {
         </View>
       </View>
 
-      <Pressable style={styles.row} onPress={() => navigation.navigate('ServiceInfo')}>
+      <Pressable style={({ pressed }) => [styles.row, pressed && PRESSED]} onPress={() => navigation.navigate('ServiceInfo')}>
         <Text style={styles.rowLabel}>서비스 안내</Text>
         <Text style={styles.rowArrow}>{'>'}</Text>
       </Pressable>
 
       <View style={styles.buttonRow}>
-        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+        <Pressable style={({ pressed }) => [styles.logoutButton, pressed && PRESSED]} onPress={handleLogout}>
           <Text style={styles.logoutText}>로그아웃</Text>
         </Pressable>
 
-        <Pressable style={styles.withdrawButton} onPress={() => navigation.navigate('Withdraw')}>
+        <Pressable style={({ pressed }) => [styles.withdrawButton, pressed && PRESSED]} onPress={() => navigation.navigate('Withdraw')}>
           <Text style={styles.withdrawText}>회원 탈퇴</Text>
         </Pressable>
       </View>

@@ -6,7 +6,7 @@ import { ActivityChipBox, CompletedQuestBox, AnalysisBox } from '../../component
 import { getFullDate, getDurationDays, EMPTY_DATE } from '../../lib/date';
 import { getSticker } from '../../lib/assets';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 import { getCurrentAnalysis, requestCurrentAnalysis } from '../../lib/api/cycles';
 import { ActivityIndicator } from 'react-native';
@@ -104,7 +104,7 @@ export default function S31CycleAnalysis ({ navigation }) {
         <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
 
         <Pressable
-          style={styles.historyButton}
+          style={({ pressed }) => [styles.historyButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('CycleHistory')}
         >
           <Text style={styles.historyButtonText}>히스토리 보기</Text>
@@ -192,7 +192,7 @@ export default function S31CycleAnalysis ({ navigation }) {
         />
 
           <Pressable
-            style={[styles.HealthyCycleBtn, (status === 'PENDING' || usedUp) && styles.HealthyCycleBtnPending]}
+            style={({ pressed }) => [styles.HealthyCycleBtn, (status === 'PENDING' || usedUp) && styles.HealthyCycleBtnPending, pressed && PRESSED]}
             onPress={requestAnalysis}
             disabled={status === 'PENDING' || usedUp}
           >

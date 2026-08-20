@@ -3,7 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityChipBox, CompletedQuestBox, AnalysisBox } from '../../components/cycle/AnalysisBoxes';
 import { getFullDate, getDurationDays, EMPTY_DATE } from '../../lib/date';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { getAnalysis } from '../../lib/api/cycles';
 
 export default function S33CycleDetail({ navigation, route }) {
@@ -37,6 +37,7 @@ export default function S33CycleDetail({ navigation, route }) {
         <Pressable
           onPress={() => navigation.goBack()}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          style={({ pressed }) => pressed && PRESSED}
         >
           <Text style={styles.close}>닫기</Text>
         </Pressable>

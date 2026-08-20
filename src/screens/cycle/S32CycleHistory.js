@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View, StyleSheet } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
 import { getFullDate, getDurationDays, EMPTY_DATE } from "../../lib/date";
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { getCycleHistory } from '../../lib/api/cycles';
 
 
@@ -58,7 +58,7 @@ export default function S32CycleHistory({ navigation }) {
           completed.map((cycle) => (
             <Pressable
               key={cycle.cycle_id}
-              style={styles.historyBox}
+              style={({ pressed }) => [styles.historyBox, pressed && PRESSED]}
               onPress={() => navigation.navigate('CycleDetail', { cycle })}
             >
               <View style={styles.historyTop}>

@@ -1,6 +1,6 @@
 // 앱 첫 화면 — 로그인 전 진입점
 import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 export default function Welcome({ navigation }) {
 
@@ -29,15 +29,15 @@ export default function Welcome({ navigation }) {
         <Text style={styles.slogan}>건강한 습관을 쌓는 가장 가벼운 방법</Text>
       </View>
 
-      <Pressable style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
+      <Pressable style={({ pressed }) => [styles.loginButton, pressed && PRESSED]} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.loginText}>로그인</Text>
       </Pressable>
 
-      <Pressable style={styles.signupButton} onPress={() => navigation.navigate('Signup')}>
+      <Pressable style={({ pressed }) => [styles.signupButton, pressed && PRESSED]} onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.signupText}>회원가입</Text>
       </Pressable>
 
-      <Pressable style={styles.adminButton} onPress={handleAdmin}>
+      <Pressable style={({ pressed }) => [styles.adminButton, pressed && PRESSED]} onPress={handleAdmin}>
         <Text style={styles.adminText}>관리자</Text>
       </Pressable>
 

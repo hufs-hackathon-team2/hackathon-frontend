@@ -2,7 +2,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/common/ScreenHeader';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import { SERVICE_INFO } from '../../lib/api/mock/settings';
 
 export default function S72ServiceInfo({ navigation }) {
@@ -21,7 +21,7 @@ export default function S72ServiceInfo({ navigation }) {
           </View>
         ))}
 
-        <Pressable style={styles.confirmButton} onPress={() => navigation.goBack()}>
+        <Pressable style={({ pressed }) => [styles.confirmButton, pressed && PRESSED]} onPress={() => navigation.goBack()}>
           <Text style={styles.confirmText}>확인했어요</Text>
         </Pressable>
 

@@ -6,7 +6,7 @@ import QuestRecommend from "../../components/quest/questRecommend";
 import { getDateFormat } from "../../lib/date";
 import { getErrorMessage } from "../../lib/api/error";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 import {
   getActiveQuest,
   getRecommendations,
@@ -162,7 +162,7 @@ export default function S50QuestList({ navigation }) {
 
               {activeQuest.count < 3 && (
                 <Pressable
-                  style={[styles.checkButton, checkedToday && styles.checkButtonDisabled]}
+                  style={({ pressed }) => [styles.checkButton, checkedToday && styles.checkButtonDisabled, pressed && PRESSED]}
                   onPress={handleCheckToday}
                   disabled={checkedToday}
                 >
@@ -176,7 +176,7 @@ export default function S50QuestList({ navigation }) {
 
             </View>
 
-            <Pressable onPress={handleGiveUp} style={styles.giveUpButton}>
+            <Pressable onPress={handleGiveUp} style={({ pressed }) => [styles.giveUpButton, pressed && PRESSED]}>
               <Text style={styles.giveUpText}>포기하기</Text>
             </Pressable>
           </View>
@@ -223,7 +223,7 @@ export default function S50QuestList({ navigation }) {
           <Text style={styles.createGuide}>원하는 행동이 없다면 직접 만들어보세요</Text>
 
           <Pressable
-            style={[styles.questButton, activeQuest !== null && styles.questButtonDisabled]}
+            style={({ pressed }) => [styles.questButton, activeQuest !== null && styles.questButtonDisabled, pressed && PRESSED]}
             onPress={() => navigation.navigate('QuestCreate')}
             disabled={activeQuest !== null}
           >

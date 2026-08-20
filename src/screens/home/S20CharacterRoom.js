@@ -9,7 +9,7 @@ import { getActiveQuest } from '../../lib/api/quests';
 import { getSavedCharacterName } from '../../lib/api/token';
 import { getDateFormat, getWeekDates } from '../../lib/date';
 import CharacterRoomCard from '../../components/home/CharacterRoomCard';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 export default function S20CharacterRoom({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -99,7 +99,7 @@ export default function S20CharacterRoom({ navigation }) {
         <Text style={styles.header}>{room ? `${characterName}의 방` : '내 방'}</Text>
 
         <Pressable
-          style={styles.albumButton}
+          style={({ pressed }) => [styles.albumButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('CharacterArchive')}
         >
           <Image source={getSticker('star')} style={styles.albumIcon} resizeMode="contain" />
@@ -191,7 +191,7 @@ export default function S20CharacterRoom({ navigation }) {
         </View>
 
         <Pressable
-          style={styles.writeButton}
+          style={({ pressed }) => [styles.writeButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('LogTab')}
         >
           <Text style={styles.writeButtonText}>기록하기</Text>
@@ -229,7 +229,7 @@ export default function S20CharacterRoom({ navigation }) {
         </View>
 
         <Pressable
-          style={styles.writeButton}
+          style={({ pressed }) => [styles.writeButton, pressed && PRESSED]}
           onPress={() => navigation.navigate('QuestTab')}
         >
           <Text style={styles.writeButtonText}>
@@ -240,7 +240,7 @@ export default function S20CharacterRoom({ navigation }) {
       </View>
 
       <Pressable
-        style={styles.button}
+        style={({ pressed }) => [styles.button, pressed && PRESSED]}
         onPress={() => navigation.navigate('Weekly')}
       >
         <Text style={styles.buttonText}>위클리 카드 보기</Text>

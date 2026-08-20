@@ -7,7 +7,7 @@ import { getCharacterStages, getSticker } from '../../lib/assets';
 import { getFullDate } from '../../lib/date';
 import { getArchive } from '../../lib/api/characters';
 import { getErrorMessage } from '../../lib/api/error';
-import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
+import { COLORS, FONT, SPACE, RADIUS, PRESSED } from '../../lib/theme';
 
 const LAST_STAGE = 6;
 
@@ -57,7 +57,7 @@ export default function S81CharacterArchive({ navigation }) {
           <View style={styles.emptyBox}>
             <Text style={styles.emptyTitle}>{errorMessage}</Text>
 
-            <Pressable style={styles.retryButton} onPress={load}>
+            <Pressable style={({ pressed }) => [styles.retryButton, pressed && PRESSED]} onPress={load}>
               <Text style={styles.retryText}>다시 시도</Text>
             </Pressable>
           </View>
