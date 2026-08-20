@@ -178,11 +178,6 @@ export default function S60Weekly({ navigation }) {
                 </View>
               </View>
 
-              {weeklyData.rest_NT_content ? (
-                <View style={styles.restNtBox}>
-                  <Text style={styles.restNtText}>{weeklyData.rest_NT_content}</Text>
-                </View>
-              ) : null}
             </View>
 
           </View>
@@ -293,17 +288,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#1B1A18',
-  },
-  restNtBox: {
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#D2D8D3',
-  },
-  restNtText: {
-    fontSize: 13,
-    color: '#4B6351',
-    lineHeight: 18,
   },
   shareBlockTitle: {
     fontSize: 16,

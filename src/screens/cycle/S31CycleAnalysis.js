@@ -3,7 +3,7 @@ import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'rea
 import CycleCalendar from '../../components/cycle/CycleCalendar';
 import { ActivityChipBox, CompletedQuestBox, AnalysisBox } from '../../components/cycle/AnalysisBoxes';
 
-import { getFullDate } from '../../lib/date';
+import { getFullDate, getDurationDays, EMPTY_DATE } from '../../lib/date';
 import { getSticker } from '../../lib/assets';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT, SPACE, RADIUS } from '../../lib/theme';
@@ -92,23 +92,26 @@ export default function S31CycleAnalysis ({ navigation }) {
     );
   }
 
+  // 휴식기에 들어가면 지속일은 쉬기 시작한 날에서 멈춘다.
+  const resting = analysis.rest_started_at != null;
+  const durationEnd = resting ? analysis.rest_started_at : new Date();
+  const duration = getDurationDays(analysis.started_at, durationEnd);
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.container}>
 
-        <View style={styles.headerRow}>
-          <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
+        <Text style={styles.nowCycleTitle}>진행 중인 Healthy Cycle</Text>
 
-          <Pressable
-            style={styles.historyButton}
-            onPress={() => navigation.navigate('CycleHistory')}
-          >
-            <Text style={styles.historyButtonText}>히스토리</Text>
-          </Pressable>
-        </View>
+        <Pressable
+          style={styles.historyButton}
+          onPress={() => navigation.navigate('CycleHistory')}
+        >
+          <Text style={styles.historyButtonText}>히스토리 보기</Text>
+        </Pressable>
 
         <View style={styles.informBox}>
-          <Text style={styles.informSub}>활동 중</Text>
+          <Text style={styles.informSub}>{resting ? '휴식 중' : '활동 중'}</Text>
           <Text style={styles.informTitle}>사이클 {analysis.cycle_count}회차</Text>
 
           <View style={styles.informRow}>
@@ -119,12 +122,16 @@ export default function S31CycleAnalysis ({ navigation }) {
 
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>지속일</Text>
-              <Text style={styles.detailValue}>{analysis.active_days ?? 0}일째</Text>
+              <Text style={styles.detailValue}>
+                {duration ?? EMPTY_DATE}일{resting ? '' : '째'}
+              </Text>
             </View>
 
             <View style={styles.informDetail}>
               <Text style={styles.detailLabel}>상태</Text>
-              <Text style={styles.detailStatus}>활동 중 ↗</Text>
+              <Text style={[styles.detailStatus, resting && styles.detailStatusRest]}>
+                {resting ? '휴식 중' : '활동 중 ↗'}
+              </Text>
             </View>
 
           </View>
@@ -209,25 +216,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
   historyButton: {
-    backgroundColor: COLORS.cardWhite,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    backgroundColor: COLORS.cardAlt,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.navigate,
     borderRadius: 999,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
+    paddingVertical: 11,
+    marginBottom: 16,
   },
 
   historyButtonText: {
     fontFamily: FONT.semibold,
-    fontSize: FONT.caption,
-    color: COLORS.text,
+    fontSize: FONT.body,
+    color: COLORS.navigate,
   },
   nowCycleTitle: {
     fontFamily: FONT.bold,
@@ -236,6 +239,9 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
 
+  detailStatusRest: {
+    color: COLORS.textSub,
+  },
   HealthyCycleBtn: {
     alignSelf: 'center',
     backgroundColor: COLORS.navigate,
